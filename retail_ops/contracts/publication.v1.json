@@ -1,0 +1,56 @@
+{
+  "publication_profile_version": "1",
+  "views": [
+    {
+      "dataset_id": "store_a_monthly_metrics",
+      "input_dataset_ids": [
+        "store_a_monthly_metrics"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "store_a_top_skus",
+      "input_dataset_ids": [
+        "store_a_top_skus"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "demo2_store_period_metrics",
+      "input_dataset_ids": [
+        "demo2_store_period_metrics",
+        "store_period_panel_metrics"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "store_period_panel_metrics",
+      "input_dataset_ids": [
+        "demo2_store_period_metrics",
+        "store_period_panel_metrics"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "demo2_top_skus_by_transaction_amount",
+      "input_dataset_ids": [
+        "demo2_top_skus_by_transaction_amount"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "demo2_top_skus_by_sales_volume",
+      "input_dataset_ids": [
+        "demo2_top_skus_by_sales_volume"
+      ],
+      "missing_input": "empty_table"
+    },
+    {
+      "dataset_id": "demo2_top_search_terms",
+      "input_dataset_ids": [
+        "demo2_top_search_terms"
+      ],
+      "missing_input": "empty_table"
+    }
+  ]
+}

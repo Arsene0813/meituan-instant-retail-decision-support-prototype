@@ -42,6 +42,6 @@
 
 四份查询在现有完整样例上的列名和数值保持一致；两个原有导出脚本产生的 CSV 字节也保持一致。回归测试覆盖空值与零、非法数字、Top 3 缺项或重复、跨窗口连接、错误的月份组合、上下文冲突，以及校验失败时保留原导出文件。
 
-这一步读取已登记的本地规范数据。原文入口产生的110条预览记录尚未直接交给这些查询。接入真实批次时，需要明确目标数据集、选择通过校验的版本并保留来源，再交给 SQL 和 RAC 使用。
+这一步读取已登记的本地规范数据。原文入口产生的110条预览记录尚未直接交给这些查询。[发布入口](../ingestion/PUBLICATION.md) 现在可以明确选择校验通过的批次，保存来源并重算 SQL、Demo 2 fact，再让一次 RAC 分析使用同一发布版本。现有命令继续读取项目样例；分析发布数据请使用 `publication_cli analyze`。
 
 实现参考：[SQLite 聚合函数](https://www.sqlite.org/lang_aggfunc.html)、[DuckDB Python 函数接口](https://duckdb.org/docs/current/clients/python/function)。

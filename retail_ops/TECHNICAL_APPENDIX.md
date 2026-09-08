@@ -110,8 +110,9 @@ must match the requested start and end dates, label, and granularity exactly.
 Another month's fact or a broader range summary cannot fill a missing window.
 Comparative facts may retain baseline periods in `observed_values`, as allowed
 by the dictionary; those values do not change the declared target window.
-These API checks validate metadata and evidence coverage. Source-value
-reconciliation and consistent published versions remain separate work.
+These API checks validate metadata and evidence coverage. The publication CLI
+now reconciles source values and pins analysis versions; connecting these API
+paths to publications remains separate work.
 
 When time is omitted, the endpoint uses its declared fixture: February–April
 2026 for Demo 1 and March 2026 for Demo 2. A month written without a year uses
@@ -128,8 +129,9 @@ retrieval. Individual missing metric values remain `null`.
 
 The existing Store A facts are range summaries. A single-month request needs
 a corresponding month fact; range summaries are not relabelled as monthly
-evidence. RAC now recomputes the registered review checks from its selected
-local evidence; shared publication/version selection remains to be connected.
+evidence. RAC recomputes the registered review checks from its selected local
+evidence. The publication CLI supplies SQL, Demo 2 facts, and RAC with one
+explicitly selected version; the existing API paths have not yet switched.
 
 ### Responsibility Split
 
@@ -815,4 +817,10 @@ slots.
 
 `retail_ops.ingestion.batch_cli` now archives reviewed canonical CSV uploads and revalidates them with the existing ingestion rules. SQLite stores source bytes, registration and identity snapshots, exact preview results, and explicit predecessor links in one transaction. Repeated requests are idempotent; corrections preserve whole snapshots and missing values. See [batch intake](ingestion/BATCH_INTAKE.md) for the field mapping and registered metadata.
 
-A stored `validated` batch has passed intake checks. SQL, facts, API, and RAC still use the existing project files; shared immutable publication and consumer version selection are the next connection. The local identity record depends on operator review and does not authenticate a Meituan account.
+A stored `validated` batch has passed intake checks. The [publication CLI](ingestion/PUBLICATION.md) replays selected batches, builds the registered views and SQL outputs, and pins SQL, Demo 2 facts, and RAC to one publication per analysis. The existing API still reads project files. The local identity record depends on operator review and does not authenticate a Meituan account.
+
+### Publication view registration
+
+`retail_ops/contracts/publication.v1.json` explicitly projects selected `demo2_store_period_metrics` or `store_period_panel_metrics` records into both existing store-period read views. The canonical field sets and definitions are unchanged; the original dataset and source registration stay in the archived batch. Other datasets use their own same-named views. Two batches in the same store/window/overlap-group/ranking-basis partition cannot be selected together.
+
+A view without selected input is an explicitly recorded empty table, not evidence of zero business activity. Publication builds four SQL outputs and Demo 2 facts from selected records, preserving missing values. Analysis output carries `publication_id`; manifest row lineage links each view record to its batch and source line. Existing repository business CSVs and saved outputs are not copied into publications.

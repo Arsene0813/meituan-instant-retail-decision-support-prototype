@@ -39,6 +39,8 @@ SQL organizes the selected store-period records. Generated facts retain the enti
 
 `retail_ops/data/DATA_DICTIONARY.md` is the naming authority for retail fields and metric definitions.
 
+For reviewed canonical CSV uploads, [batch intake](retail_ops/ingestion/BATCH_INTAKE.md) retains original bytes and explicit revisions. The [publication CLI](retail_ops/ingestion/PUBLICATION.md) selects batch IDs, rebuilds SQL and Demo 2 facts, and runs RAC against the same publication. Existing API endpoints still use their current project-file or Qdrant evidence paths.
+
 ## Current Implemented Work
 
 The current retail work includes three analytical views: Demo 1 for Store A month-over-month diagnosis, Demo 2 for selected Stores B-F under one March 2026 reporting window, and the repeated-window B-F panel across 2026-02, 2026-03, and 2026-04.

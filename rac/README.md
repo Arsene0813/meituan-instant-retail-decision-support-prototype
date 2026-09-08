@@ -339,8 +339,10 @@ Registered CSV routes retain their errors. A document anchor cannot replace
 missing or invalid CSV records. The CSV readers validate complete reporting
 dates, canonical columns and logical keys before selection. The repeated-window
 summary is reconciled against the current registered panel before its selected
-cells are used. The March diagnostic snapshot is still a separate saved input;
-unified publication across raw data, SQL, facts and RAC remains to be connected.
+cells are used. The [publication CLI](../retail_ops/ingestion/PUBLICATION.md)
+rebuilds SQL diagnostics and Demo 2 facts from selected batches, then gives
+RAC the same verified publication for the full run. Existing RAC scripts still
+read project fixtures; the API has not yet switched to publication selection.
 
 The review records exact source operands and comparison results in
 `evidence_review`. State validation recomputes the decision-bearing fields
