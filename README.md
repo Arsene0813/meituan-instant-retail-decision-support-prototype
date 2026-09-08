@@ -24,6 +24,8 @@ Reviewed Chinese source documents can be received atomically across stores and d
 
 The [local data console](retail_ops/ingestion/CONSOLE.md) connects reviewed uploads, batch inspection, explicit publication selection, date queries and RAC in one working page. Daily uploads are retained; queries remain read-only.
 
+The [registration helper](retail_ops/ingestion/REGISTRATION.md) checks explicit operator declarations against original files before appending the reviewed intake registry. It computes file digests and preserves existing registrations.
+
 ## Evidence Workflow
 
 The repository follows one evidence path:

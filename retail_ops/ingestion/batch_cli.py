@@ -7,7 +7,8 @@ import sqlite3
 from decimal import Decimal
 from pathlib import Path
 
-from .batch_store import read_batch, receive_batch, receive_document
+from .batch_store import read_batch, receive_batch
+from .document_intake import receive_document
 from .intake_registry import _unique
 from .preview import preview_json
 

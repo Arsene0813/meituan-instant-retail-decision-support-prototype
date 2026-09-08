@@ -91,8 +91,9 @@ def receive(root, database, registry_path, kind, selection_id, expected_sha256, 
         if selection_id not in known:
             raise ValueError("请选择当前独立登记中的上传来源。")
         if kind == "document":
-            return batch_store.receive_document(root, database, snapshot, selection_id, data,
-                                                 supersedes=supersedes)
+            from .document_intake import receive_document
+            return receive_document(root, database, snapshot, selection_id, data,
+                                    supersedes=supersedes)
         if kind != "csv" or set(supersedes) - {selection_id}:
             raise ValueError("修订关系必须对应所选上传标识。")
         result = batch_store.receive_batch(root, database, snapshot, selection_id, data,
