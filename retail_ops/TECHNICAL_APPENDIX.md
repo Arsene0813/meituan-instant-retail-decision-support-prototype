@@ -810,3 +810,9 @@ The current representation separates primary evidence from additional
 supporting evidence while preserving source fields, observed values,
 calculations, confidence labels, fact statements, limitations, and routing
 slots.
+
+### Local batch intake and revision storage
+
+`retail_ops.ingestion.batch_cli` now archives reviewed canonical CSV uploads and revalidates them with the existing ingestion rules. SQLite stores source bytes, registration and identity snapshots, exact preview results, and explicit predecessor links in one transaction. Repeated requests are idempotent; corrections preserve whole snapshots and missing values. See [batch intake](ingestion/BATCH_INTAKE.md) for the field mapping and registered metadata.
+
+A stored `validated` batch has passed intake checks. SQL, facts, API, and RAC still use the existing project files; shared immutable publication and consumer version selection are the next connection. The local identity record depends on operator review and does not authenticate a Meituan account.
