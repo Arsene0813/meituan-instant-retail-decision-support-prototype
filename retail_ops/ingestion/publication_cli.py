@@ -23,6 +23,9 @@ def analyze_publication(root: Path, directory: Path, publication_id: str, questi
                         query_name: str = "02_demo2_cross_store_comparability.sql") -> dict:
     """Pin once; derive and reconcile every result inside that private view."""
     with open_publication(root, directory, publication_id) as pinned:
+        if pinned.manifest["summary"].get("profile") == "source_records_v1":
+            raise ValueError("Use source_query for this source-record publication; "
+                             "monthly SQL/fact/RAC analysis requires its monthly publication.")
         if query_name not in SQL_OUTPUTS:
             raise ValueError("query is not registered for publication analysis")
         columns, rows = run_query(query_name, root=pinned.root)
@@ -84,6 +87,8 @@ def main(argv=None):
     create.add_argument("--database", type=Path, required=True)
     create.add_argument("--directory", type=Path, required=True)
     create.add_argument("--selection", type=Path, required=True)
+    create.add_argument("--source-records", action="store_true",
+                        help="publish verified source records for read-only date queries")
     inspect = commands.add_parser("inspect", help="verify and inspect a publication by ID")
     inspect.add_argument("--directory", type=Path, required=True)
     inspect.add_argument("--publication-id", required=True)
@@ -98,7 +103,8 @@ def main(argv=None):
     try:
         directory = args.directory.expanduser()
         if args.command == "publish":
-            result = publish(root, args.database.expanduser(), directory, _selection(args.selection))
+            result = publish(root, args.database.expanduser(), directory, _selection(args.selection),
+                             source_records=args.source_records)
         elif args.command == "inspect":
             with open_publication(root, directory, args.publication_id) as pinned:
                 result = pinned.manifest

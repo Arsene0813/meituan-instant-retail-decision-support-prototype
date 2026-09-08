@@ -2,6 +2,8 @@
 
 `publication_cli` 从明确列出的校验通过批次生成一个发布版本。发布目录包含所选上传原文、登记与校验结果、规范 CSV 视图、重新计算的四份 SQL 结果、Demo 2 fact，以及说明这些内容来自哪里的 manifest。
 
+新增的 `publish --source-records` 可发布实际窗口来源记录，供 [只读日期查询](SOURCE_QUERY.md) 反复读取；该发布由数据选择触发，不由每次查询触发。原默认发布仍生成月度分析证据。
+
 每次分析指定一个 `publication_id`。入口核对完整快照后，将验证过的字节复制到本次运行的独立目录；SQL、Demo 2 fact 和 RAC 都使用这个目录。运行期间接收或发布其他数据，不会改变本次分析的输入。
 
 ## 字段与视图对照
@@ -109,7 +111,7 @@ python3 -m retail_ops.ingestion.publication_cli analyze \
 
 ## 当前分析范围
 
-- 当前来源仍是完整自然月的规范 CSV。
+- 默认月度分析发布继续要求完整自然月来源。日及其他实际日期来源使用 `--source-records` 发布和 `source_query` 读取，不进入原月度 SQL/fact/RAC。
 - 四份 SQL 的已登记定义保持原样。SQL 02 的 `same_period_diagnostic_ready` 仍限三月；其他月份保留各自窗口及既有范围标志。
 - 本轮生成 Demo 2 fact。A 店路径重算 SQL 和 RAC，不把旧 Demo 1 fact JSON 复制到新发布。
 - RAC 仍使用已登记的 A 店三月至四月、B–F 店三月及二月至四月 panel 检查范围；发布功能没有扩大问题范围。

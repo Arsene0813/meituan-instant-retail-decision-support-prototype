@@ -26,6 +26,7 @@ SQL_OUTPUTS = {
 FACTS_PATH = "retail_ops/outputs/generated_demo2_retail_memory_facts.json"
 STATIC_FILES = (
     PROFILE_PATH, "retail_ops/contracts/datasets.v1.json",
+    "retail_ops/contracts/range_query.v1.json",
     "retail_ops/data/DATA_DICTIONARY.md", "retail_ops/TECHNICAL_APPENDIX.md",
     "retail_ops/COMPARABILITY_GATE_V0.md", "rac/README.md",
     "rac/schemas/cognition_state.schema.json",
@@ -33,6 +34,8 @@ STATIC_FILES = (
 )
 CODE_FILES = (
     "retail_ops/ingestion/contracts.py", "retail_ops/ingestion/preview.py",
+    "retail_ops/ingestion/source_windows.py", "retail_ops/ingestion/source_view.py",
+    "retail_ops/ingestion/source_query.py",
     "retail_ops/ingestion/intake_registry.py", "retail_ops/ingestion/batch_store.py",
     "retail_ops/ingestion/publication.py", "retail_ops/ingestion/publication_recipe.py",
     "retail_ops/ingestion/publication_cli.py", "retail_ops/sql_runtime.py",

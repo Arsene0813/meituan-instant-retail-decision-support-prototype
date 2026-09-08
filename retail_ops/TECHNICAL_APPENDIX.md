@@ -824,3 +824,9 @@ A stored `validated` batch has passed intake checks. The [publication CLI](inges
 `retail_ops/contracts/publication.v1.json` explicitly projects selected `demo2_store_period_metrics` or `store_period_panel_metrics` records into both existing store-period read views. The canonical field sets and definitions are unchanged; the original dataset and source registration stay in the archived batch. Other datasets use their own same-named views. Two batches in the same store/window/overlap-group/ranking-basis partition cannot be selected together.
 
 A view without selected input is an explicitly recorded empty table, not evidence of zero business activity. Publication builds four SQL outputs and Demo 2 facts from selected records, preserving missing values. Analysis output carries `publication_id`; manifest row lineage links each view record to its batch and source line. Existing repository business CSVs and saved outputs are not copied into publications.
+
+### Actual source windows and read-only date queries
+
+The v2 intake registry preserves the existing receipt fields and registers `canonical_csv_v2` for actual source date windows. Daily records use identical `period_start` and `period_end`; uploading a cumulative report each day does not change its source window. Existing month labels retain their documented meaning.
+
+`publication_cli publish --source-records` creates a verified source-data version without monthly SQL/fact generation. `source_query` reads one version using explicit start/end dates, returns records, lineage and per-store coverage, and does not persist query results. Natural-month selection resolves to the same date parameters. Two store metrics have explicitly registered complete-daily-coverage sums; other values retain their source-window semantics. See [SOURCE_QUERY.md](ingestion/SOURCE_QUERY.md) for field mappings, rules, and commands.

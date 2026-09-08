@@ -1,0 +1,40 @@
+{
+  "query_contract_version": "1",
+  "publication_profile": "source_records_v1",
+  "records_path": "retail_ops/outputs/published_source_records.json",
+  "default_fields": "all_registered_non_key_fields",
+  "source_scope_fields": [
+    "binding_id",
+    "source_system",
+    "source_account_id",
+    "source_store_id",
+    "source_page",
+    "aggregation_scope_sha256"
+  ],
+  "summary_policies": {
+    "transaction_amount": {
+      "operation": "sum_non_overlapping_days",
+      "grain": "store_period",
+      "dictionary_definition": "所选时间周期内，该账号所选择条件下门店的当天支付且当天未取消的订单用户实际支付金额。"
+    },
+    "transaction_orders": {
+      "operation": "sum_non_overlapping_days",
+      "grain": "store_period",
+      "dictionary_definition": "所选时间周期内，该账号所选择条件下门店的当天支付且当天未取消的订单量。"
+    }
+  },
+  "sum_requirements": [
+    "every_requested_day_present",
+    "one_record_per_day",
+    "one_source_scope",
+    "all_values_non_null",
+    "no_overlapping_source_window",
+    "reviewed_aggregation_scope"
+  ],
+  "exact_window_policy": "return_one_store_period_source_value_unchanged",
+  "other_field_policy": "retain_source_records_without_aggregation",
+  "ranking_policy": "retain_separate_source_rows_and_ranks_without_cross_window_merge",
+  "partial_overlap_policy": "show_separately_without_proration",
+  "query_storage": "no_persistent_query_record",
+  "aggregation_scope_requirement": "operator_reviewed_timezone_and_selection_conditions"
+}

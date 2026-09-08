@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import calendar
 import csv
 import hashlib
 import io
@@ -16,6 +15,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from .contracts import DatasetContractError, load_dataset_contracts
+from . import source_windows
 
 
 # These are reviewed dictionary fields, not fields inferred from an upload.
@@ -112,7 +112,7 @@ def _value(field, value):
     raise ValueError("expected a decimal without percent signs or unit conversion")
 
 
-def _normalize(raw, fields, keys, context):
+def _normalize(raw, fields, keys, context, source_month):
     errors = []
     for field in sorted(set(raw) - fields - IGNORED):
         errors.append(f"unregistered field: {field}")
@@ -123,26 +123,30 @@ def _normalize(raw, fields, keys, context):
         except (ValueError, ArithmeticError) as exc:
             errors.append(f"{field}: {exc}")
             record[field] = None
-    # Current canonical CSV sources require a month label as well as their key.
-    # Do not fill missing source metadata from the upload context.
-    for field in (*keys, "period_month"):
+    # A complete natural month requires its original label. Other source
+    # windows leave this field null; no source metadata is inferred or filled.
+    required = (*keys, "period_month") if source_month is not None else keys
+    for field in required:
         if record.get(field) is None:
             errors.append(f"missing required period metadata: {field}" if field == "period_month"
                           else f"missing key: {field}")
     for field in ("store_id", "period_start", "period_end"):
         if record.get(field) != getattr(context, field):
             errors.append(f"{field} conflicts with confirmed upload scope")
-    if record.get("period_month") not in (None, context.period_start[:7]):
+    if source_month is None and record.get("period_month") is not None:
+        errors.append("period_month must be blank for a source window outside one complete calendar month")
+    elif record.get("period_month") not in (None, source_month):
         errors.append("period_month conflicts with confirmed upload scope")
     return record, errors
 
 
-def preview_csv(root: Path, data: bytes, context: UploadContext, proposals=None):
+def preview_csv(root: Path, data: bytes, context: UploadContext, proposals=None, *,
+                mapping_version="canonical_csv_v1"):
     """Return a preview only. No database, source CSV or memory facts are written."""
     result = {
         "mode": "preview", "status": "quarantined", "context": asdict(context),
         "file_sha256": hashlib.sha256(data).hexdigest(),
-        "mapping_version": "canonical_csv_v1",
+        "mapping_version": mapping_version,
         "errors": [], "validated_records": [], "quarantined_records": [],
     }
     try:
@@ -165,14 +169,15 @@ def preview_csv(root: Path, data: bytes, context: UploadContext, proposals=None)
             raise ValueError("confirmed store_id is required")
         if context.store_id != context.store_id.strip():
             raise ValueError("confirmed store_id must not contain surrounding whitespace")
-        start, end = _date(context.period_start), _date(context.period_end)
-        if start.day != 1 or end != date(start.year, start.month, calendar.monthrange(start.year, start.month)[1]):
-            raise ValueError("this preview supports complete calendar-month source windows")
+        source_month = source_windows.validate_source_dataset(
+            context.dataset_id, mapping_version, context.period_start, context.period_end)
         field_types = {field: next(kind for kind, names in (
             ("text", TEXT), ("count", COUNTS), ("decimal", DECIMALS), ("rank", RANKS), ("period", PERIOD),
         ) if field in names) for field in sorted(fields)}
         schema = {"contract": asdict(contract), "fields": field_types, "mapping_version": result["mapping_version"]}
         schema["normalizer_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        if mapping_version == "canonical_csv_v2":
+            schema["source_windows_sha256"] = hashlib.sha256(Path(source_windows.__file__).read_bytes()).hexdigest()
         result["schema_sha256"] = hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
         result["dictionary_sha256"] = hashlib.sha256((root / "retail_ops/data/DATA_DICTIONARY.md").read_bytes()).hexdigest()
         reader = csv.reader(io.StringIO(data.decode("utf-8-sig"), newline=""), strict=True)
@@ -201,7 +206,7 @@ def preview_csv(root: Path, data: bytes, context: UploadContext, proposals=None)
 
     candidates = []
     for index, (line, raw) in enumerate(source_rows):
-        record, errors = _normalize(raw, fields, contract.key_fields, context)
+        record, errors = _normalize(raw, fields, contract.key_fields, context, source_month)
         if proposals is not None:
             proposed = proposals[index]
             if not isinstance(proposed, dict) or set(proposed) != {"dataset_id", "grain", "ranking_basis", "record"}:
@@ -211,7 +216,7 @@ def preview_csv(root: Path, data: bytes, context: UploadContext, proposals=None)
             elif not isinstance(proposed["record"], dict) or any(not isinstance(k, str) for k in proposed["record"]):
                 errors.append("proposal record must have text field names")
             else:
-                proposed_record, proposed_errors = _normalize(proposed["record"], fields, contract.key_fields, context)
+                proposed_record, proposed_errors = _normalize(proposed["record"], fields, contract.key_fields, context, source_month)
                 errors.extend("proposal: " + error for error in proposed_errors)
                 if proposed_record != record:
                     errors.append("proposal values differ from the source row")
@@ -261,12 +266,15 @@ def main():
         parser.add_argument("--" + name, required=True)
     parser.add_argument("--ranking-basis")
     parser.add_argument("--proposals", type=Path)
+    parser.add_argument("--mapping-version", choices=sorted(source_windows.MAPPING_VERSIONS),
+                        default="canonical_csv_v1")
     args = parser.parse_args()
     try:
         proposals = json.loads(args.proposals.read_text(encoding="utf-8"), parse_float=Decimal,
                                object_pairs_hook=_json_object) if args.proposals else None
         scope = UploadContext(**{key: getattr(args, key) for key in UploadContext.__dataclass_fields__})
-        result = preview_csv(Path(__file__).resolve().parents[2], args.input.read_bytes(), scope, proposals)
+        result = preview_csv(Path(__file__).resolve().parents[2], args.input.read_bytes(), scope,
+                             proposals, mapping_version=args.mapping_version)
         result["source_file"] = str(args.input)
     except (OSError, ValueError) as exc:
         parser.exit(2, f"Cannot preview upload: {exc}\n")

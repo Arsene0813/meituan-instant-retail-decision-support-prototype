@@ -15,6 +15,7 @@ from pathlib import Path
 from . import contracts as contract_module
 from . import intake_registry
 from . import preview as preview_module
+from . import source_windows
 from .contracts import build_batch_metadata, load_dataset_contracts
 
 APPLICATION_ID = 0x4D545249
@@ -51,6 +52,7 @@ def _provenance(root):
     files = {
         "batch_store": Path(__file__), "intake_registry": Path(intake_registry.__file__),
         "preview": Path(preview_module.__file__), "contracts": Path(contract_module.__file__),
+        "source_windows": Path(source_windows.__file__),
         "dataset_registry": root / contract_module.DEFAULT_REGISTRY_PATH,
         "dictionary": root / "retail_ops/data/DATA_DICTIONARY.md",
     }
@@ -161,13 +163,22 @@ def _decode(row):
 def _scope(registration):
     context = registration["context"]
     binding = registration["binding"]
-    return _json({
+    scope = {
         "binding_id": binding["binding_id"], "source_system": binding["source_system"],
         "source_account_id": binding["source_account_id"], "source_store_id": binding["source_store_id"],
         "dataset_id": context["dataset_id"], "store_id": context["store_id"],
         "period_start": context["period_start"], "period_end": context["period_end"],
         "grain": context["grain"], "ranking_basis": context["ranking_basis"],
-    })
+    }
+    # Absent review keeps the exact legacy scope encoding. A reviewed filter
+    # change is a different source scope and cannot overwrite its predecessor.
+    receipt = registration["receipt"]
+    if "aggregation_scope" in receipt:
+        digest = intake_registry.aggregation_scope_sha256(receipt["aggregation_scope"])
+        if digest is None:
+            raise ValueError("A recorded aggregation_scope must be a reviewed object.")
+        scope["aggregation_scope_sha256"] = digest
+    return _json(scope)
 
 
 def _retry_key(upload_id, file_hash, registration, registry_hash, proposals_hash, predecessor, provenance):
@@ -207,7 +218,8 @@ def receive_batch(root: Path, database: Path, registry_path: Path, upload_id: st
         resolved = intake_registry.resolve_upload(root, registry_path, upload_id, data)
         registry_bytes = resolved["registry_bytes"]
         identity = resolved["identity_evidence"]
-        preview = preview_module.preview_csv(root, data, resolved["context"], proposals)
+        preview = preview_module.preview_csv(root, data, resolved["context"], proposals,
+                                             mapping_version=resolved["metadata"]["mapping_version"])
         if preview["status"] != "validated":
             errors.append("Source rows or proposals require review; the complete batch is quarantined.")
     except (ValueError, OSError, KeyError, TypeError) as exc:
@@ -262,7 +274,7 @@ def receive_batch(root: Path, database: Path, registry_path: Path, upload_id: st
             else:
                 previous_result = _decode(previous)
                 if previous["status"] != "validated" or previous["scope_key"] != scope_key:
-                    errors.append("A revision must reference a validated batch with the same binding, dataset, store and window.")
+                    errors.append("A revision must reference a validated batch with the same binding, dataset, store, window and reviewed aggregation scope.")
                 if connection.execute("SELECT 1 FROM batches WHERE supersedes_batch_id=? AND status='validated'", (supersedes_batch_id,)).fetchone():
                     errors.append("The predecessor already has a validated successor; select the intended revision explicitly.")
                 if metadata is not None and previous_result.get("metadata") is not None:

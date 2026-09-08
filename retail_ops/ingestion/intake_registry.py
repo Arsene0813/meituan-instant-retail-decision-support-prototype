@@ -1,15 +1,15 @@
 """Resolve operator-reviewed upload registrations independently of upload proposals."""
 from __future__ import annotations
 
-import calendar
 import hashlib
 import json
 import re
-from datetime import date
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .contracts import _aware_datetime, load_dataset_contracts
 from .preview import ROUTES, SCHEMAS, UploadContext
+from .source_windows import validate_source_dataset, validate_source_window
 
 
 REGISTRY_KEYS = {"registry_version", "bindings", "uploads"}
@@ -22,6 +22,7 @@ UPLOAD_KEYS = {
     "file_sha256", "source_page", "extracted_at", "mapping_version",
 }
 IDENTITY_KEYS = {"source_system", "source_account_id", "source_store_id"}
+AGGREGATION_SCOPE_KEYS = {"scope_version", "timezone", "selection_conditions", "reviewed_by"}
 
 
 def _unique(pairs):
@@ -77,12 +78,62 @@ def _identity(base, binding):
 
 
 def _month(start, end):
-    for value in (start, end):
-        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
-            raise ValueError("upload window requires YYYY-MM-DD")
-    first, last = date.fromisoformat(start), date.fromisoformat(end)
-    if first.day != 1 or last != date(first.year, first.month, calendar.monthrange(first.year, first.month)[1]):
-        raise ValueError("current intake requires a complete calendar-month window")
+    return validate_source_window(start, end, "canonical_csv_v1")
+
+
+def validate_aggregation_scope(value):
+    """Check a trusted operator declaration of complete non-date conditions.
+
+    This review is independent of CSV rows and model proposals. It does not
+    authenticate backend filters; the operator must verify the source export.
+    """
+    if value is None:
+        return None
+    _object(value, AGGREGATION_SCOPE_KEYS, "aggregation_scope")
+    for key in AGGREGATION_SCOPE_KEYS:
+        _text(value[key], key)
+    if value["scope_version"] != "1":
+        raise ValueError("aggregation scope version is not registered")
+    if value["timezone"] in {"localtime", "posixrules"} or value["timezone"].startswith(("posix/", "right/")):
+        raise ValueError("aggregation_scope timezone must be an explicit IANA timezone")
+    try:
+        ZoneInfo(value["timezone"])
+    except (ValueError, ZoneInfoNotFoundError) as exc:
+        raise ValueError("aggregation_scope timezone must be an explicit IANA timezone") from exc
+    return value
+
+
+def aggregation_scope_sha256(scope):
+    """Identify the complete reviewed declaration, never a scope name alone."""
+    value = validate_aggregation_scope(scope)
+    if value is None:
+        return None
+    data = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+    return hashlib.sha256(data).hexdigest()
+
+
+def validate_upload_window(upload, registry_version):
+    """Validate a receipt's registered fields, source format and actual dates."""
+    expected = UPLOAD_KEYS
+    if registry_version == "2" and isinstance(upload, dict) and "aggregation_scope" in upload:
+        expected = UPLOAD_KEYS | {"aggregation_scope"}
+    _object(upload, expected, "upload")
+    for key in UPLOAD_KEYS:
+        _text(upload[key], key)
+    if registry_version not in ("1", "2"):
+        raise ValueError("intake registry version is not registered")
+    allowed = ("canonical_csv_v1",) if registry_version == "1" else ("canonical_csv_v1", "canonical_csv_v2")
+    if upload["mapping_version"] not in allowed:
+        raise ValueError("source format is not registered for this intake registry version")
+    if "aggregation_scope" in upload:
+        if upload["mapping_version"] != "canonical_csv_v2" or upload["aggregation_scope"] is None:
+            raise ValueError("aggregation_scope requires a reviewed object with canonical_csv_v2")
+        validate_aggregation_scope(upload["aggregation_scope"])
+    _sha(upload["file_sha256"], "file_sha256")
+    month = validate_source_dataset(upload["dataset_id"], upload["mapping_version"],
+                                    upload["period_start"], upload["period_end"])
+    _aware_datetime("extracted_at", upload["extracted_at"])
+    return month
 
 
 def resolve_upload(root: Path, registry_path: Path, upload_id: str, data: bytes):
@@ -95,7 +146,7 @@ def resolve_upload(root: Path, registry_path: Path, upload_id: str, data: bytes)
     registry_bytes = registry_path.read_bytes()
     registry = json.loads(registry_bytes, object_pairs_hook=_unique)
     _object(registry, REGISTRY_KEYS, "registry")
-    if registry["registry_version"] != "1":
+    if registry["registry_version"] not in ("1", "2"):
         raise ValueError("intake registry version is not registered")
     if not isinstance(registry["bindings"], list) or not isinstance(registry["uploads"], list):
         raise ValueError("bindings and uploads must be lists")
@@ -137,19 +188,12 @@ def resolve_upload(root: Path, registry_path: Path, upload_id: str, data: bytes)
         identities.add(source)
     uploads = {}
     for upload in registry["uploads"]:
-        _object(upload, UPLOAD_KEYS, "upload")
-        for key in UPLOAD_KEYS:
-            _text(upload[key], key)
+        validate_upload_window(upload, registry["registry_version"])
         if upload["upload_id"] in uploads:
             raise ValueError("duplicate upload_id")
         binding = bindings.get(upload["binding_id"])
         if binding is None or upload["dataset_id"] not in binding["dataset_ids"]:
             raise ValueError("upload binding or dataset is not registered")
-        if upload["mapping_version"] != "canonical_csv_v1":
-            raise ValueError("source format is not registered for persistent intake")
-        _sha(upload["file_sha256"], "file_sha256")
-        _month(upload["period_start"], upload["period_end"])
-        _aware_datetime("extracted_at", upload["extracted_at"])
         uploads[upload["upload_id"]] = upload
     _text(upload_id, "upload_id")
     if upload_id not in uploads:

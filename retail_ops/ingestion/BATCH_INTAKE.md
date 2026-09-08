@@ -1,8 +1,8 @@
 # 批次留存与修订
 
-`batch_cli` 将单店、单月、单个已登记数据集的规范 CSV 保存到本地 SQLite 批次库。每次接入重新运行现有 preview，连同上传字节、登记快照、身份核对记录、哈希和校验结果一并提交事务。批次通过后可以按 `batch_id` 检查和追溯。
+`batch_cli` 将单店、单个实际来源窗口、单个已登记数据集的规范 CSV 保存到本地 SQLite 批次库。每次接入重新运行现有 preview，连同上传字节、登记快照、身份核对记录、哈希和校验结果一并提交事务。批次通过后可以按 `batch_id` 检查和追溯。
 
-这里的 `validated` 表示接入校验通过。现在可以通过 [批次发布与固定版本分析](PUBLICATION.md) 明确选择批次，生成快照，并让 SQL、Demo 2 fact 与 RAC 在同一次 CLI 分析中使用同一版本。现有 API 仍读取项目文件。
+这里的 `validated` 表示接入校验通过。实际日期接入与只读范围查询见 [SOURCE_QUERY.md](SOURCE_QUERY.md)。现在可以通过 [批次发布与固定版本分析](PUBLICATION.md) 明确选择批次，生成快照，并让 SQL、Demo 2 fact 与 RAC 在同一次 CLI 分析中使用同一版本。现有 API 仍读取项目文件。
 
 ## 字段对照
 
@@ -21,7 +21,7 @@
 | `extracted_at`、`coverage_start`、`coverage_end` | 既有提取时间和报表覆盖起止日期 | 区分接收时间、提取时间、报表窗口 | 否 |
 | `file_sha256`、`mapping_version`、`snapshot_semantics` | 既有文件摘要、映射版本和快照语义 | 对照原字节及当前规则，保留修订、不相加 | 否 |
 
-新增的接入登记在 `../contracts/intake_registry.v1.schema.json` 中定义，由 `intake_registry.py` 进一步核对跨条目关系、日期和证据文件。它们均为来源和处理元数据：
+接入登记在 `../contracts/intake_registry.v1.schema.json` 及兼容原字段的 `../contracts/intake_registry.v2.schema.json` 中定义，由 `intake_registry.py` 进一步核对跨条目关系、日期和证据文件。它们均为来源和处理元数据：
 
 | 新增登记字段 | 用途 |
 |---|---|
@@ -46,9 +46,9 @@ SQLite 的 `raw_data`、`registry_bytes`、`identity_evidence` 保存字节；`r
 
 这是本地人工核对记录，尚未连接美团授权接口。哈希能检查字节与核对版本是否一致；身份和原文准确性仍依赖操作人的核对。模型与非可信上传端不能获得登记文件的写权限。这里没有实现用户登录、角色权限或后台账号认证。
 
-项目提供 `../contracts/intake_registry.empty.json` 作为空结构，不包含任何真实门店映射。没有登记的 `upload_id` 会待核对。真实 ID、来源页面和 CSV 整理准确性确认后才填写登记；不要从 A–F 样例猜测真实 ID。
+新接入使用 `../contracts/intake_registry.v2.empty.json`；原 v1 模板和读取行为继续保留。空结构不包含任何真实门店映射。没有登记的 `upload_id` 会待核对。真实 ID、来源页面和 CSV 整理准确性确认后才填写登记；不要从 A–F 样例猜测真实 ID。
 
-本轮唯一可持久化来源格式为 `canonical_csv_v1`。现有中文原文预览仍可单独运行；原始后台导出、中文多区块上传和日窗口需分别接入登记与核验。收到新名称不会自动创建分类或存储去向。
+v1 登记继续使用 `canonical_csv_v1` 完整自然月格式；v2 登记可使用该格式或已登记的 `canonical_csv_v2` 实际来源窗口格式，后者支持日及其他明确日期范围。现有中文原文预览仍可单独运行；原始后台导出和中文多区块上传需继续接入登记与核验。收到新名称不会自动创建分类或存储去向。
 
 ## 重复上传和修订
 

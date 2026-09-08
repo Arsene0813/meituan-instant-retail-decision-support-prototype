@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:meituan:contracts:intake-registry:2",
+  "title": "Reviewed local intake registry with actual source windows",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_version",
+    "bindings",
+    "uploads"
+  ],
+  "properties": {
+    "registry_version": {
+      "const": "2"
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "binding_id",
+          "source_system",
+          "source_account_id",
+          "source_store_id",
+          "store_id",
+          "identity_evidence_path",
+          "reviewed_by",
+          "dataset_ids",
+          "identity_evidence_sha256"
+        ],
+        "properties": {
+          "binding_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_system": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_account_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_store_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "store_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "identity_evidence_path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "reviewed_by": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "dataset_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+            }
+          },
+          "identity_evidence_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "uploads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "upload_id",
+          "binding_id",
+          "dataset_id",
+          "source_page",
+          "extracted_at",
+          "period_start",
+          "period_end",
+          "file_sha256",
+          "mapping_version"
+        ],
+        "properties": {
+          "upload_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "binding_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "dataset_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_page": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "extracted_at": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          },
+          "file_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "mapping_version": {
+            "enum": [
+              "canonical_csv_v1",
+              "canonical_csv_v2"
+            ]
+          },
+          "aggregation_scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope_version",
+              "timezone",
+              "selection_conditions",
+              "reviewed_by"
+            ],
+            "properties": {
+              "scope_version": {
+                "const": "1"
+              },
+              "timezone": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              },
+              "selection_conditions": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              },
+              "reviewed_by": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "aggregation_scope"
+              ]
+            },
+            "then": {
+              "properties": {
+                "mapping_version": {
+                  "const": "canonical_csv_v2"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

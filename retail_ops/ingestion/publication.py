@@ -13,7 +13,7 @@ import shutil
 import sqlite3
 import tempfile
 
-from . import batch_store, intake_registry, publication_recipe
+from . import batch_store, intake_registry, publication_recipe, source_view
 from .contracts import build_batch_metadata, load_dataset_contracts
 from .preview import preview_csv
 
@@ -115,7 +115,7 @@ def _selected_registration(root, item):
     """
     registry = _json(item["registry_bytes"])
     intake_registry._object(registry, intake_registry.REGISTRY_KEYS, "archived registry")
-    if registry["registry_version"] != "1" or not all(
+    if registry["registry_version"] not in ("1", "2") or not all(
             isinstance(registry[key], list) for key in ("bindings", "uploads")):
         raise ValueError("Archived intake registry structure is unsupported.")
     contracts = load_dataset_contracts(root)
@@ -138,16 +138,12 @@ def _selected_registration(root, item):
         sources.add(source)
     uploads = {}
     for receipt in registry["uploads"]:
-        intake_registry._object(receipt, intake_registry.UPLOAD_KEYS, "archived upload")
-        for key in intake_registry.UPLOAD_KEYS:
-            intake_registry._text(receipt[key], key)
+        intake_registry.validate_upload_window(receipt, registry["registry_version"])
         binding = bindings.get(receipt["binding_id"])
         if (receipt["upload_id"] in uploads or binding is None or
-                receipt["dataset_id"] not in binding["dataset_ids"] or
-                receipt["mapping_version"] != "canonical_csv_v1"):
+                receipt["dataset_id"] not in binding["dataset_ids"]):
             raise ValueError("Archived upload registration is ambiguous or unsupported.")
         intake_registry._sha(receipt["file_sha256"], "file_sha256")
-        intake_registry._month(receipt["period_start"], receipt["period_end"])
         intake_registry._aware_datetime("extracted_at", receipt["extracted_at"])
         uploads[receipt["upload_id"]] = receipt
     receipt = uploads.get(item["result"]["upload_id"])
@@ -171,7 +167,8 @@ def _replay(root, item, provenance):
         registry = base / "publication-selected-registry.json"
         while registry.exists():
             registry = registry.with_name("selected-" + registry.name)
-        registry.write_bytes(_bytes({"registry_version": "1", "bindings": [binding], "uploads": [receipt]}))
+        registry.write_bytes(_bytes({"registry_version": _json(item["registry_bytes"])["registry_version"],
+                                     "bindings": [binding], "uploads": [receipt]}))
         resolved = intake_registry.resolve_upload(root, registry, result["upload_id"], item["data"])
     registration = {"receipt": resolved["receipt"], "binding": resolved["binding"],
                     "context": asdict(resolved["context"]),
@@ -182,7 +179,8 @@ def _replay(root, item, provenance):
                      "received_at": result["received_at"], "status": "validated"}, load_dataset_contracts(root)))
     if metadata != result["metadata"]:
         raise ValueError("Archived batch metadata conflicts with the reviewed upload.")
-    checked = preview_csv(root, item["data"], resolved["context"], result["proposals"])
+    checked = preview_csv(root, item["data"], resolved["context"], result["proposals"],
+                          mapping_version=resolved["metadata"]["mapping_version"])
     if checked["status"] != "validated" or _bytes(checked) != _bytes(result["preview"]):
         raise ValueError("Archived preview differs from independent source replay.")
 
@@ -295,14 +293,23 @@ def _read_publication(root, directory, publication_id):
     return manifest, contents
 
 
-def publish(root: Path, database: Path, directory: Path, batch_ids: list[str]) -> dict:
+def publish(root: Path, database: Path, directory: Path, batch_ids: list[str], *, source_records: bool = False) -> dict:
     """Atomically publish one explicit selection; existing versions are immutable."""
     root = Path(root).resolve()
+    if not isinstance(source_records, bool):
+        raise ValueError("source_records must be an explicit boolean.")
     selected = _selection(database, batch_ids)
     provenance = batch_store._provenance(root)
     recipe = _recipe(root)
     for item in selected:
         _replay(root, item, provenance)
+        if not source_records:
+            context = item["result"]["registration"]["context"]
+            try:
+                intake_registry._month(context["period_start"], context["period_end"])
+            except ValueError as exc:
+                raise ValueError("Monthly analysis requires complete month source records; "
+                                 "use --source-records publication for actual-date queries.") from exc
     _check_overlaps(root, selected)
     directory = _directory(root, directory, create=True)
     staging = Path(tempfile.mkdtemp(prefix="publication-staging-", dir=directory))
@@ -315,7 +322,8 @@ def publish(root: Path, database: Path, directory: Path, batch_ids: list[str]) -
                                "registry.json": item["registry_bytes"],
                                "identity.json": item["identity_evidence"]}.items():
                 _write(archive, name, data)
-        summary = publication_recipe.build_evidence_view(staging / "evidence", selected)
+        summary = (source_view.build_source_view(staging / "evidence", selected) if source_records
+                   else publication_recipe.build_evidence_view(staging / "evidence", selected))
         if provenance != batch_store._provenance(root) or recipe != _recipe(root):
             raise ValueError("Processing rules changed during publication; no version was published.")
         core = {"publication_version": VERSION, "batch_ids": sorted(batch_ids),
