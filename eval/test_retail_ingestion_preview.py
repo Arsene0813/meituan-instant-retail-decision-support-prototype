@@ -116,6 +116,30 @@ class RetailIngestionPreviewTests(unittest.TestCase):
             self.assert_quarantined(result)
             self.assertEqual(result["quarantined_records"][0]["source_record"]["new_metric"], value)
 
+    def test_month_metadata_is_required_by_preview_and_sql_for_every_dataset(self):
+        from retail_ops.sql_runtime import prepare_rows
+
+        for contract in load_dataset_contracts(ROOT).values():
+            with (ROOT / contract.source_path).open(newline="") as source:
+                row = next(csv.DictReader(source))
+            scope = ingestion.UploadContext(contract.dataset_id, row["store_id"],
+                row["period_start"], row["period_end"], contract.grain, contract.ranking_basis)
+            for state in ("omitted", "", " ", None):
+                with self.subTest(dataset=contract.dataset_id, month=state):
+                    candidate = dict(row)
+                    if state == "omitted":
+                        candidate.pop("period_month")
+                    else:
+                        candidate["period_month"] = state
+                    result = ingestion.preview_csv(ROOT, csv_bytes([candidate]), scope)
+                    self.assert_quarantined(result)
+                    self.assertIn("missing required period metadata: period_month",
+                                  result["quarantined_records"][0]["errors"])
+                    self.assertEqual(result["quarantined_records"][0]["source_record"].get("period_month"),
+                                     candidate.get("period_month") or ("" if "period_month" in candidate else None))
+                    with self.assertRaises(ValueError):
+                        prepare_rows(contract.dataset_id, list(candidate), [candidate])
+
     def test_unknown_dataset_has_no_same_grain_fallback(self):
         scope = replace(self.context, dataset_id="future_store_data")
         self.assert_quarantined(ingestion.preview_csv(ROOT, csv_bytes([self.row]), scope))

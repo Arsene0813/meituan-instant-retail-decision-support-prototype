@@ -4,7 +4,7 @@
 
 Meituan Instant-Retail Decision Support Prototype
 
-Repository: `livestream-agent-memory-layer`
+Repository: `meituan-instant-retail-decision-support-prototype`
 
 ## Project Summary
 

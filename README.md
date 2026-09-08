@@ -1,6 +1,6 @@
 # Meituan Instant-Retail Decision Support Prototype
 
-Repository: `livestream-agent-memory-layer`
+Repository: `meituan-instant-retail-decision-support-prototype`
 
 A local decision-support prototype that connects selected Meituan backend metrics, reproducible SQL diagnostics, source-linked memory facts, retrieval tests, and deterministic grounded review.
 

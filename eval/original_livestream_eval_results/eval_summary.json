@@ -1,5 +1,5 @@
 {
-  "project": "livestream-agent-memory-layer",
+  "project": "meituan-instant-retail-decision-support-prototype",
   "evaluation_name": "livestream_memory_behavior_eval",
   "evaluation_type": "scenario_based_behavior_evaluation",
   "summary": {

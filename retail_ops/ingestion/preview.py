@@ -123,9 +123,12 @@ def _normalize(raw, fields, keys, context):
         except (ValueError, ArithmeticError) as exc:
             errors.append(f"{field}: {exc}")
             record[field] = None
-    for field in keys:
+    # Current canonical CSV sources require a month label as well as their key.
+    # Do not fill missing source metadata from the upload context.
+    for field in (*keys, "period_month"):
         if record.get(field) is None:
-            errors.append(f"missing key: {field}")
+            errors.append(f"missing required period metadata: {field}" if field == "period_month"
+                          else f"missing key: {field}")
     for field in ("store_id", "period_start", "period_end"):
         if record.get(field) != getattr(context, field):
             errors.append(f"{field} conflicts with confirmed upload scope")
