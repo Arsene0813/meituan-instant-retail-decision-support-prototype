@@ -104,7 +104,32 @@ The current retail endpoints do not use one identical evidence path.
 | `/chat_retail_ops_kb` | Qdrant-backed retrieval over the retail memory corpus, with embedding scores used for retrieval behavior analysis. | Retrieval score is not treated as standalone operating evidence. |
 | `/chat_retail_ops_demo2_kb` | File-backed Demo 2 generated memory facts with local question routing and boundary refusal behavior. | Demo 2 remains a same-period B-F diagnostic endpoint, not a completed pairwise comparability gate. |
 
-Both paths should preserve metric definitions, entity scope, period scope, source limits, and comparison boundaries before returning an answer.
+Both paths check returned fact identity, period metadata, source-trace fields,
+and complete store-by-slot coverage before returning an answer. Fact windows
+must match the requested start and end dates, label, and granularity exactly.
+Another month's fact or a broader range summary cannot fill a missing window.
+Comparative facts may retain baseline periods in `observed_values`, as allowed
+by the dictionary; those values do not change the declared target window.
+These API checks validate metadata and evidence coverage. Source-value
+reconciliation and consistent published versions remain separate work.
+
+When time is omitted, the endpoint uses its declared fixture: February–April
+2026 for Demo 1 and March 2026 for Demo 2. A month written without a year uses
+that fixture's year. Supported forms include `2026-03`, `3月`, `三月`,
+`March 2026`, and complete date ranges. Relative dates, partial months, annual
+requests, and ambiguous ranges require an explicit supported window.
+
+Each selected store needs every requested slot in that window. `top_k` must
+fit the complete selection; responses are not truncated. Multiple returned
+active facts for the same store, slot, and window require version selection.
+Every fact used by the Demo 1 vector fallback must meet its score threshold
+and the same evidence checks. The Qdrant queries also filter the window before
+retrieval. Individual missing metric values remain `null`.
+
+The existing Store A facts are range summaries. A single-month request needs
+a corresponding month fact; range summaries are not relabelled as monthly
+evidence. Shared publication/version selection and RAC evidence recomputation
+remain separate work.
 
 ### Responsibility Split
 
@@ -663,7 +688,7 @@ Supported Demo 2 responses now use:
 - fact-level `score`: `null`
 
 The Demo 2 endpoint reads repository-backed facts and applies deterministic
-entity-and-slot filtering. It does not calculate an embedding similarity
+entity, slot and period filtering, followed by coverage checks. It does not calculate an embedding similarity
 score.
 
 `confidence` remains trace-confidence metadata attached to generated facts.

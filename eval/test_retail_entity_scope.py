@@ -98,12 +98,14 @@ class RetailEntityScopeTests(unittest.TestCase):
 
     def test_qdrant_scroll_and_vector_results_recheck_identity(self):
         path = Path(__file__).resolve().parents[1] / "retail_ops/outputs/generated_retail_memory_facts.json"
-        fact = next(item for item in json.loads(path.read_text()) if item["slot"] == "visibility_entry_profile")
+        facts = [item for item in json.loads(path.read_text())
+                 if item["slot"] in {"visibility_entry_profile", "single_metric_attribution_guard"}]
         for mode in ("scroll", "vector"):
             for change, supported in (({}, True), ({"entity_id": "store_B"}, False), ({"entity_id_norm": "store_b"}, False)):
-                payload = dict(fact, **change)
-                points = [{"score": 0.99, "payload": payload}]
-                scroll = AsyncMock(return_value=points if mode == "scroll" else [])
+                points = [{"score": 0.99, "payload": dict(fact, **change)} for fact in facts]
+                async def scroll_slot(*, slot, **kwargs):
+                    return [point for point in points if point["payload"]["slot"] == slot] if mode == "scroll" else []
+                scroll = AsyncMock(side_effect=scroll_slot)
                 vector = AsyncMock(return_value=points)
                 with self.subTest(mode=mode, change=change), patch.object(api, "qdrant_scroll_retail_slot", scroll), patch.object(api, "qdrant_query_retail", vector):
                     result = asyncio.run(api.chat_retail_ops_kb(api.RetailOpsKbReq(message="Store A exposure")))

@@ -245,18 +245,8 @@ async def run_checks() -> int:
             entity_id="store_A",
         )
         require_refusal(name, result)
-        require_contains(
-            name,
-            result,
-            [
-                "Demo 2",
-                "Store B",
-                "Store C",
-                "Store D",
-                "Store E",
-                "Store F",
-            ],
-        )
+        if result.get("facts") != []:
+            raise AssertionError(f"{name}: an out-of-scope store must return no facts")
 
     await run_case(
         "Store E transaction-conversion endpoint behavior",

@@ -20,6 +20,17 @@ else:
         retail_fact_matches_entities,
     )
 
+if __package__:
+    from .retail_evidence_scope import (
+        DEMO1_WINDOW, DEMO2_WINDOW, RetailWindow,
+        parse_retail_window, select_retail_points,
+    )
+else:
+    from retail_evidence_scope import (
+        DEMO1_WINDOW, DEMO2_WINDOW, RetailWindow,
+        parse_retail_window, select_retail_points,
+    )
+
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:14b")
 
@@ -2117,122 +2128,6 @@ def _contains_retail_term(
     )
 
 
-RETAIL_MONTH_NAMES = (
-    "january",
-    "february",
-    "march",
-    "april",
-    "may",
-    "june",
-    "july",
-    "august",
-    "september",
-    "october",
-    "november",
-    "december",
-)
-
-
-
-
-def retail_question_has_unsupported_date_window(message: str) -> bool:
-    from calendar import monthrange
-    from datetime import date
-
-    q = (message or "").lower()
-    if re.search(
-        r"\b(?:daily|hourly|weekly|per\s+(?:day|hour|week)|by\s+(?:day|hour|week))\b"
-        r"|按日|按天|逐日|逐天|每日|每天|按小时|每小时|逐小时|按周|每周|逐周",
-        q,
-    ):
-        return True
-
-    # Complete calendar-month windows can be written with exact boundaries.
-    pattern = r"(?<!\d)\d{4}[-/]\d{1,2}[-/]\d{1,2}(?!\d)"
-    dates = list(re.finditer(pattern, q))
-    if len(dates) % 2:
-        return True
-    for left, right in zip(dates[::2], dates[1::2]):
-        if re.match(r"(?:t\d|\s+\d{1,2}:)", q[right.end():]):
-            return True
-        if not re.fullmatch(
-            r"\s*(?:to|through|-|–|—|~|～|至|到)\s*",
-            q[left.end():right.start()],
-        ):
-            return True
-        try:
-            first = date(*map(int, re.split(r"[-/]", left.group())))
-            last = date(*map(int, re.split(r"[-/]", right.group())))
-        except ValueError:
-            return True
-        if first > last or first.day != 1:
-            return True
-        if last.day != monthrange(last.year, last.month)[1]:
-            return True
-
-    remainder = re.sub(pattern, " ", q)
-    month_names = "|".join(RETAIL_MONTH_NAMES)
-    return bool(re.search(
-        r"(?<!\d)\d{1,2}[-/]\d{1,2}[-/]\d{4}(?!\d)"
-        r"|(?:\d{1,2}|[一二三四五六七八九十]{1,3})月\s*"
-        r"(?:\d{1,2}|[一二三四五六七八九十]{1,3})(?:日|号)"
-        rf"|\b(?:{month_names})\s+\d{{1,2}}(?:st|nd|rd|th)?\b"
-        rf"|\b\d{{1,2}}(?:st|nd|rd|th)?\s+(?:{month_names})\b",
-        remainder,
-    ))
-
-def extract_retail_period_references(
-    message: str,
-) -> tuple[set[str], set[str]]:
-    q = (message or "").lower()
-    years = set(
-        re.findall(
-            r"(?<!\d)(20\d{2})(?!\d)",
-            q,
-        )
-    )
-    period_months = set()
-
-    for year, month in re.findall(
-        (
-            r"(?<!\d)(20\d{2})"
-            r"[-/](\d{1,2})(?!\d)"
-        ),
-        q,
-    ):
-        period_months.add(
-            f"{year}-{int(month):02d}"
-        )
-
-    for year, month in re.findall(
-        r"(20\d{2})年(\d{1,2})月",
-        q,
-    ):
-        period_months.add(
-            f"{year}-{int(month):02d}"
-        )
-
-    month_pattern = "|".join(
-        RETAIL_MONTH_NAMES
-    )
-
-    for month_name, year in re.findall(
-        rf"\b({month_pattern})\s+(20\d{{2}})\b",
-        q,
-    ):
-        month_number = (
-            RETAIL_MONTH_NAMES.index(
-                month_name
-            )
-            + 1
-        )
-        period_months.add(
-            f"{year}-{month_number:02d}"
-        )
-
-    return years, period_months
-
-
 def infer_retail_slots(message: str) -> list[str]:
     q = (message or "").lower()
     slots: list[str] = []
@@ -2340,23 +2235,14 @@ def is_unsupported_retail_scope(
     message: str,
     entity_id: str | None,
 ) -> str | None:
-    if retail_question_has_unsupported_date_window(message):
-        return "Current evidence covers calendar-month windows. Specify YYYY-MM or a complete window, such as 2026-03-01 to 2026-03-31."
     q = (message or "").lower()
     eid = normalize_retail_entity_id(entity_id)
-    years, period_months = (
-        extract_retail_period_references(message)
-    )
-
-    if (
-        years - {"2026"}
-        or period_months
-        - {
-            "2026-02",
-            "2026-03",
-            "2026-04",
-        }
-    ):
+    try:
+        window = parse_retail_window(message, DEMO1_WINDOW)
+    except ValueError as exc:
+        return str(exc)
+    if (window.period_start < DEMO1_WINDOW.period_start
+            or window.period_end > DEMO1_WINDOW.period_end):
         return (
             "Demo 1 supports Store A evidence "
             "from February through April 2026."
@@ -2445,7 +2331,7 @@ def is_unsupported_retail_scope(
     return None
 
 
-async def qdrant_scroll_retail_slot(entity_id_norm: str, slot: str, limit: int = 5):
+async def qdrant_scroll_retail_slot(entity_id_norm: str, slot: str, *, window: RetailWindow, limit: int = 5):
     body = {
         "limit": limit,
         "with_payload": True,
@@ -2456,6 +2342,8 @@ async def qdrant_scroll_retail_slot(entity_id_norm: str, slot: str, limit: int =
                 {"key": "entity_id_norm", "match": {"value": entity_id_norm}},
                 {"key": "slot", "match": {"value": slot}},
                 {"key": "is_active", "match": {"value": True}},
+                *[{"key": field, "match": {"value": getattr(window, field)}}
+                  for field in ("period_start", "period_end", "period_label", "period_granularity")],
             ]
         },
     }
@@ -2469,7 +2357,7 @@ async def qdrant_scroll_retail_slot(entity_id_norm: str, slot: str, limit: int =
         return r.json().get("result", {}).get("points", [])
 
 
-async def qdrant_query_retail(message: str, entity_id_norm: str, limit: int = 5):
+async def qdrant_query_retail(message: str, entity_id_norm: str, *, window: RetailWindow, limit: int = 5):
     query_vector = await ollama_embed(message)
 
     body = {
@@ -2481,6 +2369,8 @@ async def qdrant_query_retail(message: str, entity_id_norm: str, limit: int = 5)
                 {"key": "domain", "match": {"value": "retail_ops"}},
                 {"key": "entity_id_norm", "match": {"value": entity_id_norm}},
                 {"key": "is_active", "match": {"value": True}},
+                *[{"key": field, "match": {"value": getattr(window, field)}}
+                  for field in ("period_start", "period_end", "period_label", "period_granularity")],
             ]
         },
     }
@@ -2494,24 +2384,15 @@ async def qdrant_query_retail(message: str, entity_id_norm: str, limit: int = 5)
         return r.json().get("result", [])
 
 
-def retail_answer_from_points(points: list[dict], *, entity_ids: set[str]) -> dict:
-    if any(
-        not isinstance(point, dict)
-        or not retail_fact_matches_entities(point.get("payload"), entity_ids)
-        for point in points
-    ):
-        return {
-            "supported": False,
-            "answer": "The retrieved facts do not match the requested retail store scope.",
-            "facts": [],
-        }
-    returned_entities = {point["payload"]["entity_id"].lower() for point in points}
-    if returned_entities != entity_ids:
-        return {
-            "supported": False,
-            "answer": "The retrieved facts do not cover every requested store.",
-            "facts": [],
-        }
+def retail_answer_from_points(points: list[dict], *, entity_ids: set[str],
+                              required_slots: set[str], window: RetailWindow,
+                              limit: int, min_score: float | None = None) -> dict:
+    points, reason = select_retail_points(
+        points, entity_ids=entity_ids, required_slots=required_slots,
+        window=window, limit=limit, min_score=min_score,
+    )
+    if reason:
+        return {"supported": False, "answer": reason, "facts": []}
     facts = []
     answer_parts = []
 
@@ -2642,18 +2523,13 @@ def is_demo2_cross_store_query(message: str) -> bool:
 
 
 def is_unsupported_demo2_retail_scope(message: str, entity_id: str | None) -> str | None:
-    if retail_question_has_unsupported_date_window(message):
-        return "Current evidence covers calendar-month windows. Specify YYYY-MM or a complete window, such as 2026-03-01 to 2026-03-31."
     q = (message or "").lower()
     eid = resolve_retail_entity_id(message, entity_id)
-    years, period_months = (
-        extract_retail_period_references(message)
-    )
-
-    if (
-        years - {"2026"}
-        or period_months - {"2026-03"}
-    ):
+    try:
+        window = parse_retail_window(message, DEMO2_WINDOW)
+    except ValueError as exc:
+        return str(exc)
+    if window != DEMO2_WINDOW:
         return (
             "Demo 2 supports the March 2026 "
             "B-F diagnostic evidence."
@@ -2772,7 +2648,10 @@ def load_demo2_retail_facts() -> list[dict]:
     import json
     from pathlib import Path
 
-    path = Path("retail_ops/outputs/generated_demo2_retail_memory_facts.json")
+    root = Path(__file__).resolve().parent
+    if root.name == "api":
+        root = root.parent
+    path = root / "retail_ops/outputs/generated_demo2_retail_memory_facts.json"
 
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -2865,11 +2744,13 @@ async def chat_retail_ops_demo2_kb(req: RetailOpsDemo2KbReq):
                 fact.get("entity_id", "").lower()
                 in target_entity_ids
             )
-            and fact.get("slot") in selected_slots
+            and isinstance(fact.get("slot"), str)
+            and fact["slot"] in selected_slots
         ]
     else:
         entity_id_norm = resolve_retail_entity_id(req.message, req.entity_id)
         target_entity_ids = {entity_id_norm}
+        selected_slots = set(slots)
 
         selected_facts = [
             fact
@@ -2877,42 +2758,15 @@ async def chat_retail_ops_demo2_kb(req: RetailOpsDemo2KbReq):
             if isinstance(fact, dict)
             and isinstance(fact.get("entity_id"), str)
             and fact["entity_id"].lower() == entity_id_norm
-            and fact.get("slot") in slots
+            and isinstance(fact.get("slot"), str)
+            and fact["slot"] in slots
         ]
 
-    if not selected_facts:
-        return {
-            "supported": False,
-            "answer": "No supported Demo 2 retail memory fact was found for this question.",
-            "facts": [],
-        }
-
-    limit = req.top_k or 5
-
-    if (
-        is_cross_store
-        and len(selected_facts) > limit
-    ):
-        required_count = len(selected_facts)
-
-        return {
-            "supported": False,
-            "answer": (
-                "The requested cross-store evidence "
-                f"requires {required_count} facts, but "
-                f"top_k={limit} would truncate the "
-                "declared store and factor scope. "
-                "Increase top_k to at least "
-                f"{required_count}."
-            ),
-            "facts": [],
-        }
-
-    points = demo2_retail_facts_to_points(
-        selected_facts[:limit]
+    points = demo2_retail_facts_to_points(selected_facts)
+    result = retail_answer_from_points(
+        points, entity_ids=target_entity_ids, required_slots=selected_slots,
+        window=parse_retail_window(req.message, DEMO2_WINDOW), limit=req.top_k or 5,
     )
-
-    result = retail_answer_from_points(points, entity_ids=target_entity_ids)
 
     result["demo_scope"] = "demo2_same_period_b_f_diagnostic"
     result["retrieval_mode"] = "not_used"
@@ -2944,23 +2798,33 @@ async def chat_retail_ops_kb(req: RetailOpsKbReq):
             "facts": [],
         }
 
+    window = parse_retail_window(req.message, DEMO1_WINDOW)
+    limit = req.top_k or 5
+    if len(slots) > limit:
+        return {"supported": False, "answer": f"The requested evidence requires {len(slots)} facts; increase top_k to at least {len(slots)}.", "facts": []}
+
     slot_points = []
     for slot in slots:
         slot_points.extend(
             await qdrant_scroll_retail_slot(
                 entity_id_norm=entity_id_norm,
                 slot=slot,
-                limit=req.top_k or 5,
+                window=window,
+                limit=2,
             )
         )
 
     if slot_points:
-        return retail_answer_from_points(slot_points[: req.top_k or 5], entity_ids={entity_id_norm})
+        return retail_answer_from_points(
+            slot_points, entity_ids={entity_id_norm}, required_slots=set(slots),
+            window=window, limit=limit,
+        )
 
     vector_points = await qdrant_query_retail(
         message=req.message,
         entity_id_norm=entity_id_norm,
-        limit=req.top_k or 5,
+        window=window,
+        limit=limit + 1,
     )
 
     if not vector_points:
@@ -2970,12 +2834,7 @@ async def chat_retail_ops_kb(req: RetailOpsKbReq):
             "facts": [],
         }
 
-    top_score = vector_points[0].get("score") or 0
-    if top_score < RETAIL_DEMO1_VECTOR_FALLBACK_MIN_SCORE:
-        return {
-            "supported": False,
-            "answer": "The retrieved retail facts were too weakly matched to answer safely.",
-            "facts": [],
-        }
-
-    return retail_answer_from_points(vector_points, entity_ids={entity_id_norm})
+    return retail_answer_from_points(
+        vector_points, entity_ids={entity_id_norm}, required_slots=set(slots),
+        window=window, limit=limit, min_score=RETAIL_DEMO1_VECTOR_FALLBACK_MIN_SCORE,
+    )
