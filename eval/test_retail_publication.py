@@ -35,7 +35,8 @@ class RetailPublicationTests(unittest.TestCase):
         self.database = self.base / "batches.sqlite3"
         self.directory = self.base / "publications"
         self.registry_path = self.base / "registry.json"
-        for name in ("retail_ops/contracts/datasets.v1.json", "retail_ops/data/DATA_DICTIONARY.md"):
+        for name in ("retail_ops/contracts/datasets.v1.json", "retail_ops/data/DATA_DICTIONARY.md",
+                     "retail_ops/contracts/manual_text.v2.json", "retail_ops/contracts/manual_text.v3.json"):
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, path)

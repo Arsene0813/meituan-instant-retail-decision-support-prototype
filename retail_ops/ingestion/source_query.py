@@ -16,6 +16,7 @@ from .intake_registry import _unique, aggregation_scope_sha256, validate_aggrega
 from .preview import COUNTS, KEYS, SCHEMAS, _value
 from .publication import open_publication
 from .source_windows import validate_source_dataset
+from .text_document import TEXT_MAPPINGS, validate_text_locator
 
 POLICY_PATH = "retail_ops/contracts/range_query.v1.json"
 RECORDS_PATH = "retail_ops/outputs/published_source_records.json"
@@ -93,7 +94,10 @@ def _validate_entries(payload, contracts) -> list[dict]:
         if any(record.get(field) is None for field in contracts[dataset].key_fields):
             raise ValueError("published source key is missing")
         _range(record["period_start"], record["period_end"])
-        if not isinstance(source, dict) or set(source) != SOURCE_FIELDS:
+        text_source = (isinstance(source, dict) and isinstance(source.get("mapping_version"), str)
+                       and source["mapping_version"] in TEXT_MAPPINGS)
+        expected_source_fields = SOURCE_FIELDS | ({"source_locator"} if text_source else set())
+        if not isinstance(source, dict) or set(source) != expected_source_fields:
             raise ValueError("published source lineage is incomplete")
         for field in SOURCE_FIELDS - {"source_line_end", "aggregation_scope", "aggregation_scope_sha256"}:
             if not isinstance(source[field], str) or not source[field] or source[field] != source[field].strip():
@@ -105,11 +109,18 @@ def _validate_entries(payload, contracts) -> list[dict]:
         # Operator review records the filters and timezone; it does not authenticate
         # the backend or independently prove that an export used those filters.
         scope = validate_aggregation_scope(source["aggregation_scope"])
-        if scope is not None and source["mapping_version"] != "canonical_csv_v2":
-            raise ValueError("published aggregation scope requires canonical_csv_v2")
+        if scope is not None and source["mapping_version"] not in {"canonical_csv_v2", *TEXT_MAPPINGS}:
+            raise ValueError("published aggregation scope requires a registered reviewed source format")
         if source["aggregation_scope_sha256"] != aggregation_scope_sha256(scope):
             raise ValueError("published aggregation scope does not match its digest")
-        month = validate_source_dataset(dataset, source["mapping_version"],
+        mapping = ({"manual_text_v2": "canonical_csv_v1", "manual_text_v3": "canonical_csv_v2"}
+                   [source["mapping_version"]] if text_source else source["mapping_version"])
+        if text_source:
+            if dataset not in {"store_period_panel_metrics", "demo2_top_search_terms",
+                               "demo2_top_skus_by_sales_volume", "demo2_top_skus_by_transaction_amount"}:
+                raise ValueError("published text dataset is not registered for its source profile")
+            validate_text_locator(source["source_locator"], record, source["source_line_end"])
+        month = validate_source_dataset(dataset, mapping,
                                         record["period_start"], record["period_end"])
         if record["period_month"] != month:
             raise ValueError("published period_month disagrees with the actual source window")

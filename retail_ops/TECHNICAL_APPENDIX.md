@@ -817,7 +817,7 @@ slots.
 
 `retail_ops.ingestion.batch_cli` now archives reviewed canonical CSV uploads and revalidates them with the existing ingestion rules. SQLite stores source bytes, registration and identity snapshots, exact preview results, and explicit predecessor links in one transaction. Repeated requests are idempotent; corrections preserve whole snapshots and missing values. See [batch intake](ingestion/BATCH_INTAKE.md) for the field mapping and registered metadata.
 
-A stored `validated` batch has passed intake checks. The [publication CLI](ingestion/PUBLICATION.md) replays selected batches, builds the registered views and SQL outputs, and pins SQL, Demo 2 facts, and RAC to one publication per analysis. The existing API still reads project files. The local identity record depends on operator review and does not authenticate a Meituan account.
+A stored `validated` batch has passed intake checks. The [publication CLI](ingestion/PUBLICATION.md) replays selected batches, builds the registered views and SQL outputs, and pins SQL, Demo 2 facts, and RAC to one publication per analysis. The Docker API reads project files; the range API reads explicitly selected publications. The local identity record depends on operator review and does not authenticate a Meituan account.
 
 ### Publication view registration
 
@@ -837,3 +837,10 @@ The v2 intake registry preserves the existing receipt fields and registers `cano
 `range_analysis` selects current and optional baseline windows from one verified private publication copy, reconciles each query summary with source rows, then rebuilds RAC checks, alternative direction hypotheses, critique and belief. The default review fields are `transaction_amount` and `transaction_orders`; optional fields retain the dictionary definitions and registered comparison rules. `rac/contracts/range_review.v1.json` defines scope and calculation rules, and `rac/schemas/range_cognition_state.v1.schema.json` registers review metadata including exact differences and reference links. No canonical source field is renamed.
 
 The standalone `api.retail_range_api` provides `/retail/query` and `/retail/review` using a server-configured external publication directory. Requests carry explicit IDs and selectors, never paths, SQL or source evidence. It runs in the publication interpreter on localhost port 8001; existing Docker endpoints are separate. Neither endpoint writes a query record. See [RANGE_API.md](ingestion/RANGE_API.md) for startup, request shapes and version handling.
+
+
+### Registered Chinese document intake
+
+The v3 intake registry binds each declared text block and dataset to a reviewed upload receipt. `receive-document` independently parses the full document, checks complete receipt coverage and all store/window identities, then commits the child batches atomically. `manual_text_v2` retains the original month format; `manual_text_v3` registers inclusive ISO dates, explicit user-count labels and labelled SKU amounts. Canonical fields and dictionary definitions remain unchanged.
+
+Text publications archive exact `source.txt` bytes and replay the entire document before selecting child batches. `source_locator` records header and field spans plus ranked-item order; queries and range RAC retain those locators. CSV source records keep their existing structure. See [TEXT_INTAKE.md](ingestion/TEXT_INTAKE.md) for the field comparison and new intake metadata. Backend authentication and scheduled collection still need a verified real source interface.

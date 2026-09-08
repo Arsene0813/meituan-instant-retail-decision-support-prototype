@@ -1,4 +1,4 @@
-"""Store and inspect reviewed canonical CSV uploads in a local batch ledger."""
+"""Store and inspect reviewed CSV uploads or complete source documents."""
 from __future__ import annotations
 
 import argparse
@@ -7,7 +7,7 @@ import sqlite3
 from decimal import Decimal
 from pathlib import Path
 
-from .batch_store import read_batch, receive_batch
+from .batch_store import read_batch, receive_batch, receive_document
 from .intake_registry import _unique
 from .preview import preview_json
 
@@ -22,6 +22,13 @@ def main(argv=None):
     receive.add_argument("--input", required=True, type=Path)
     receive.add_argument("--supersedes-batch-id")
     receive.add_argument("--proposals", type=Path)
+    document = commands.add_parser("receive-document", help="atomically archive every reviewed text source group")
+    document.add_argument("--database", required=True, type=Path)
+    document.add_argument("--registry", required=True, type=Path)
+    document.add_argument("--document-id", required=True)
+    document.add_argument("--input", required=True, type=Path)
+    document.add_argument("--supersedes", type=Path, help="JSON map of upload IDs to predecessor batch IDs")
+    document.add_argument("--proposals", type=Path)
     show = commands.add_parser("show", help="verify and inspect one stored batch by ID")
     show.add_argument("--database", required=True, type=Path)
     show.add_argument("--batch-id", required=True)
@@ -37,6 +44,13 @@ def main(argv=None):
             result = receive_batch(root, database, args.registry.expanduser(), args.upload_id,
                                    args.input.expanduser().read_bytes(),
                                    supersedes_batch_id=args.supersedes_batch_id, proposals=proposals)
+        elif args.command == "receive-document":
+            proposals = (json.loads(args.proposals.expanduser().read_bytes(), parse_float=Decimal,
+                                    object_pairs_hook=_unique) if args.proposals else None)
+            supersedes = (json.loads(args.supersedes.expanduser().read_bytes(), object_pairs_hook=_unique)
+                          if args.supersedes else None)
+            result = receive_document(root, database, args.registry.expanduser(), args.document_id,
+                                      args.input.expanduser().read_bytes(), supersedes=supersedes, proposals=proposals)
         else:
             result = read_batch(database, args.batch_id)
     except (ValueError, OSError, sqlite3.Error) as exc:

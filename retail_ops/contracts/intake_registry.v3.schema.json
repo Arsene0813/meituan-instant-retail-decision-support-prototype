@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:meituan:contracts:intake-registry:3",
+  "title": "Reviewed local source documents and CSV uploads",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_version",
+    "bindings",
+    "uploads"
+  ],
+  "properties": {
+    "registry_version": {
+      "const": "3"
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "binding_id",
+          "source_system",
+          "source_account_id",
+          "source_store_id",
+          "store_id",
+          "identity_evidence_path",
+          "reviewed_by",
+          "dataset_ids",
+          "identity_evidence_sha256"
+        ],
+        "properties": {
+          "binding_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_system": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_account_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_store_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "store_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "identity_evidence_path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "reviewed_by": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "dataset_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+            }
+          },
+          "identity_evidence_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "uploads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "upload_id",
+          "binding_id",
+          "dataset_id",
+          "source_page",
+          "extracted_at",
+          "period_start",
+          "period_end",
+          "file_sha256",
+          "mapping_version"
+        ],
+        "properties": {
+          "upload_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "binding_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "dataset_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_page": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "extracted_at": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          },
+          "file_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "mapping_version": {
+            "enum": [
+              "canonical_csv_v1",
+              "canonical_csv_v2",
+              "manual_text_v2",
+              "manual_text_v3"
+            ]
+          },
+          "aggregation_scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope_version",
+              "timezone",
+              "selection_conditions",
+              "reviewed_by"
+            ],
+            "properties": {
+              "scope_version": {
+                "const": "1"
+              },
+              "timezone": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              },
+              "selection_conditions": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              },
+              "reviewed_by": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+              }
+            }
+          },
+          "document_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+          },
+          "source_block_line": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mapping_version": {
+                  "enum": [
+                    "manual_text_v2",
+                    "manual_text_v3"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "document_id",
+                "source_block_line"
+              ],
+              "properties": {
+                "dataset_id": {
+                  "enum": [
+                    "store_period_panel_metrics",
+                    "demo2_top_search_terms",
+                    "demo2_top_skus_by_sales_volume",
+                    "demo2_top_skus_by_transaction_amount"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "document_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "source_block_line"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "aggregation_scope"
+              ]
+            },
+            "then": {
+              "properties": {
+                "mapping_version": {
+                  "enum": [
+                    "canonical_csv_v2",
+                    "manual_text_v2",
+                    "manual_text_v3"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

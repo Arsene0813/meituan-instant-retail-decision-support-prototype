@@ -1,4 +1,4 @@
-"""Persist reviewed CSV intake and explicit revisions without publishing data."""
+"""Persist reviewed source intake and explicit revisions without publishing data."""
 from __future__ import annotations
 
 import csv
@@ -49,12 +49,17 @@ def _file_bytes(path):
 
 
 def _provenance(root):
+    from . import text_document, text_preview
     files = {
         "batch_store": Path(__file__), "intake_registry": Path(intake_registry.__file__),
         "preview": Path(preview_module.__file__), "contracts": Path(contract_module.__file__),
         "source_windows": Path(source_windows.__file__),
         "dataset_registry": root / contract_module.DEFAULT_REGISTRY_PATH,
         "dictionary": root / "retail_ops/data/DATA_DICTIONARY.md",
+        "text_preview": Path(text_preview.__file__),
+        "text_document": Path(text_document.__file__),
+        "manual_text_v2": root / "retail_ops/contracts/manual_text.v2.json",
+        "manual_text_v3": root / "retail_ops/contracts/manual_text.v3.json",
     }
     return {name + "_sha256": _hash(data) if (data := _file_bytes(path)) is not None else None
             for name, path in files.items()}
@@ -78,6 +83,13 @@ def _reject_excluded_columns(data):
         raise ValueError("Cannot verify excluded columns in malformed CSV; no bytes were archived.") from exc
     if set(header) & preview_module.IGNORED:
         raise ValueError("Excluded order-count columns cannot be archived; remove those columns before intake.")
+    if not {"store_id", "period_start", "period_end"} <= set(header) and any(
+            label.encode("utf-8") in data for label in preview_module.IGNORED):
+        # A text prelude or unknown upload ID must not route excluded source
+        # labels into the CSV quarantine archive. Canonical cell text retains
+        # its existing field semantics, including literal words in SKU names.
+        from .text_document import reject_excluded_text
+        reject_excluded_text(data)
 
 
 def _open(database):
@@ -190,127 +202,299 @@ def _retry_key(upload_id, file_hash, registration, registry_hash, proposals_hash
     }).encode())
 
 
+def _registration(resolved):
+    if resolved is None:
+        return None
+    registration = {"receipt": resolved["receipt"], "binding": resolved["binding"],
+                    "context": asdict(resolved["context"]),
+                    "identity_evidence_sha256": _hash(resolved["identity_evidence"])}
+    if "document_identity_evidence" in resolved:
+        registration["document_identity_evidence"] = resolved["document_identity_evidence"]
+    return registration
+
+
+def _prepare(upload_id, data, registry_bytes, resolved, checked, proposals, predecessor, provenance, errors):
+    registration = _registration(resolved)
+    registry_hash = _hash(registry_bytes) if registry_bytes is not None else None
+    proposals = json.loads(_json(proposals))
+    proposals_hash = _hash(_json(proposals).encode())
+    file_hash = _hash(data)
+    return {"upload_id": upload_id, "data": data, "registry_bytes": registry_bytes,
+            "resolved": resolved, "preview": checked, "proposals": proposals,
+            "supersedes_batch_id": predecessor, "provenance": provenance, "errors": list(errors),
+            "registration": registration, "registry_hash": registry_hash,
+            "proposals_hash": proposals_hash, "file_hash": file_hash,
+            "retry_key": _retry_key(upload_id, file_hash, registration, registry_hash,
+                                     proposals_hash, predecessor, provenance)}
+
+
+def _verify_ledger(connection):
+    # A corrupt indexed control column must not hide any prior scope or revision.
+    for stored in connection.execute("SELECT " + ",".join(CONTROL_COLUMNS) + " FROM batches"):
+        _verify_control(stored)
+
+
+def _store_one(root, connection, prepared):
+    """Write under the caller's transaction; common revision rules for all formats."""
+    upload_id, data, registry_bytes = (prepared[key] for key in ("upload_id", "data", "registry_bytes"))
+    resolved, preview, proposals = (prepared[key] for key in ("resolved", "preview", "proposals"))
+    supersedes_batch_id, provenance = (prepared[key] for key in ("supersedes_batch_id", "provenance"))
+    errors = list(prepared["errors"])
+    registration, registry_hash, proposals_hash, file_hash, retry_key = (
+        prepared[key] for key in ("registration", "registry_hash", "proposals_hash", "file_hash", "retry_key"))
+    serialized_proposals = _json(proposals)
+    identity = resolved["identity_evidence"] if resolved is not None else None
+    metadata = None
+    upload_payload_key = _hash(_json(registration).encode()) if registration is not None else None
+    scope_key = _scope(registration) if registration is not None else None
+    existing = connection.execute("SELECT * FROM batches WHERE retry_key=?", (retry_key,)).fetchone()
+    if existing is not None:
+        result = _decode(existing)
+        return {**result, "idempotent": True}
+    for prior in connection.execute("SELECT * FROM batches WHERE upload_id=?", (upload_id,)):
+        _decode(prior)
+        if prior["upload_payload_key"] is not None and (prior["file_sha256"] != file_hash or (
+                upload_payload_key is not None and prior["upload_payload_key"] != upload_payload_key)):
+            errors.append("upload_id was already used with different source bytes or reviewed registration.")
+            break
+
+    batch_id = "batch_" + uuid.uuid4().hex
+    received_at = datetime.now(timezone.utc).isoformat()
+    if resolved is not None:
+        try:
+            payload = {**resolved["metadata"], "batch_id": batch_id,
+                       "received_at": received_at, "status": "quarantined" if errors else "validated"}
+            metadata_object = build_batch_metadata(payload, load_dataset_contracts(root))
+            metadata = dict(metadata_object.__dict__)
+        except (ValueError, OSError, KeyError, TypeError) as exc:
+            errors.append("Batch metadata failed: " + str(exc))
+    if supersedes_batch_id is not None:
+        previous = connection.execute("SELECT * FROM batches WHERE batch_id=?", (supersedes_batch_id,)).fetchone()
+        if previous is None:
+            errors.append("The requested predecessor does not exist.")
+        else:
+            previous_result = _decode(previous)
+            if previous["status"] != "validated" or previous["scope_key"] != scope_key:
+                errors.append("A revision must reference a validated batch with the same binding, dataset, store, window and reviewed aggregation scope.")
+            if connection.execute("SELECT 1 FROM batches WHERE supersedes_batch_id=? AND status='validated'", (supersedes_batch_id,)).fetchone():
+                errors.append("The predecessor already has a validated successor; select the intended revision explicitly.")
+            if metadata is not None and previous_result.get("metadata") is not None:
+                current_time = datetime.fromisoformat(metadata["extracted_at"].replace("Z", "+00:00"))
+                previous_time = datetime.fromisoformat(previous_result["metadata"]["extracted_at"].replace("Z", "+00:00"))
+                if current_time < previous_time:
+                    errors.append("A revision cannot move the extraction timestamp backwards.")
+    elif scope_key is not None and connection.execute(
+            "SELECT 1 FROM batches WHERE scope_key=? AND status='validated'", (scope_key,)).fetchone():
+        errors.append("This store/window already has validated intake; an explicit predecessor is required.")
+
+    if provenance != _provenance(root):
+        errors.append("The dictionary, dataset registration or validation code changed before intake commit.")
+    status = "quarantined" if errors else "validated"
+    if metadata is not None:
+        metadata["status"] = status
+    result = {"batch_id": batch_id, "upload_id": upload_id, "received_at": received_at,
+              "status": status, "file_sha256": file_hash, "metadata": metadata,
+              "supersedes_batch_id": supersedes_batch_id, "registry_sha256": registry_hash,
+              "registration": registration, "proposals_sha256": proposals_hash,
+              "proposals": json.loads(serialized_proposals),
+              "provenance": provenance, "preview": preview, "errors": errors}
+    serialized = _json(result)
+    connection.execute("INSERT INTO batches VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+        batch_id, upload_id, status, retry_key, file_hash, data, registry_bytes, registry_hash,
+        identity, _hash(identity) if identity is not None else None, scope_key, upload_payload_key,
+        supersedes_batch_id, serialized, _hash(serialized.encode()),
+    ))
+    return {**json.loads(serialized), "idempotent": False}
+
+
+def _registry_bytes(path):
+    try:
+        return intake_registry._regular_file(path).read_bytes()
+    except (ValueError, OSError):
+        return None
+
+
 def receive_batch(root: Path, database: Path, registry_path: Path, upload_id: str, data: bytes, *,
                   supersedes_batch_id: str | None = None, proposals=None) -> dict:
-    """Archive a reviewed receipt or quarantine; never select analysis versions."""
-    root, database, registry_path = Path(root), Path(database), Path(registry_path)
-    registry_path = registry_path.absolute()
+    """Archive one CSV receipt; manual text requires atomic document intake."""
+    root, database, registry_path = Path(root), Path(database), Path(registry_path).absolute()
     if not isinstance(data, bytes) or not isinstance(upload_id, str) or not upload_id.strip():
         raise ValueError("Intake requires source bytes and a non-empty upload_id.")
     if supersedes_batch_id is not None and (not isinstance(supersedes_batch_id, str) or not supersedes_batch_id):
         raise ValueError("supersedes_batch_id must be a non-empty batch ID or null.")
-    _reject_excluded_columns(data)  # Excluded values must not enter even the raw archive.
+    _reject_excluded_columns(data)
     _reject_excluded_proposals(proposals)
-    serialized_proposals = _json(proposals)
-    proposals_hash = _hash(serialized_proposals.encode())
+    if data.decode("utf-8-sig").lstrip().startswith("店铺"):
+        from .text_document import reject_excluded_text
+        reject_excluded_text(data)
+        raise intake_registry.DocumentIntakeRequired("manual text requires receive-document and whole-document validation")
     provenance = _provenance(root)
-    registry_bytes = None
-    try:
-        registry_bytes = intake_registry._regular_file(registry_path).read_bytes()
-    except (ValueError, OSError):
-        pass
-    resolved = None
-    preview = None
-    metadata = None
-    identity = None
-    errors = []
+    registry_bytes = _registry_bytes(registry_path)
+    resolved, checked, errors = None, None, []
     try:
         resolved = intake_registry.resolve_upload(root, registry_path, upload_id, data)
         registry_bytes = resolved["registry_bytes"]
-        identity = resolved["identity_evidence"]
-        preview = preview_module.preview_csv(root, data, resolved["context"], proposals,
-                                             mapping_version=resolved["metadata"]["mapping_version"])
-        if preview["status"] != "validated":
+        checked = preview_module.preview_csv(root, data, resolved["context"], proposals,
+                                              mapping_version=resolved["metadata"]["mapping_version"])
+        if checked["status"] != "validated":
             errors.append("Source rows or proposals require review; the complete batch is quarantined.")
+    except intake_registry.DocumentIntakeRequired:
+        raise
     except (ValueError, OSError, KeyError, TypeError) as exc:
         errors.append("Registration or validation failed: " + str(exc))
     if provenance != _provenance(root):
         errors.append("The dictionary, dataset registration or validation code changed during intake.")
-
-    registry_hash = _hash(registry_bytes) if registry_bytes is not None else None
-    registration = None if resolved is None else {
-        "receipt": resolved["receipt"], "binding": resolved["binding"],
-        "context": asdict(resolved["context"]),
-        "identity_evidence_sha256": _hash(identity),
-    }
-    file_hash = _hash(data)
-    retry_key = _retry_key(upload_id, file_hash, registration, registry_hash,
-                           proposals_hash, supersedes_batch_id, provenance)
-    upload_payload_key = _hash(_json(registration).encode()) if registration is not None else None
-    scope_key = _scope(registration) if registration is not None else None
+    prepared = _prepare(upload_id, data, registry_bytes, resolved, checked, proposals,
+                        supersedes_batch_id, provenance, errors)
     connection = _open(database)
     try:
-        # A corrupt scope/retry column could hide a row from the indexed
-        # lookup below. Check control columns under the same write transaction;
-        # this scan does not reread archived source or registration blobs.
-        for stored in connection.execute("SELECT " + ",".join(CONTROL_COLUMNS) + " FROM batches"):
-            _verify_control(stored)
-        existing = connection.execute("SELECT * FROM batches WHERE retry_key=?", (retry_key,)).fetchone()
-        if existing is not None:
-            result = _decode(existing)
-            connection.commit()
-            return {**result, "idempotent": True}
-        for prior in connection.execute("SELECT * FROM batches WHERE upload_id=?", (upload_id,)):
-            _decode(prior)
-            if prior["upload_payload_key"] is not None and (prior["file_sha256"] != file_hash or (
-                    upload_payload_key is not None and prior["upload_payload_key"] != upload_payload_key)):
-                errors.append("upload_id was already used with different source bytes or reviewed registration.")
-                break
-
-        batch_id = "batch_" + uuid.uuid4().hex
-        received_at = datetime.now(timezone.utc).isoformat()
-        if resolved is not None:
-            try:
-                payload = {**resolved["metadata"], "batch_id": batch_id,
-                           "received_at": received_at, "status": "quarantined" if errors else "validated"}
-                metadata_object = build_batch_metadata(payload, load_dataset_contracts(root))
-                metadata = dict(metadata_object.__dict__)
-            except (ValueError, OSError, KeyError, TypeError) as exc:
-                errors.append("Batch metadata failed: " + str(exc))
-        if supersedes_batch_id is not None:
-            previous = connection.execute("SELECT * FROM batches WHERE batch_id=?", (supersedes_batch_id,)).fetchone()
-            if previous is None:
-                errors.append("The requested predecessor does not exist.")
-            else:
-                previous_result = _decode(previous)
-                if previous["status"] != "validated" or previous["scope_key"] != scope_key:
-                    errors.append("A revision must reference a validated batch with the same binding, dataset, store, window and reviewed aggregation scope.")
-                if connection.execute("SELECT 1 FROM batches WHERE supersedes_batch_id=? AND status='validated'", (supersedes_batch_id,)).fetchone():
-                    errors.append("The predecessor already has a validated successor; select the intended revision explicitly.")
-                if metadata is not None and previous_result.get("metadata") is not None:
-                    current_time = datetime.fromisoformat(metadata["extracted_at"].replace("Z", "+00:00"))
-                    previous_time = datetime.fromisoformat(previous_result["metadata"]["extracted_at"].replace("Z", "+00:00"))
-                    if current_time < previous_time:
-                        errors.append("A revision cannot move the extraction timestamp backwards.")
-        elif scope_key is not None and connection.execute(
-                "SELECT 1 FROM batches WHERE scope_key=? AND status='validated'", (scope_key,)).fetchone():
-            errors.append("This store/window already has validated intake; an explicit predecessor is required.")
-
-        if provenance != _provenance(root):
-            errors.append("The dictionary, dataset registration or validation code changed before intake commit.")
-        status = "quarantined" if errors else "validated"
-        if metadata is not None:
-            metadata["status"] = status
-        result = {"batch_id": batch_id, "upload_id": upload_id, "received_at": received_at,
-                  "status": status, "file_sha256": file_hash, "metadata": metadata,
-                  "supersedes_batch_id": supersedes_batch_id, "registry_sha256": registry_hash,
-                  "registration": registration, "proposals_sha256": proposals_hash,
-                  "proposals": json.loads(serialized_proposals),
-                  "provenance": provenance, "preview": preview, "errors": errors}
-        serialized = _json(result)
-        connection.execute("INSERT INTO batches VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
-            batch_id, upload_id, status, retry_key, file_hash, data, registry_bytes, registry_hash,
-            identity, _hash(identity) if identity is not None else None, scope_key, upload_payload_key,
-            supersedes_batch_id, serialized, _hash(serialized.encode()),
-        ))
+        _verify_ledger(connection)
+        result = _store_one(root, connection, prepared)
         connection.commit()
-        return {**json.loads(serialized), "idempotent": False}
+        return result
     except BaseException:
         connection.rollback()
         raise
     finally:
         connection.close()
 
+
+def _document_groups(root, registry_path, document_id, data, proposals):
+    from .text_document import parse_document
+    document = intake_registry.resolve_document(root, registry_path, document_id, data)
+    parsed = parse_document(root, data, document["mapping_version"], proposals)
+    if parsed["status"] != "validated" or parsed["errors"]:
+        raise ValueError("The complete source document requires review: " + "; ".join(parsed["errors"]))
+    groups = {}
+    for group in parsed["groups"]:
+        selector = (group["source_block_line"], group["dataset_id"])
+        if selector in groups:
+            raise ValueError("Source document repeats a registered group.")
+        groups[selector] = group
+    expected = {(value["receipt"]["source_block_line"], value["receipt"]["dataset_id"])
+                for value in document["resolved_uploads"]}
+    if not expected or expected != set(groups):
+        raise ValueError("Reviewed document receipts must cover every parsed source group exactly once.")
+    prepared = []
+    for resolved in document["resolved_uploads"]:
+        receipt = resolved["receipt"]
+        group = groups[(receipt["source_block_line"], receipt["dataset_id"])]
+        context = asdict(resolved["context"])
+        if group["context"] != context or group["preview"]["context"] != context:
+            raise ValueError("Source store, window or dataset conflicts with independently reviewed receipt.")
+        if group["preview"]["status"] != "validated":
+            raise ValueError("Every document group must pass its registered field checks.")
+        prepared.append({"resolved": resolved, "preview": group["preview"]})
+    return document, prepared
+
+
+def replay_document_group(root, registry_path, upload_id, data, proposals=None):
+    """Recheck the whole original document before returning one registered group."""
+    from .text_document import reject_excluded_text
+    reject_excluded_text(data)
+    registry = json.loads(intake_registry._regular_file(registry_path).read_bytes(),
+                          object_pairs_hook=intake_registry._unique)
+    receipts = [receipt for receipt in registry.get("uploads", [])
+                if isinstance(receipt, dict) and receipt.get("upload_id") == upload_id]
+    if len(receipts) != 1 or "document_id" not in receipts[0]:
+        raise ValueError("The selected upload is not a unique registered document group.")
+    _, groups = _document_groups(Path(root), Path(registry_path), receipts[0]["document_id"], data, proposals)
+    return next(group for group in groups if group["resolved"]["receipt"]["upload_id"] == upload_id)
+
+
+def _document_result(document_id, batches, *, errors=None, quarantine=None, idempotent=False):
+    return {"document_id": document_id, "status": "quarantined" if errors else "validated",
+            "errors": list(errors or []), "batches": batches,
+            "quarantine_batch_id": quarantine, "idempotent": idempotent}
+
+
+def receive_document(root: Path, database: Path, registry_path: Path, document_id: str, data: bytes, *,
+                     supersedes=None, proposals=None) -> dict:
+    """Archive all reviewed source groups atomically, or retain only quarantine."""
+    from .text_document import reject_excluded_text
+    root, database, registry_path = Path(root), Path(database), Path(registry_path).absolute()
+    intake_registry._text(document_id, "document_id")
+    if not isinstance(data, bytes):
+        raise ValueError("Document intake requires original source bytes.")
+    reject_excluded_text(data)
+    _reject_excluded_proposals(proposals)
+    supersedes = {} if supersedes is None else supersedes
+    if (not isinstance(supersedes, dict) or
+            any(not isinstance(key, str) or not key or not isinstance(value, str) or not value
+                for key, value in supersedes.items())):
+        raise ValueError("supersedes must map reviewed upload IDs to explicit predecessor batch IDs.")
+    provenance = _provenance(root)
+    registry_bytes = _registry_bytes(registry_path)
+    errors, prepared = [], []
+    try:
+        document, groups = _document_groups(root, registry_path, document_id, data, proposals)
+        registry_bytes = document["registry_bytes"]
+        upload_ids = {item["resolved"]["receipt"]["upload_id"] for item in groups}
+        if not set(supersedes) <= upload_ids:
+            raise ValueError("supersedes includes an upload outside this reviewed document.")
+        for item in groups:
+            resolved = item["resolved"]
+            upload_id = resolved["receipt"]["upload_id"]
+            prepared.append(_prepare(upload_id, data, registry_bytes, resolved, item["preview"], proposals,
+                                     supersedes.get(upload_id), provenance, []))
+    except (ValueError, OSError, KeyError, TypeError) as exc:
+        errors.append("Document registration or validation failed: " + str(exc))
+    if provenance != _provenance(root):
+        errors.append("Processing rules changed during document intake.")
+    connection = _open(database)
+    try:
+        _verify_ledger(connection)
+        prior_children = []
+        quarantine_upload_id = "document:" + document_id
+        for row in connection.execute("SELECT * FROM batches"):
+            result = _decode(row)
+            registration = result.get("registration")
+            if registration is not None and registration["receipt"].get("document_id") == document_id:
+                if result["status"] == "validated":
+                    prior_children.append((row, result))
+            if (result["upload_id"] == quarantine_upload_id and registration is None and
+                    result["file_sha256"] != _hash(data)):
+                errors.append("document_id already identifies different source bytes; register a new document ID.")
+        if prior_children:
+            expected_retries = {item["retry_key"] for item in prepared}
+            if (errors or len(prior_children) != len(prepared) or
+                    {row["retry_key"] for row, _ in prior_children} != expected_retries):
+                errors.append("document_id already has a different complete reviewed intake; register a new document ID.")
+            else:
+                batches = [{**result, "idempotent": True} for _, result in prior_children]
+                batches.sort(key=lambda item: item["upload_id"])
+                connection.commit()
+                return _document_result(document_id, batches, idempotent=True)
+        batches = []
+        if not errors:
+            connection.execute("SAVEPOINT complete_document")
+            for item in prepared:
+                result = _store_one(root, connection, item)
+                batches.append(result)
+                if result["status"] != "validated":
+                    errors.extend(result["errors"])
+            if provenance != _provenance(root):
+                errors.append("Processing rules changed before complete document commit.")
+            if errors:
+                connection.execute("ROLLBACK TO complete_document")
+            connection.execute("RELEASE complete_document")
+        if errors:
+            # Keep the exact rejected input once; no valid child escapes a
+            # document with an unknown line, missing receipt or revision conflict.
+            held = _prepare(quarantine_upload_id, data, registry_bytes, None, None,
+                            {"document_proposals": proposals, "supersedes": supersedes},
+                            None, provenance, errors)
+            archived = _store_one(root, connection, held)
+            connection.commit()
+            return _document_result(document_id, [], errors=archived["errors"],
+                                    quarantine=archived["batch_id"], idempotent=archived["idempotent"])
+        connection.commit()
+        return _document_result(document_id, batches)
+    except BaseException:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
 
 def _read_row(database: Path, batch_id: str):
     database = Path(database).resolve()

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+import base64
+import binascii
 from dataclasses import asdict, dataclass
 import fcntl
 import hashlib
@@ -16,6 +18,7 @@ import tempfile
 from . import batch_store, intake_registry, publication_recipe, source_view
 from .contracts import build_batch_metadata, load_dataset_contracts
 from .preview import preview_csv
+from .text_document import TEXT_MAPPINGS
 
 
 VERSION = "1"
@@ -38,6 +41,44 @@ def _sha(data):
 
 def _json(data):
     return json.loads(data, object_pairs_hook=intake_registry._unique)
+
+
+def _source_name(result):
+    version = result["metadata"]["mapping_version"]
+    if not isinstance(version, str):
+        raise ValueError("Publication source format must be registered text.")
+    if version in TEXT_MAPPINGS:
+        return "source.txt"
+    if version in {"canonical_csv_v1", "canonical_csv_v2"}:
+        return "source.csv"
+    raise ValueError("Publication source format is not registered.")
+
+
+def _document_identities(base, item, registry):
+    """Restore exact independently checked files, never synthesize identities."""
+    bundle = item["result"]["registration"].get("document_identity_evidence")
+    paths = {binding["identity_evidence_path"] for binding in registry["bindings"]}
+    if not isinstance(bundle, dict) or set(bundle) != paths:
+        raise ValueError("Document identity archive must cover every registered binding exactly.")
+    decoded = {}
+    try:
+        for name, value in bundle.items():
+            relative = _relative(name)
+            if not isinstance(value, str):
+                raise ValueError("Document identity bytes require base64 text.")
+            data = base64.b64decode(value, validate=True)
+            if base64.b64encode(data).decode("ascii") != value:
+                raise ValueError("Document identity bytes require canonical base64 text.")
+            decoded[name] = data
+            _write(base, relative.as_posix(), data)
+    except (binascii.Error, UnicodeError) as exc:
+        raise ValueError("Document identity archive contains invalid encoded bytes.") from exc
+    for binding in registry["bindings"]:
+        if _sha(decoded[binding["identity_evidence_path"]]) != binding["identity_evidence_sha256"]:
+            raise ValueError("Document identity archive disagrees with its reviewed binding.")
+    own = item["result"]["registration"]["binding"]
+    if decoded[own["identity_evidence_path"]] != item["identity_evidence"]:
+        raise ValueError("Selected identity bytes differ from their document archive.")
 
 
 def _relative(value):
@@ -108,14 +149,14 @@ def _selection(database, batch_ids):
 
 
 def _selected_registration(root, item):
-    """Check the archived registry structure; replay the selected identity only.
+    """Check registration structure before restoring archived identity evidence.
 
-    Other bindings' identity files were not archived with this batch. Their
-    existence is not invented here and they do not authorize this selection.
+    CSV batches contain the selected identity. Text batches additionally retain
+    every reviewed identity needed to replay the complete registered document.
     """
     registry = _json(item["registry_bytes"])
     intake_registry._object(registry, intake_registry.REGISTRY_KEYS, "archived registry")
-    if registry["registry_version"] not in ("1", "2") or not all(
+    if registry["registry_version"] not in ("1", "2", "3") or not all(
             isinstance(registry[key], list) for key in ("bindings", "uploads")):
         raise ValueError("Archived intake registry structure is unsupported.")
     contracts = load_dataset_contracts(root)
@@ -157,30 +198,43 @@ def _replay(root, item, provenance):
     if result["provenance"] != provenance or any(value is None for value in provenance.values()):
         raise ValueError("Intake processing rules changed; explicitly review the batch before publication.")
     binding, receipt = _selected_registration(root, item)
+    text_source = receipt["mapping_version"] in TEXT_MAPPINGS
     with tempfile.TemporaryDirectory(prefix="retail-registration-replay-") as temp:
         base = Path(temp)
-        identity = base / _relative(binding["identity_evidence_path"])
-        identity.parent.mkdir(parents=True, exist_ok=True)
-        identity.write_bytes(item["identity_evidence"])
-        # The temporary registry is a selection of archived reviewed entries,
-        # retaining the original identity path and bytes, not model metadata.
+        archived_registry = _json(item["registry_bytes"])
+        if text_source:
+            _document_identities(base, item, archived_registry)
+        else:
+            identity = base / _relative(binding["identity_evidence_path"])
+            identity.parent.mkdir(parents=True, exist_ok=True)
+            identity.write_bytes(item["identity_evidence"])
+        # Text requires all original receipts; CSV retains its selected entry.
+        # Both restore reviewed identity bytes at their registered paths.
         registry = base / "publication-selected-registry.json"
         while registry.exists():
             registry = registry.with_name("selected-" + registry.name)
-        registry.write_bytes(_bytes({"registry_version": _json(item["registry_bytes"])["registry_version"],
-                                     "bindings": [binding], "uploads": [receipt]}))
-        resolved = intake_registry.resolve_upload(root, registry, result["upload_id"], item["data"])
+        registry.write_bytes(item["registry_bytes"] if text_source else _bytes({
+            "registry_version": archived_registry["registry_version"],
+            "bindings": [binding], "uploads": [receipt]}))
+        if text_source:
+            replayed = batch_store.replay_document_group(
+                root, registry, result["upload_id"], item["data"], result["proposals"])
+            resolved, checked = replayed["resolved"], replayed["preview"]
+        else:
+            resolved = intake_registry.resolve_upload(root, registry, result["upload_id"], item["data"])
+            checked = preview_csv(root, item["data"], resolved["context"], result["proposals"],
+                                  mapping_version=resolved["metadata"]["mapping_version"])
     registration = {"receipt": resolved["receipt"], "binding": resolved["binding"],
                     "context": asdict(resolved["context"]),
                     "identity_evidence_sha256": _sha(item["identity_evidence"])}
+    if text_source:
+        registration["document_identity_evidence"] = resolved["document_identity_evidence"]
     if registration != result["registration"]:
         raise ValueError("Archived registration conflicts with independently replayed source scope.")
     metadata = asdict(build_batch_metadata({**resolved["metadata"], "batch_id": result["batch_id"],
                      "received_at": result["received_at"], "status": "validated"}, load_dataset_contracts(root)))
     if metadata != result["metadata"]:
         raise ValueError("Archived batch metadata conflicts with the reviewed upload.")
-    checked = preview_csv(root, item["data"], resolved["context"], result["proposals"],
-                          mapping_version=resolved["metadata"]["mapping_version"])
     if checked["status"] != "validated" or _bytes(checked) != _bytes(result["preview"]):
         raise ValueError("Archived preview differs from independent source replay.")
 
@@ -275,7 +329,17 @@ def _read_publication(root, directory, publication_id):
             any(not isinstance(item, str) or not re.fullmatch(BATCH_PATTERN, item) for item in ids) or
             ids != sorted(set(ids))):
         raise ValueError("Publication batch selection is invalid.")
-    archives = {f"archive/{batch_id}/{name}" for batch_id in ids for name in ARCHIVE_NAMES}
+    archives = set()
+    for batch_id in ids:
+        result = _json(contents.get(f"archive/{batch_id}/result.json", b"null"))
+        if not isinstance(result, dict) or set(result) != RESULT_KEYS or result["batch_id"] != batch_id:
+            raise ValueError("Publication batch result fields are incomplete or inconsistent.")
+        try:
+            source_name = _source_name(result)
+        except (KeyError, TypeError) as exc:
+            raise ValueError("Publication batch source format is missing.") from exc
+        archives.update(f"archive/{batch_id}/{name}" for name in
+                        (ARCHIVE_NAMES - {"source.csv"}) | {source_name})
     if not archives <= set(contents):
         raise ValueError("Publication batch archives are incomplete.")
     for name in contents:
@@ -318,7 +382,7 @@ def publish(root: Path, database: Path, directory: Path, batch_ids: list[str], *
             _write(staging / "evidence", name, data)
         for item in selected:
             archive = staging / "archive" / item["result"]["batch_id"]
-            for name, data in {"result.json": _bytes(item["result"]), "source.csv": item["data"],
+            for name, data in {"result.json": _bytes(item["result"]), _source_name(item["result"]): item["data"],
                                "registry.json": item["registry_bytes"],
                                "identity.json": item["identity_evidence"]}.items():
                 _write(archive, name, data)

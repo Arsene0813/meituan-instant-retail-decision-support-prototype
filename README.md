@@ -20,6 +20,8 @@ Promotion, subsidy, pricing, SKU arrangement, ranking position, and fulfillment 
 
 The project organizes multi-store operating evidence so that each supported interpretation can be traced to defined fields, reporting periods, and source records as the business expands.
 
+Reviewed Chinese source documents can be received atomically across stores and datasets, with original text positions retained through date queries and RAC. See [text intake](retail_ops/ingestion/TEXT_INTAKE.md) for registered formats and commands.
+
 ## Evidence Workflow
 
 The repository follows one evidence path:

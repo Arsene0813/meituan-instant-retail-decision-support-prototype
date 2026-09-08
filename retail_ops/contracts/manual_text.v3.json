@@ -1,0 +1,228 @@
+{
+  "mapping_version": "manual_text_v3",
+  "store_aliases": {
+    "B": "B",
+    "C": "C",
+    "D": "D",
+    "E": "E",
+    "F": "F"
+  },
+  "store_dataset_id": "store_period_panel_metrics",
+  "fields": {
+    "成交金额": {
+      "field": "transaction_amount",
+      "format": "number"
+    },
+    "成交订单量": {
+      "field": "transaction_orders",
+      "format": "number"
+    },
+    "预计收入": {
+      "field": "estimated_income_proxy",
+      "format": "number"
+    },
+    "单均价": {
+      "field": "average_order_value",
+      "format": "number"
+    },
+    "店铺曝光人数": {
+      "field": "exposure_users",
+      "format": "number"
+    },
+    "店铺曝光次数": {
+      "field": "exposure_times",
+      "format": "number"
+    },
+    "店铺曝光平均排名": {
+      "field": "store_average_rank",
+      "format": "number"
+    },
+    "入店人数": {
+      "field": "entry_users",
+      "format": "number"
+    },
+    "入店次数": {
+      "field": "entry_times",
+      "format": "number"
+    },
+    "入店转化率": {
+      "field": "entry_conversion_rate_pct",
+      "format": "percent"
+    },
+    "下单人数": {
+      "field": "order_users",
+      "format": "number"
+    },
+    "下单次数": {
+      "field": "order_times",
+      "format": "number"
+    },
+    "下单转化率": {
+      "field": "order_conversion_rate_pct",
+      "format": "percent"
+    },
+    "下单金额": {
+      "field": "order_amount",
+      "format": "number"
+    },
+    "支付人数": {
+      "field": "payment_users",
+      "format": "number"
+    },
+    "支付金额": {
+      "field": "payment_amount",
+      "format": "number"
+    },
+    "支付转化率": {
+      "field": "payment_conversion_rate_pct",
+      "format": "percent"
+    },
+    "搜索曝光平均排名": {
+      "field": "search_average_rank",
+      "format": "number"
+    },
+    "商家列表平均排名": {
+      "field": "merchant_list_average_rank",
+      "format": "number"
+    },
+    "订单页曝光人数": {
+      "field": "order_page_exposure_users",
+      "format": "number"
+    },
+    "其他曝光人数": {
+      "field": "other_exposure_users",
+      "format": "number"
+    },
+    "退款金额": {
+      "field": "refund_amount",
+      "format": "number"
+    },
+    "退款订单数（全部退款）": {
+      "field": "full_refund_orders",
+      "format": "number"
+    },
+    "退款订单数（全部退款+部分退款）": {
+      "field": "refund_orders_all_or_partial",
+      "format": "number"
+    },
+    "活动营业总额": {
+      "field": "activity_original_transaction_amount",
+      "format": "number"
+    },
+    "活动订单数": {
+      "field": "activity_orders",
+      "format": "number"
+    },
+    "活动成本": {
+      "field": "activity_cost",
+      "format": "number"
+    },
+    "商家补贴金额": {
+      "field": "merchant_subsidy_amount",
+      "format": "number"
+    },
+    "平台补贴金额": {
+      "field": "platform_subsidy_amount",
+      "format": "number"
+    },
+    "投入产出比": {
+      "field": "activity_cost_ratio_pct",
+      "format": "percent"
+    },
+    "商圈同行排名（按核心经营数据）": {
+      "field": "business_district_rank",
+      "format": "number"
+    },
+    "搜索曝光人数": {
+      "field": "search_exposure_users",
+      "format": "number"
+    },
+    "搜索入店人数": {
+      "field": "search_entry_users",
+      "format": "number"
+    },
+    "商家列表曝光人数": {
+      "field": "merchant_list_exposure_users",
+      "format": "number"
+    },
+    "商家列表入店人数": {
+      "field": "merchant_list_entry_users",
+      "format": "number"
+    },
+    "活动专区曝光人数": {
+      "field": "activity_zone_exposure_users",
+      "format": "number"
+    },
+    "活动专区入店人数": {
+      "field": "activity_zone_entry_users",
+      "format": "number"
+    },
+    "订单页入店人数": {
+      "field": "order_page_entry_users",
+      "format": "number"
+    },
+    "其他入店人数": {
+      "field": "other_entry_users",
+      "format": "number"
+    },
+    "区域类型": {
+      "field": "region_type",
+      "format": "value",
+      "values": {
+        "青岛": "Qingdao",
+        "烟台": "Yantai"
+      }
+    },
+    "店铺类型": {
+      "field": "store_type",
+      "format": "value",
+      "values": {
+        "自营": "self-operated",
+        "合作": "partner"
+      }
+    }
+  },
+  "pending_labels": [
+    "搜索曝光",
+    "搜索入店",
+    "商家列表曝光",
+    "商家列表入店",
+    "活动专区曝光",
+    "活动专区入店",
+    "订单页入店",
+    "其他入店"
+  ],
+  "sections": [
+    {
+      "header": "本店top3搜索词",
+      "dataset_id": "demo2_top_search_terms",
+      "grain": "store_search_term_period",
+      "ranking_basis": null,
+      "parser": "search_terms",
+      "expected_items": 3
+    },
+    {
+      "header": "商品销量top3交易商品",
+      "dataset_id": "demo2_top_skus_by_sales_volume",
+      "grain": "store_sku_period",
+      "ranking_basis": "sales_volume",
+      "parser": "sku_sales_volume",
+      "expected_items": 3
+    },
+    {
+      "header": "top3交易商品成交金额",
+      "dataset_id": "demo2_top_skus_by_transaction_amount",
+      "grain": "store_sku_period",
+      "ranking_basis": "transaction_amount",
+      "parser": "sku_transaction_amount",
+      "expected_items": 3
+    }
+  ],
+  "ignored_notes": [
+    "（正确[✅](https://fonts.gstatic.com/s/e/notoemoji/17.0/2705/72.png)已使用）",
+    "（[✅](https://fonts.gstatic.com/s/e/notoemoji/17.0/2705/72.png)已使用）"
+  ],
+  "window_format": "iso_date_inclusive_range",
+  "canonical_mapping_version": "canonical_csv_v2",
+  "sku_amount_format": "labelled_amount_with_yuan"
+}

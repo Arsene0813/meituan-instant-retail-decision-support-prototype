@@ -62,7 +62,7 @@
 | `summary.queries`、`summary.facts` | 生成结果路径、列与记录数量 |
 | `publication_runtime.json` 中的 `code_sha256`、`engines` | 分析相关代码及 Python、SQLite、DuckDB、jsonschema、NumPy 版本 |
 
-`archive/<batch_id>/` 保存 `source.csv`、`registry.json`、`identity.json` 和 `result.json`。`evidence/` 包含本版规范视图与重算结果。SQL 和 fact 的既有相对 `source_path` 在这个目录内解析，再经 manifest 追到原文；不需要修改业务字段或添加虚构来源行。
+`archive/<batch_id>/` 保存原文件、`registry.json`、`identity.json` 和 `result.json`。规范 CSV 的原文件为 `source.csv`；已登记中文格式为 `source.txt`，其结果还包含重放整份文档所需的身份字节包。文件名由登记格式确定。`evidence/` 包含本版规范视图与重算结果。SQL 和 fact 的既有相对 `source_path` 在这个目录内解析，再经 manifest 追到原文。中文的行列片段保留在 `source_locator`，见 [TEXT_INTAKE.md](TEXT_INTAKE.md)。
 
 分析返回的外层 JSON 包含 `publication_id`、`sql`、`facts`、`rac`。RAC 的 `source_path` 与判断字段继续沿用现有 schema。
 

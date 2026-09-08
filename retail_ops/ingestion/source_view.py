@@ -10,6 +10,7 @@ import re
 
 from . import batch_store, intake_registry, preview
 from .contracts import load_dataset_contracts
+from .text_document import TEXT_MAPPINGS, parse_document, validate_text_locator
 
 
 RECORDS_PATH = "retail_ops/outputs/published_source_records.json"
@@ -35,6 +36,20 @@ def _source_rows(data, fields):
         rows[reader.line_num] = dict(zip(header, cells))
     _require(rows, "source rows are required")
     return rows
+
+
+def _text_rows(root, item, receipt, checked):
+    """Rebuild values and physical locators from the complete archived document."""
+    parsed = parse_document(root, item["data"], receipt["mapping_version"],
+                            item["result"]["proposals"])
+    _require(parsed["status"] == "validated" and not parsed["errors"],
+             "the complete source document must independently validate")
+    matches = [group for group in parsed["groups"]
+               if group["source_block_line"] == receipt["source_block_line"]
+               and group["dataset_id"] == receipt["dataset_id"]]
+    _require(len(matches) == 1 and batch_store._json(matches[0]["preview"]) == batch_store._json(checked),
+             "selected text values or locators differ from the archived document")
+    return matches[0]["preview"]["validated_records"]
 
 
 def _records(root, selected):
@@ -77,33 +92,41 @@ def _records(root, selected):
         for field in ("source_page", "extracted_at", "mapping_version"):
             _require(metadata[field] == receipt[field], "source metadata disagrees: " + field)
         _require(checked["mapping_version"] == metadata["mapping_version"], "mapping version disagrees")
+        text_source = metadata["mapping_version"] in TEXT_MAPPINGS
         source = {"batch_id": batch_id, **{key: binding[key] for key in (
             "binding_id", "source_system", "source_account_id", "source_store_id")},
             **{key: metadata[key] for key in ("source_page", "extracted_at", "file_sha256", "mapping_version")}}
         _require(all(isinstance(value, str) and value and value == value.strip() for value in source.values()),
                  "source identity and provenance require non-empty text")
         if "aggregation_scope" in receipt:
-            _require(receipt["mapping_version"] == "canonical_csv_v2" and receipt["aggregation_scope"] is not None,
+            _require(receipt["mapping_version"] in {"canonical_csv_v2", *TEXT_MAPPINGS}
+                     and receipt["aggregation_scope"] is not None,
                      "aggregation scope requires a reviewed version 2 receipt object")
         scope = intake_registry.validate_aggregation_scope(receipt.get("aggregation_scope"))
         source.update(aggregation_scope=scope,
                       aggregation_scope_sha256=intake_registry.aggregation_scope_sha256(scope))
-        raw_rows = _source_rows(item["data"], fields)
+        raw_rows = None if text_source else _source_rows(item["data"], fields)
+        if text_source:
+            _text_rows(root, item, receipt, checked)
         validated = checked["validated_records"]
         _require(isinstance(validated, list) and validated, "validated records are required")
         source_lines = set()
         for row in validated:
-            _require(isinstance(row, dict) and set(row) == {"source_line_end", "record"},
+            row_fields = {"source_line_end", "record"} | ({"source_locator"} if text_source else set())
+            _require(isinstance(row, dict) and set(row) == row_fields,
                      "validated row fields are incomplete or unregistered")
             record, line = row["record"], row["source_line_end"]
-            _require(type(line) is int and line in raw_rows and line not in source_lines,
-                     "source line is absent or duplicated")
-            source_lines.add(line)
             _require(isinstance(record, dict) and set(record) == fields, "canonical record fields disagree")
-            for field in fields:
-                normalized = preview._value(field, raw_rows[line].get(field))
-                _require(batch_store._json(record[field]) == batch_store._json(normalized),
-                         "canonical value differs from its source line: " + field)
+            if text_source:
+                validate_text_locator(row["source_locator"], record, line)
+            else:
+                _require(type(line) is int and line in raw_rows and line not in source_lines,
+                         "source line is absent or duplicated")
+                source_lines.add(line)
+                for field in fields:
+                    normalized = preview._value(field, raw_rows[line].get(field))
+                    _require(batch_store._json(record[field]) == batch_store._json(normalized),
+                             "canonical value differs from its source line: " + field)
             _require(all(record[field] == context[field] for field in ("store_id", "period_start", "period_end")),
                      "record belongs to a different store or source window")
             key = (dataset_id, *(record[field] for field in contract.key_fields))
@@ -111,8 +134,10 @@ def _records(root, selected):
                      "record logical key is incomplete or duplicated")
             seen.add(key)
             records.append((key, {"dataset_id": dataset_id, "record": dict(record),
-                                  "source": {**source, "source_line_end": line}}))
-        _require(source_lines == set(raw_rows), "the validated selection omits a source row")
+                                  "source": {**source, "source_line_end": line,
+                                             **({"source_locator": row["source_locator"]} if text_source else {})}}))
+        if not text_source:
+            _require(source_lines == set(raw_rows), "the validated selection omits a source row")
     records.sort(key=lambda item: (*item[0], item[1]["source"]["batch_id"]))
     return [value for _, value in records]
 

@@ -27,6 +27,9 @@ FACTS_PATH = "retail_ops/outputs/generated_demo2_retail_memory_facts.json"
 STATIC_FILES = (
     PROFILE_PATH, "retail_ops/contracts/datasets.v1.json",
     "retail_ops/contracts/range_query.v1.json",
+    "retail_ops/contracts/intake_registry.v3.schema.json",
+    "retail_ops/contracts/manual_text.v1.json", "retail_ops/contracts/manual_text.v2.json",
+    "retail_ops/contracts/manual_text.v3.json",
     "retail_ops/data/DATA_DICTIONARY.md", "retail_ops/TECHNICAL_APPENDIX.md",
     "retail_ops/COMPARABILITY_GATE_V0.md", "rac/README.md",
     "rac/schemas/cognition_state.schema.json", "rac/schemas/range_cognition_state.v1.schema.json",
@@ -35,6 +38,7 @@ STATIC_FILES = (
 )
 CODE_FILES = (
     "retail_ops/ingestion/contracts.py", "retail_ops/ingestion/preview.py",
+    "retail_ops/ingestion/text_preview.py", "retail_ops/ingestion/text_document.py",
     "retail_ops/ingestion/source_windows.py", "retail_ops/ingestion/source_view.py",
     "retail_ops/ingestion/source_query.py",
     "retail_ops/ingestion/range_analysis.py", "rac/src/range_evidence_review.py",
@@ -144,7 +148,8 @@ def build_evidence_view(root: Path, selected: list[dict]) -> dict:
                 if set(record) != set(columns):
                     raise ValueError("replayed record does not match the registered target field set")
                 key = tuple(record[field] for field in contracts[target].key_fields)
-                rows.append((key, record, result["batch_id"], item["source_line_end"]))
+                rows.append((key, record, result["batch_id"], item["source_line_end"],
+                             item.get("source_locator")))
         rows.sort(key=lambda row: row[0])
         if len({row[0] for row in rows}) != len(rows):
             raise ValueError("multiple selected records target the same canonical key")
@@ -155,9 +160,12 @@ def build_evidence_view(root: Path, selected: list[dict]) -> dict:
         next(reader)
         target_lineage = []
         for row, cells in zip(rows, reader):
-            target_lineage.append({"key": dict(zip(contracts[target].key_fields, row[0])),
-                                   "output_line_end": reader.line_num,
-                                   "batch_id": row[2], "source_line_end": row[3]})
+            location = {"key": dict(zip(contracts[target].key_fields, row[0])),
+                        "output_line_end": reader.line_num,
+                        "batch_id": row[2], "source_line_end": row[3]}
+            if row[4] is not None:
+                location["source_locator"] = row[4]
+            target_lineage.append(location)
         lineage[target] = target_lineage
         materialized[target] = {"source_path": path, "input_dataset_ids": view["input_dataset_ids"],
                                 "row_count": len(rows), "batch_ids": sorted({row[2] for row in rows}),

@@ -14,13 +14,14 @@ from dataclasses import asdict
 from datetime import date
 from pathlib import Path
 
-from . import preview
+from . import preview, source_windows
 
 
 PROFILE_PATH = Path("retail_ops/contracts/manual_text.v1.json")
 PROFILE_PATHS = {
     "manual_text_v1": PROFILE_PATH,
     "manual_text_v2": Path("retail_ops/contracts/manual_text.v2.json"),
+    "manual_text_v3": Path("retail_ops/contracts/manual_text.v3.json"),
 }
 PARSERS = {
     "search_terms": ("store_search_term_period", None),
@@ -47,6 +48,16 @@ def _load_profile(root, version):
     profile = json.loads(data, object_pairs_hook=_unique)
     if profile["mapping_version"] != version:
         raise ValueError("source format is not registered")
+    if version == "manual_text_v3" and (
+        profile.get("window_format") != "iso_date_inclusive_range"
+        or profile.get("canonical_mapping_version") != "canonical_csv_v2"
+        or profile.get("sku_amount_format") != "labelled_amount_with_yuan"
+        or set(profile["fields"]) & {
+            "搜索曝光", "搜索入店", "商家列表曝光", "商家列表入店",
+            "活动专区曝光", "活动专区入店", "订单页入店", "其他入店",
+        }
+    ):
+        raise ValueError("manual_text_v3 requires its registered dates and explicit units")
     dataset = profile["store_dataset_id"]
     if dataset not in preview.SCHEMAS or preview.ROUTES[dataset] != ("store_period", None):
         raise ValueError("store source profile requires an explicit store-period schema")
@@ -91,7 +102,14 @@ def _value_tail(line, label):
     return rest.lstrip().lstrip(":：").strip()
 
 
-def _window(text):
+def _window(text, version="manual_text_v1"):
+    if version == "manual_text_v3":
+        matched = re.fullmatch(r"([0-9]{4}-[0-9]{2}-[0-9]{2})至([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
+        if not matched:
+            raise ValueError("manual_text_v3 requires YYYY-MM-DD至YYYY-MM-DD")
+        start, end = matched.groups()
+        month = source_windows.validate_source_window(start, end, "canonical_csv_v2")
+        return {"period_start": start, "period_end": end, "period_month": month}
     month = re.fullmatch(r"([0-9]{4})[.-]([0-9]{1,2})", text)
     if month:
         year, number = map(int, month.groups())
@@ -126,7 +144,7 @@ def _split_items(body):
     return items
 
 
-def _list_rows(body, parser):
+def _list_rows(body, parser, *, labelled_amount=False):
     items = _split_items(body)
     if len(items) != 3 or any(not item for item in items):
         raise ValueError("the registered Top 3 list needs three explicit source entries")
@@ -162,6 +180,8 @@ def _list_rows(body, parser):
                     raise ValueError("labelled SKU amount requires 元")
                 value = value[:-1] if value else value
             else:
+                if labelled_amount:
+                    raise ValueError("manual_text_v3 SKU amounts require an explicit 成交金额 label")
                 match = re.fullmatch(r"(.+?[^0-9.])([+-]?[0-9]+(?:\.[0-9]+)?)元", item)
                 if not match:
                     raise ValueError("SKU amount entry needs a name followed by an amount and 元")
@@ -223,7 +243,7 @@ def preview_text(root: Path, data: bytes, version: str, expected_store_ids=None,
             try:
                 if block["period"] is not None:
                     raise ValueError("a second source window requires a new store block")
-                block["period"] = _window(line[len("时间范围"):].lstrip(" :："))
+                block["period"] = _window(line[len("时间范围"):].lstrip(" :："), version)
                 block["source_window"] = {"source_line": number, "source_text": line}
             except ValueError as exc:
                 block["issues"].append({"source_line": number, "source_text": line, "reason": str(exc)})
@@ -241,7 +261,7 @@ def preview_text(root: Path, data: bytes, version: str, expected_store_ids=None,
             try:
                 if any(group["context"]["dataset_id"] == section["dataset_id"] for group in block["groups"]):
                     raise ValueError("source list is repeated in the same store window")
-                rows = _list_rows(match[1], section["parser"])
+                rows = _list_rows(match[1], section["parser"], labelled_amount=version == "manual_text_v3")
                 context = preview.UploadContext(section["dataset_id"], block["store_id"],
                     block["period"]["period_start"], block["period"]["period_end"], section["grain"], section["ranking_basis"])
                 block["groups"].append({"context": asdict(context), "candidate_records": [
@@ -254,7 +274,7 @@ def preview_text(root: Path, data: bytes, version: str, expected_store_ids=None,
             continue
         pending = next((label for label in profile["pending_labels"] if _value_tail(line, label) is not None), None)
         if pending:
-            if _value_tail(line, pending):
+            if version == "manual_text_v3" or _value_tail(line, pending):
                 block["issues"].append({"source_line": number, "source_text": line, "reason": "source label needs a confirmed unit", "source_label": pending})
             continue
         mapped = False
@@ -319,7 +339,8 @@ def preview_text(root: Path, data: bytes, version: str, expected_store_ids=None,
         writer.writerows(rows)
         proposed = None if proposals is None else proposals[cursor:cursor + len(rows)]
         cursor += len(rows)
-        checked = preview.preview_csv(root, buffer.getvalue().encode(), scope, proposed)
+        checked = preview.preview_csv(root, buffer.getvalue().encode(), scope, proposed,
+            mapping_version="canonical_csv_v2" if version == "manual_text_v3" else "canonical_csv_v1")
         group["schema_sha256"] = checked.get("schema_sha256")
         if checked["status"] != "validated":
             group["issues"].extend(checked["errors"])
