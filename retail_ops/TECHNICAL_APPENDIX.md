@@ -417,6 +417,23 @@ The generation script is:
 
 - `retail_ops/scripts/generate_demo2_retail_memory_facts.py`
 
+The generator joins search-term and transaction-amount SKU records by
+`store_id`, `period_start`, and `period_end`. Each fact uses the diagnostic
+row's `period_month` and dates. Auxiliary rows retain their registered rank;
+identical names at different ranks remain separate records. The Top-3 slot
+selects source ranks 1–3, matching the SQL selection.
+
+The source dataset contract fixes the SKU ranking basis. Missing optional
+values become JSON `null`; zero stays zero. Counts use exact integer parsing.
+Decimal values are carried through without two-place rounding, and generation
+stops if the current JSON number format would change their decimal value.
+Missing keys, conflicting month metadata, duplicate keys, or invalid source
+columns stop generation before the existing fact file is replaced.
+
+These checks apply to fact construction. The current Demo 2 SQL scope and API
+remain tied to their registered March fixture; broader query scope and a
+shared published data version are separate changes.
+
 The validation script is:
 
 - `retail_ops/scripts/validate_demo2_retail_memory_facts.py`

@@ -24,6 +24,7 @@
       "search_entry_share_pct": 88.7,
       "top_search_terms": [
         {
+          "search_term_rank": 1,
           "search_term": "隐形眼镜护理液",
           "search_term_en": "contact lens care solution",
           "search_term_exposure_times": 512,
@@ -31,6 +32,7 @@
           "search_term_order_times": 15
         },
         {
+          "search_term_rank": 2,
           "search_term": "美瞳护理液",
           "search_term_en": "colored contact lens care solution",
           "search_term_exposure_times": 231,
@@ -38,6 +40,7 @@
           "search_term_order_times": 6
         },
         {
+          "search_term_rank": 3,
           "search_term": "美瞳日抛",
           "search_term_en": "daily disposable colored contact lenses",
           "search_term_exposure_times": 231,
@@ -61,6 +64,7 @@
       "search_entry_users",
       "search_entry_rate_pct",
       "search_entry_share_pct",
+      "search_term_rank",
       "search_term",
       "search_term_en",
       "search_term_exposure_times",
@@ -184,24 +188,31 @@
       "top3_sku_transaction_amount_share_pct": 11.15,
       "top_skus_by_transaction_amount": [
         {
+          "sku_rank": 1,
           "sku_name": "隐形眼镜护理液（海俪恩）隐形眼镜多功能护理液（清润）（舒适型）120ml/瓶/盒",
           "sku_name_en": "Hailien Qingrun comfort-type multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 678.45
         },
         {
+          "sku_rank": 2,
           "sku_name": "（博士伦）透明隐形眼镜（清朗）（日抛）（每日抛弃型）10片/盒",
           "sku_name_en": "Bausch + Lomb Qinglang clear daily disposable contact lenses, 10 lenses/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 320.95
         },
         {
+          "sku_rank": 3,
           "sku_name": "（博士伦）透明隐形眼镜（奥澈）（月抛）（硅水凝胶）3片/盒保湿新科技 强烈推荐",
           "sku_name_en": "Bausch + Lomb Aoche clear monthly silicone hydrogel contact lenses, 3 lenses/box, moisturizing technology",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 301.5
         }
       ]
     },
     "calculation": "top3_sku_transaction_amount_share_pct = top3_sku_transaction_amount / transaction_amount * 100",
     "source_fields": [
+      "sku_rank",
       "sku_name",
       "sku_name_en",
       "sku_transaction_amount",
@@ -298,6 +309,7 @@
       "search_entry_share_pct": 68.8,
       "top_search_terms": [
         {
+          "search_term_rank": 1,
           "search_term": "隐形眼镜护理液",
           "search_term_en": "contact lens care solution",
           "search_term_exposure_times": 706,
@@ -305,6 +317,7 @@
           "search_term_order_times": 37
         },
         {
+          "search_term_rank": 2,
           "search_term": "护理液",
           "search_term_en": "care solution",
           "search_term_exposure_times": 167,
@@ -312,6 +325,7 @@
           "search_term_order_times": 2
         },
         {
+          "search_term_rank": 3,
           "search_term": "美瞳护理液",
           "search_term_en": "colored contact lens care solution",
           "search_term_exposure_times": 128,
@@ -335,6 +349,7 @@
       "search_entry_users",
       "search_entry_rate_pct",
       "search_entry_share_pct",
+      "search_term_rank",
       "search_term",
       "search_term_en",
       "search_term_exposure_times",
@@ -458,24 +473,31 @@
       "top3_sku_transaction_amount_share_pct": 28.38,
       "top_skus_by_transaction_amount": [
         {
+          "sku_rank": 1,
           "sku_name": "（傲滴）隐形眼镜多功能护理液（清洁舒适）（无菌）120ml/瓶/盒",
           "sku_name_en": "Aodi cleaning-and-comfort sterile multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 785.38
         },
         {
+          "sku_rank": 2,
           "sku_name": "（海俪恩）隐形眼镜多功能护理液（海俪恩清润）120ml/瓶",
           "sku_name_en": "Hailien Qingrun multi-purpose contact lens solution, 120ml bottle",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 694.96
         },
         {
+          "sku_rank": 3,
           "sku_name": "（博士伦）硬性角膜接触镜护理液（博视顿新洁）120ml/瓶/盒",
           "sku_name_en": "Bausch + Lomb Boston Xinjie hard contact lens care solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 524.5
         }
       ]
     },
     "calculation": "top3_sku_transaction_amount_share_pct = top3_sku_transaction_amount / transaction_amount * 100",
     "source_fields": [
+      "sku_rank",
       "sku_name",
       "sku_name_en",
       "sku_transaction_amount",
@@ -572,6 +594,7 @@
       "search_entry_share_pct": 87.65,
       "top_search_terms": [
         {
+          "search_term_rank": 1,
           "search_term": "隐形眼镜护理液",
           "search_term_en": "contact lens care solution",
           "search_term_exposure_times": 800,
@@ -579,6 +602,7 @@
           "search_term_order_times": 45
         },
         {
+          "search_term_rank": 2,
           "search_term": "美瞳日抛",
           "search_term_en": "daily disposable colored contact lenses",
           "search_term_exposure_times": 226,
@@ -586,6 +610,7 @@
           "search_term_order_times": 9
         },
         {
+          "search_term_rank": 3,
           "search_term": "隐形眼镜日抛",
           "search_term_en": "daily disposable contact lenses",
           "search_term_exposure_times": 195,
@@ -609,6 +634,7 @@
       "search_entry_users",
       "search_entry_rate_pct",
       "search_entry_share_pct",
+      "search_term_rank",
       "search_term",
       "search_term_en",
       "search_term_exposure_times",
@@ -732,24 +758,31 @@
       "top3_sku_transaction_amount_share_pct": 16.9,
       "top_skus_by_transaction_amount": [
         {
+          "sku_rank": 1,
           "sku_name": "（爱尔康）隐形眼镜多功能护理液（傲滴）120ml/瓶/盒",
           "sku_name_en": "Alcon Aodi multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 1619.79
         },
         {
+          "sku_rank": 2,
           "sku_name": "（爱尔康）隐形眼镜多功能护理液（傲滴）（内含镜盒）355ml/瓶/盒",
           "sku_name_en": "Alcon Aodi multi-purpose contact lens solution with lens case included, 355ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 832.77
         },
         {
+          "sku_rank": 3,
           "sku_name": "（海俪恩）隐形眼镜多功能护理液（全视）360ml/瓶/盒",
           "sku_name_en": "Hailien Quanshi multi-purpose contact lens solution, 360ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 603.22
         }
       ]
     },
     "calculation": "top3_sku_transaction_amount_share_pct = top3_sku_transaction_amount / transaction_amount * 100",
     "source_fields": [
+      "sku_rank",
       "sku_name",
       "sku_name_en",
       "sku_transaction_amount",
@@ -846,6 +879,7 @@
       "search_entry_share_pct": 87.01,
       "top_search_terms": [
         {
+          "search_term_rank": 1,
           "search_term": "隐形眼镜护理液",
           "search_term_en": "contact lens care solution",
           "search_term_exposure_times": 412,
@@ -853,6 +887,7 @@
           "search_term_order_times": 17
         },
         {
+          "search_term_rank": 2,
           "search_term": "护理液",
           "search_term_en": "care solution",
           "search_term_exposure_times": 93,
@@ -860,6 +895,7 @@
           "search_term_order_times": 1
         },
         {
+          "search_term_rank": 3,
           "search_term": "美瞳护理液",
           "search_term_en": "colored contact lens care solution",
           "search_term_exposure_times": 59,
@@ -883,6 +919,7 @@
       "search_entry_users",
       "search_entry_rate_pct",
       "search_entry_share_pct",
+      "search_term_rank",
       "search_term",
       "search_term_en",
       "search_term_exposure_times",
@@ -1006,24 +1043,31 @@
       "top3_sku_transaction_amount_share_pct": 12.55,
       "top_skus_by_transaction_amount": [
         {
+          "sku_rank": 1,
           "sku_name": "（海俪恩）隐形眼镜多功能护理液（清润）（舒适型）120ml/瓶/盒",
           "sku_name_en": "Hailien Qingrun comfort-type multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 256.97
         },
         {
+          "sku_rank": 2,
           "sku_name": "（爱尔康）隐形眼镜多功能护理液（傲滴）120ml/瓶/盒",
           "sku_name_en": "Alcon Aodi multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 243.78
         },
         {
+          "sku_rank": 3,
           "sku_name": "（博士伦）隐形眼镜多功能护理液（300ml/瓶+120ml/瓶）/盒",
           "sku_name_en": "Bausch + Lomb multi-purpose contact lens solution set, 300ml bottle + 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 225.5
         }
       ]
     },
     "calculation": "top3_sku_transaction_amount_share_pct = top3_sku_transaction_amount / transaction_amount * 100",
     "source_fields": [
+      "sku_rank",
       "sku_name",
       "sku_name_en",
       "sku_transaction_amount",
@@ -1120,6 +1164,7 @@
       "search_entry_share_pct": 88.91,
       "top_search_terms": [
         {
+          "search_term_rank": 1,
           "search_term": "隐形眼镜护理液",
           "search_term_en": "contact lens care solution",
           "search_term_exposure_times": 712,
@@ -1127,6 +1172,7 @@
           "search_term_order_times": 34
         },
         {
+          "search_term_rank": 2,
           "search_term": "护理液",
           "search_term_en": "care solution",
           "search_term_exposure_times": 184,
@@ -1134,6 +1180,7 @@
           "search_term_order_times": 15
         },
         {
+          "search_term_rank": 3,
           "search_term": "隐形眼镜日抛",
           "search_term_en": "daily disposable contact lenses",
           "search_term_exposure_times": 119,
@@ -1157,6 +1204,7 @@
       "search_entry_users",
       "search_entry_rate_pct",
       "search_entry_share_pct",
+      "search_term_rank",
       "search_term",
       "search_term_en",
       "search_term_exposure_times",
@@ -1280,24 +1328,31 @@
       "top3_sku_transaction_amount_share_pct": 19.33,
       "top_skus_by_transaction_amount": [
         {
+          "sku_rank": 1,
           "sku_name": "（海俪恩）隐形眼镜多功能护理液（清润）（舒适型）120ml/瓶/盒",
           "sku_name_en": "Hailien Qingrun comfort-type multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 809.34
         },
         {
+          "sku_rank": 2,
           "sku_name": "（爱尔康）隐形眼镜多功能护理液（傲滴）120ml/瓶/盒",
           "sku_name_en": "Alcon Aodi multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 715.0
         },
         {
+          "sku_rank": 3,
           "sku_name": "（博士伦）隐形眼镜多功能护理液（润明）120ml/瓶/盒",
           "sku_name_en": "Bausch + Lomb Runming multi-purpose contact lens solution, 120ml bottle/box",
+          "sku_category_note": "not_classified",
           "sku_transaction_amount": 274.06
         }
       ]
     },
     "calculation": "top3_sku_transaction_amount_share_pct = top3_sku_transaction_amount / transaction_amount * 100",
     "source_fields": [
+      "sku_rank",
       "sku_name",
       "sku_name_en",
       "sku_transaction_amount",
