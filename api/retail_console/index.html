@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="console-token" content="__CONSOLE_TOKEN__">
+  <title>美团数据工作台</title>
+  <link rel="stylesheet" href="/assets/console.css">
+  <script src="/assets/console.js" defer></script>
+</head>
+<body>
+  <header><div><span class="eyebrow">MEITUAN · RETAIL OPERATIONS</span><h1>美团数据工作台</h1></div><span class="local">本地工作区</span></header>
+  <main>
+    <nav aria-label="工作步骤"><button class="active" data-panel="upload" aria-pressed="true">01 上传数据</button><button data-panel="batches" aria-pressed="false">02 批次与发布</button><button data-panel="query" aria-pressed="false">03 日期查询与 RAC</button></nav>
+    <p id="global-status" class="status" role="status" aria-live="polite">正在读取本地配置…</p>
+
+    <section id="upload-panel" class="panel">
+      <div class="section-title"><div><h2>核对来源，再留存</h2><p>选择已登记的上传来源，与文件中的门店、日期和分类逐项核对。</p></div><button id="refresh-registry" class="secondary">刷新登记</button></div>
+      <div class="two-column">
+        <div class="card"><label for="selection">已核对的上传登记</label><select id="selection"><option value="">请选择</option></select>
+          <label for="source-file">原始文件 <span class="muted">UTF-8 CSV 或已登记中文文本，最大 8 MiB</span></label><input type="file" id="source-file" accept=".csv,.txt,text/plain,text/csv">
+          <p id="file-status" class="muted">请选择与登记摘要一致的文件。</p>
+          <label class="check"><input type="checkbox" id="revision">本次修订已有批次</label><div id="predecessors" hidden></div>
+          <button id="receive" class="primary" disabled>核对并留存</button><p id="receive-status" class="status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="card"><h3>所选来源</h3><div id="receipts" class="muted">选定登记后显示门店、来源窗口和数据分类。</div></div>
+      </div>
+      <div id="receive-result" class="result"></div>
+    </section>
+
+    <section id="batches-panel" class="panel" hidden>
+      <div class="section-title"><div><h2>选择进入分析的数据</h2><p>批次保留每次接收。发布版本由你明确选择，不自动取最新值。</p></div><button id="refresh-batches" class="secondary">刷新批次</button></div>
+      <div class="card"><div id="batch-list">尚未读取批次。</div><div class="toolbar"><button id="batch-prev" class="secondary" disabled>上一页</button><button id="batch-next" class="secondary" disabled>下一页</button><span id="selection-count">未选择批次</span><button id="clear-selection" class="secondary">清空选择</button><button id="publish" class="primary" disabled>发布所选批次</button></div><details><summary>查看全部已选批次（含其他页）</summary><div id="selected-batches"></div></details><p id="publish-status" role="status" class="status"></p><div id="publish-result"></div></div>
+      <div id="batch-detail" class="result"></div>
+    </section>
+
+    <section id="query-panel" class="panel" hidden>
+      <div class="section-title"><div><h2>按实际日期查看证据</h2><p>自然月和自选日期使用相同的日期规则。查询与 RAC 不保存查询记录。</p></div><button id="refresh-publications" class="secondary">刷新版本</button></div>
+      <div class="card query-controls">
+        <label for="publication">发布版本</label><select id="publication"><option value="">请选择一个明确版本</option></select><div class="toolbar"><button id="publication-more" class="secondary" disabled>加载更多版本</button><span id="publication-status" class="muted"></span></div>
+        <div class="row"><div><label for="dataset">数据分类</label><select id="dataset"></select></div><div><label for="stores">门店标识 <span class="muted">多个门店用逗号分开</span></label><input id="stores" placeholder="例如 B, C" autocomplete="off"></div></div>
+        <fieldset><legend>查询窗口</legend><div class="row"><div><label for="window-mode">选择方式</label><select id="window-mode"><option value="month">自然月</option><option value="range">自选日期</option></select></div><div id="month-control"><label for="month">月份</label><input id="month" type="month"></div><div id="start-control" hidden><label for="start">开始日</label><input id="start" type="date"></div><div id="end-control" hidden><label for="end">结束日（包含）</label><input id="end" type="date"></div></div></fieldset>
+        <label for="fields">查看字段 <span class="muted">可按 Ctrl 多选；不选时查询全部字段，RAC 默认检查成交金额与成交订单量</span></label><select id="fields" multiple size="5"></select>
+        <label class="check"><input id="baseline-enabled" type="checkbox">同店与较早区间比较</label><div id="baseline-controls" class="row" hidden><div><label for="baseline-start">基准开始日</label><input id="baseline-start" type="date"></div><div><label for="baseline-end">基准结束日</label><input id="baseline-end" type="date"></div></div><p id="review-note" class="muted"></p>
+        <div class="toolbar"><button id="query" class="primary" disabled>查看区间数据</button><button id="review" class="secondary" disabled>运行 RAC 核对</button><span id="query-status" class="status" role="status" aria-live="polite"></span></div>
+      </div>
+      <div id="query-result" class="result" aria-live="polite"></div>
+    </section>
+    <footer>Meituan Instant-Retail Decision Support Prototype · 原值、实际窗口、明确来源</footer>
+  </main>
+</body>
+</html>

@@ -22,6 +22,8 @@ The project organizes multi-store operating evidence so that each supported inte
 
 Reviewed Chinese source documents can be received atomically across stores and datasets, with original text positions retained through date queries and RAC. See [text intake](retail_ops/ingestion/TEXT_INTAKE.md) for registered formats and commands.
 
+The [local data console](retail_ops/ingestion/CONSOLE.md) connects reviewed uploads, batch inspection, explicit publication selection, date queries and RAC in one working page. Daily uploads are retained; queries remain read-only.
+
 ## Evidence Workflow
 
 The repository follows one evidence path:
