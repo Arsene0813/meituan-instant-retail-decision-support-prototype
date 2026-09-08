@@ -132,7 +132,7 @@
       "weight_reason": "Central to avoiding overconfident or misleading conclusions.",
       "weighting_method": "fixed review-priority bucket assignment; source: rac/src/mock_pipeline.py; used to order review attention within the current evidence scope",
       "weight_source": "rac/src/mock_pipeline.py",
-      "evidence_status": "missing"
+      "evidence_status": "partially_supported"
     },
     {
       "factor_id": "competitor_context",
@@ -141,7 +141,7 @@
       "weight_reason": "Potentially relevant but requires stronger evidence.",
       "weighting_method": "fixed review-priority bucket assignment; source: rac/src/mock_pipeline.py; used to order review attention within the current evidence scope",
       "weight_source": "rac/src/mock_pipeline.py",
-      "evidence_status": "missing"
+      "evidence_status": "partially_supported"
     }
   ],
   "evidence_packets": [
@@ -149,152 +149,190 @@
       "evidence_id": "evidence_activity_orders",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: activity_orders.",
+      "claim_supported": "activity_orders: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_activity_cost",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: activity_cost.",
+      "claim_supported": "activity_cost: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_merchant_subsidy",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: merchant_subsidy.",
+      "claim_supported": "merchant_subsidy: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_platform_subsidy",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: platform_subsidy.",
+      "claim_supported": "platform_subsidy: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_order_conversion",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: order_conversion.",
+      "claim_supported": "order_conversion: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_payment_conversion",
       "source_type": "markdown",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: payment_conversion.",
+      "claim_supported": "payment_conversion: registered definition_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_sku_margin_structure",
       "source_type": "markdown",
-      "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: sku_margin_structure.",
+      "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+      "claim_supported": "sku_margin_structure: registered boundary_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_competitor_context",
       "source_type": "markdown",
-      "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "claim_supported": "Provides context needed to evaluate factor: competitor_context.",
+      "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+      "claim_supported": "competitor_context: registered boundary_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     }
   ],
-  "hypotheses": [
-    {
-      "hypothesis_id": "H1",
-      "claim": "A bounded promotion review should cover activity cost, merchant and platform subsidy, and order and payment conversion.",
-      "confidence": 0.84,
-      "supporting_factors": [
-        "activity_orders",
-        "activity_cost",
-        "merchant_subsidy",
-        "platform_subsidy",
-        "order_conversion",
-        "payment_conversion"
-      ],
-      "weaknesses": [
-        "The available evidence defines review dimensions but does not establish a promotion outcome."
-      ],
-      "status": "strong"
+  "evidence_review": {
+    "method": "registered_local_evidence_rules_v1",
+    "scope": {
+      "store_ids": [],
+      "period_start": null,
+      "period_end": null
     },
-    {
-      "hypothesis_id": "H2",
-      "claim": "The current evidence can support a bounded promotion review checklist, but not an automatic promotion change.",
-      "confidence": 0.68,
-      "supporting_factors": [
-        "activity_orders",
-        "activity_cost",
-        "merchant_subsidy",
-        "platform_subsidy",
-        "order_conversion",
-        "payment_conversion"
-      ],
-      "weaknesses": [
-        "Repeated-period cost evidence is required for trend interpretation.",
-        "SKU margin and competitor context remain unresolved for final action."
-      ],
-      "status": "plausible"
-    }
-  ],
-  "critic_findings": [
-    {
-      "issue": "Current evidence scope is limited to committed local project files.",
-      "severity": "medium",
-      "recommendation": "Keep source paths and unresolved external requirements explicit."
-    },
-    {
-      "issue": "SKU margin and competitor context remain unresolved for final promotion action.",
-      "severity": "high",
-      "recommendation": "Keep the output at bounded review-checklist level."
-    }
-  ],
-  "fact_check": {
-    "status": "pass",
-    "unsupported_claims": [],
-    "definition_conflicts": []
-  },
-  "belief_update": {
-    "belief_id": "promotion_changes_require_multi_factor_check",
-    "claim": "The current evidence supports a bounded promotion-review checklist, not an automatic promotion change.",
-    "confidence": 0.8,
-    "status": "active",
-    "validity_conditions": [
-      "Retail operations decision-support questions."
-    ],
-    "limitations": [
-      "Margin fields are absent from the current evidence.",
-      "Competitor data may be incomplete.",
-      "One reporting window is insufficient for robust action attribution."
+    "confidence_method": "not_estimated",
+    "checks": [
+      {
+        "check_id": "activity_orders/document",
+        "factor_id": "activity_orders",
+        "evidence_id": "evidence_activity_orders",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "activity_orders: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "activity_cost/document",
+        "factor_id": "activity_cost",
+        "evidence_id": "evidence_activity_cost",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "activity_cost: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "merchant_subsidy/document",
+        "factor_id": "merchant_subsidy",
+        "evidence_id": "evidence_merchant_subsidy",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "merchant_subsidy: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "platform_subsidy/document",
+        "factor_id": "platform_subsidy",
+        "evidence_id": "evidence_platform_subsidy",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "platform_subsidy: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "order_conversion/document",
+        "factor_id": "order_conversion",
+        "evidence_id": "evidence_order_conversion",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "order_conversion: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "payment_conversion/document",
+        "factor_id": "payment_conversion",
+        "evidence_id": "evidence_payment_conversion",
+        "source_path": "retail_ops/data/DATA_DICTIONARY.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "payment_conversion: registered definition_evidence anchor matched."
+      },
+      {
+        "check_id": "sku_margin_structure/document",
+        "factor_id": "sku_margin_structure",
+        "evidence_id": "evidence_sku_margin_structure",
+        "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "sku_margin_structure: registered boundary_evidence anchor matched."
+      },
+      {
+        "check_id": "competitor_context/document",
+        "factor_id": "competitor_context",
+        "evidence_id": "evidence_competitor_context",
+        "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "competitor_context: registered boundary_evidence anchor matched."
+      }
     ]
   },
-  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nThe current evidence supports a bounded promotion-review checklist, not an automatic promotion change.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: strategic_recommendation\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | order_conversion, sku_margin_structure |\n| medium | 0.72 | Important context but not sufficient on its own. | payment_conversion |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | activity_orders, activity_cost, merchant_subsidy, platform_subsidy, competitor_context |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| activity_orders | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| activity_cost | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| merchant_subsidy | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| platform_subsidy | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| order_conversion | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| payment_conversion | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| sku_margin_structure | 0.85 | high | missing | Central to avoiding overconfident or misleading conclusions. |\n| competitor_context | 0.60 | default | missing | Potentially relevant but requires stronger evidence. |\n\n`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 6\n- Boundary matched packets: 2\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| activity_orders | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 659-661 | activity_orders | n/a |\n| activity_cost | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 665-667 | activity_cost | n/a |\n| merchant_subsidy | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 671-673 | merchant_subsidy_amount | n/a |\n| platform_subsidy | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 677-679 | platform_subsidy_amount | n/a |\n| order_conversion | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 523-525 | order_conversion_rate_pct, order_users, entry_users | n/a |\n| payment_conversion | retail_ops/data/DATA_DICTIONARY.md | default_evidence | keyword_matched | lines 575-577 | payment_conversion_rate_pct, payment_users, order_users | n/a |\n| sku_margin_structure | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 137-139 | required SKU margin context; unavailable in current evidence | n/a |\n| competitor_context | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 71-73 | required competitor context; unavailable in current evidence | n/a |\n\n\n## 5. Competing Hypotheses\n\nThe `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.\n\n| Hypothesis | Scenario-Template Confidence | Status | Weakness |\n|---|---:|---|---|\n| A bounded promotion review should cover activity cost, merchant and platform subsidy, and order and payment conversion. | 0.84 | strong | The available evidence defines review dimensions but does not establish a promotion outcome. |\n| The current evidence can support a bounded promotion review checklist, but not an automatic promotion change. | 0.68 | plausible | Repeated-period cost evidence is required for trend interpretation; SKU margin and competitor context remain unresolved for final action. |\n\n## 6. Critic Findings\n\n- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.\n- [high] SKU margin and competitor context remain unresolved for final promotion action. Recommendation: Keep the output at bounded review-checklist level.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nThe current evidence supports a bounded promotion-review checklist, not an automatic promotion change.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 6\n- Boundary matched packets: 2\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 0.89\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 8\n- record_matched_packets = 0\n- keyword_matched_packets = 6\n- boundary_matched_packets = 2\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 0.75\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- Margin fields are absent from the current evidence.\n- Competitor data may be incomplete.\n- One reporting window is insufficient for robust action attribution.\n\n## 11. Review-State Update\n\n- review_state_id: promotion_changes_require_multi_factor_check\n- status: active\n- validity_conditions:\n  - Retail operations decision-support questions.\n",
   "grounded_evidence": {
     "summary": {
       "question": "What should be checked before changing promotions for a store?",
@@ -305,7 +343,7 @@
         "boundary_matched": 2
       },
       "role_counts": {
-        "default_evidence": 6,
+        "definition_evidence": 6,
         "boundary_evidence": 2
       },
       "source_missing_count": 0,
@@ -321,7 +359,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `activity_orders`"
         ],
@@ -338,8 +376,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: activity_orders.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -353,7 +391,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `activity_cost`"
         ],
@@ -370,8 +408,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: activity_cost.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -385,7 +423,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `merchant_subsidy_amount`"
         ],
@@ -402,8 +440,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: merchant_subsidy.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -417,7 +455,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `platform_subsidy_amount`"
         ],
@@ -434,8 +472,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: platform_subsidy.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -449,7 +487,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `order_conversion_rate_pct`"
         ],
@@ -466,8 +504,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: order_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -481,7 +519,7 @@
         "source_type": "markdown",
         "source_path": "retail_ops/data/DATA_DICTIONARY.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "definition_evidence",
         "keywords_used": [
           "### `payment_conversion_rate_pct`"
         ],
@@ -498,8 +536,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: payment_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -530,8 +568,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: sku_margin_structure.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -581,8 +619,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: competitor_context.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -592,12 +630,77 @@
       }
     ]
   },
+  "hypotheses": [
+    {
+      "hypothesis_id": "H1",
+      "claim": "The registered local documents cover the promotion-review checklist: activity_orders, activity_cost, merchant_subsidy, platform_subsidy, order_conversion, payment_conversion, sku_margin_structure, competitor_context.",
+      "confidence": null,
+      "supporting_factors": [
+        "activity_orders",
+        "activity_cost",
+        "merchant_subsidy",
+        "platform_subsidy",
+        "order_conversion",
+        "payment_conversion",
+        "sku_margin_structure",
+        "competitor_context"
+      ],
+      "weaknesses": [
+        "No store/window-specific promotion observations were selected."
+      ],
+      "status": "strong"
+    },
+    {
+      "hypothesis_id": "H2",
+      "claim": "The current document routes alone establish a promotion action.",
+      "confidence": null,
+      "supporting_factors": [
+        "activity_orders",
+        "activity_cost",
+        "merchant_subsidy",
+        "platform_subsidy",
+        "order_conversion",
+        "payment_conversion",
+        "sku_margin_structure",
+        "competitor_context"
+      ],
+      "weaknesses": [
+        "No store/window-specific promotion observations were selected."
+      ],
+      "status": "unsupported"
+    }
+  ],
+  "belief_update": {
+    "belief_id": "promotion_changes_require_multi_factor_check",
+    "claim": "The registered local documents cover the promotion-review checklist: activity_orders, activity_cost, merchant_subsidy, platform_subsidy, order_conversion, payment_conversion, sku_margin_structure, competitor_context.",
+    "confidence": null,
+    "status": "active",
+    "validity_conditions": [
+      "Only the registered definition/design routes are used."
+    ],
+    "limitations": [
+      "No store/window-specific promotion observations were selected."
+    ]
+  },
+  "critic_findings": [
+    {
+      "issue": "The selected document anchors describe review requirements, not measured operating outcomes.",
+      "severity": "medium",
+      "recommendation": "Use observations and tests appropriate to the proposed decision."
+    }
+  ],
+  "fact_check": {
+    "status": "pass",
+    "unsupported_claims": [],
+    "definition_conflicts": []
+  },
+  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nThe registered local documents cover the promotion-review checklist: activity_orders, activity_cost, merchant_subsidy, platform_subsidy, order_conversion, payment_conversion, sku_margin_structure, competitor_context.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: strategic_recommendation\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | order_conversion, sku_margin_structure |\n| medium | 0.72 | Important context but not sufficient on its own. | payment_conversion |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | activity_orders, activity_cost, merchant_subsidy, platform_subsidy, competitor_context |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| activity_orders | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| activity_cost | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| merchant_subsidy | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| platform_subsidy | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| order_conversion | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| payment_conversion | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| sku_margin_structure | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| competitor_context | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n\n`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 6\n- Boundary matched packets: 2\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| activity_orders | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 659-661 | activity_orders | n/a |\n| activity_cost | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 665-667 | activity_cost | n/a |\n| merchant_subsidy | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 671-673 | merchant_subsidy_amount | n/a |\n| platform_subsidy | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 677-679 | platform_subsidy_amount | n/a |\n| order_conversion | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 523-525 | order_conversion_rate_pct, order_users, entry_users | n/a |\n| payment_conversion | retail_ops/data/DATA_DICTIONARY.md | definition_evidence | keyword_matched | lines 575-577 | payment_conversion_rate_pct, payment_users, order_users | n/a |\n| sku_margin_structure | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 137-139 | required SKU margin context; unavailable in current evidence | n/a |\n| competitor_context | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 71-73 | required competitor context; unavailable in current evidence | n/a |\n\n\n## 5. Competing Hypotheses\n\nHypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.\n\n| Hypothesis | Confidence | Status | Weakness |\n|---|---:|---|---|\n| The registered local documents cover the promotion-review checklist: activity_orders, activity_cost, merchant_subsidy, platform_subsidy, order_conversion, payment_conversion, sku_margin_structure, competitor_context. | unknown | strong | No store/window-specific promotion observations were selected. |\n| The current document routes alone establish a promotion action. | unknown | unsupported | No store/window-specific promotion observations were selected. |\n\n## 6. Critic Findings\n\n- [medium] The selected document anchors describe review requirements, not measured operating outcomes. Recommendation: Use observations and tests appropriate to the proposed decision.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n\n### Evidence Checks\n\n| Check | Evidence | Status | Result |\n|---|---|---|---|\n| activity_orders/document | evidence_activity_orders | supported | activity_orders: registered definition_evidence anchor matched. |\n| activity_cost/document | evidence_activity_cost | supported | activity_cost: registered definition_evidence anchor matched. |\n| merchant_subsidy/document | evidence_merchant_subsidy | supported | merchant_subsidy: registered definition_evidence anchor matched. |\n| platform_subsidy/document | evidence_platform_subsidy | supported | platform_subsidy: registered definition_evidence anchor matched. |\n| order_conversion/document | evidence_order_conversion | supported | order_conversion: registered definition_evidence anchor matched. |\n| payment_conversion/document | evidence_payment_conversion | supported | payment_conversion: registered definition_evidence anchor matched. |\n| sku_margin_structure/document | evidence_sku_margin_structure | supported | sku_margin_structure: registered boundary_evidence anchor matched. |\n| competitor_context/document | evidence_competitor_context | supported | competitor_context: registered boundary_evidence anchor matched. |\n\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nThe registered local documents cover the promotion-review checklist: activity_orders, activity_cost, merchant_subsidy, platform_subsidy, order_conversion, payment_conversion, sku_margin_structure, competitor_context.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 6\n- Boundary matched packets: 2\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 0.89\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 8\n- record_matched_packets = 0\n- keyword_matched_packets = 6\n- boundary_matched_packets = 2\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 0.75\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- No store/window-specific promotion observations were selected.\n\n## 11. Review-State Update\n\n- review_state_id: promotion_changes_require_multi_factor_check\n- status: active\n- validity_conditions:\n  - Only the registered definition/design routes are used.\n",
   "grounded_evidence_rows": [
     {
       "factor_id": "activity_orders",
       "evidence_id": "evidence_activity_orders",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "659-661",
       "matched_terms": [
@@ -609,7 +712,7 @@
       "factor_id": "activity_cost",
       "evidence_id": "evidence_activity_cost",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "665-667",
       "matched_terms": [
@@ -621,7 +724,7 @@
       "factor_id": "merchant_subsidy",
       "evidence_id": "evidence_merchant_subsidy",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "671-673",
       "matched_terms": [
@@ -633,7 +736,7 @@
       "factor_id": "platform_subsidy",
       "evidence_id": "evidence_platform_subsidy",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "677-679",
       "matched_terms": [
@@ -645,7 +748,7 @@
       "factor_id": "order_conversion",
       "evidence_id": "evidence_order_conversion",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "523-525",
       "matched_terms": [
@@ -657,7 +760,7 @@
       "factor_id": "payment_conversion",
       "evidence_id": "evidence_payment_conversion",
       "source_path": "retail_ops/data/DATA_DICTIONARY.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "definition_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "575-577",
       "matched_terms": [

@@ -273,8 +273,7 @@ FACTOR_KEYWORDS: dict[str, list[str]] = {
 
 
 # Canonical definitions and explicit evidence boundaries use narrower
-# source-specific anchors. General factor keywords remain available for
-# unregistered source-factor pairs, but cannot replace these anchors.
+# source-specific anchors. General keywords apply only within registered routes.
 SOURCE_FACTOR_KEYWORDS: dict[
     tuple[str, str],
     list[str],
@@ -483,12 +482,14 @@ def infer_factor_id(packet: dict[str, Any]) -> str:
 
 
 def read_source_text(root: Path, source_path: str) -> tuple[Path, str | None]:
-    path = root / source_path
+    path = (root / source_path).resolve()
+    if not path.is_relative_to(root.resolve()):
+        raise ValueError("Evidence source is outside the declared project root.")
 
     if not path.exists() or not path.is_file():
         return path, None
 
-    return path, path.read_text(encoding="utf-8", errors="ignore")
+    return path, path.read_text(encoding="utf-8")
 
 
 def find_keyword_snippets(
@@ -593,14 +594,18 @@ def candidate_sources_for_packet(
     ):
         return COMPARABILITY_SOURCE_OVERRIDES[factor_id]
 
-    return [
-        {
-            "source_path": str(
-                packet.get("source_path", "")
-            ),
-            "grounding_role": "default_evidence",
-        }
-    ]
+    if question_type == "strategic_recommendation" and factor_id in {
+        "activity_orders", "activity_cost", "merchant_subsidy",
+        "platform_subsidy", "order_conversion", "payment_conversion",
+    }:
+        return [{"source_path": "retail_ops/data/DATA_DICTIONARY.md",
+                 "grounding_role": "definition_evidence"}]
+    if question_type == "technical_design" and factor_id in {
+        "typed_memory", "evidence_packets", "hypotheses", "belief_records",
+        "confidence", "limitations", "retrieval_trace", "active_state_filtering",
+    }:
+        return [{"source_path": "rac/README.md", "grounding_role": "design_evidence"}]
+    raise ValueError(f"Unregistered RAC evidence route: {question_type}/{factor_id}.")
 
 
 def keywords_for_source(
@@ -770,7 +775,12 @@ def resolve_evidence_packet(
         reverse=True
     )
 
-    best = resolved_candidates[0]
+    # A registered record route is authoritative, including an error or a
+    # missing file. Context snippets cannot fill missing business records.
+    record_sources = [item for item in resolved_candidates if
+                      supports_store_a_record(question_type, factor_id, item["source_path"])
+                      or supports_demo2_record(question_type, factor_id, item["source_path"])]
+    best = record_sources[0] if record_sources else resolved_candidates[0]
 
     if len(resolved_candidates) > 1:
         best["candidate_sources_checked"] = [

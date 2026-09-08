@@ -2,7 +2,7 @@
 
 ## 1. Direct Answer
 
-Stores B-F can be organized for same-period diagnostic review, but should not be treated as directly comparable without pairwise gates.
+Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. Direct comparability remains unresolved.
 
 Deterministic local-file review; routing scores summarize route resolution under the current rules.
 
@@ -37,11 +37,11 @@ Weighting boundary:
 | transaction_amount | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |
 | activity_intensity | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |
 | region_context | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |
-| competition | 0.60 | default | missing | Potentially relevant but requires stronger evidence. |
+| competition | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |
 | sku_structure | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |
 | repeated_reporting_windows | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |
 
-`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.
+`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.
 
 ## 4. Local Evidence Grounding
 
@@ -70,27 +70,53 @@ For CSV evidence, `Source Locator` shows the selected record scope and `Selected
 
 ## 5. Competing Hypotheses
 
-The `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.
+Hypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.
 
-| Hypothesis | Scenario-Template Confidence | Status | Weakness |
+| Hypothesis | Confidence | Status | Weakness |
 |---|---:|---|---|
-| Stores B-F can be organized in a same-period diagnostic table. | 0.78 | strong | Same-period diagnostic organization does not establish robust comparability. |
-| Stores B-F should not be treated as directly comparable without pairwise gates. | 0.86 | strong | Pairwise quantitative thresholds are outside the current review contract. |
+| Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. | unknown | strong | Only the stated fields and reporting windows were checked. |
+| The current evidence establishes direct comparability for an operating decision. | unknown | unsupported | A question-specific pairwise gate is not implemented; Region type remains weak context. |
 
 ## 6. Critic Findings
 
-- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.
-- [critical] Same-period diagnostic organization must not be described as a completed pairwise comparability gate. Recommendation: Separate same-period diagnostic review from pairwise comparability.
+- [medium] Shared reporting dates do not establish direct comparability. Recommendation: Use observations and tests appropriate to the proposed decision.
 
 ## 7. Claim and Definition Check
 
 - Status: pass
+
+### Evidence Checks
+
+| Check | Evidence | Status | Result |
+|---|---|---|---|
+| same_reporting_period/period_start | evidence_same_reporting_period | supported | period_start: B=2026-03-01; C=2026-03-01; D=2026-03-01; E=2026-03-01; F=2026-03-01. |
+| same_reporting_period/period_end | evidence_same_reporting_period | supported | period_end: B=2026-03-31; C=2026-03-31; D=2026-03-31; E=2026-03-31; F=2026-03-31. |
+| same_reporting_period/period_month | evidence_same_reporting_period | supported | period_month: B=2026-03; C=2026-03; D=2026-03; E=2026-03; F=2026-03. |
+| store_type/store_type | evidence_store_type | supported | store_type: B=self-operated; C=self-operated; D=self-operated; E=partner; F=partner. |
+| order_volume/transaction_orders | evidence_order_volume | supported | transaction_orders: B=299; C=175; D=404; E=158; F=266. |
+| transaction_amount/transaction_amount | evidence_transaction_amount | supported | transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. |
+| activity_intensity/activity_orders | evidence_activity_intensity | supported | activity_orders: B=265; C=124; D=337; E=109; F=217. |
+| activity_intensity/activity_order_share_pct | evidence_activity_intensity | supported | activity_order_share_pct: B=88.63; C=70.86; D=83.42; E=68.99; F=81.58. |
+| activity_intensity/activity_cost | evidence_activity_intensity | supported | activity_cost: B=3361.3; C=490.21; D=2776.4; E=1576.26; F=1008.3. |
+| activity_intensity/activity_cost_ratio_pct | evidence_activity_intensity | supported | activity_cost_ratio_pct: B=24.12; C=9.45; D=14.92; E=29.38; F=12.16. |
+| region_context/region_type | evidence_region_context | supported | region_type: B=Qingdao; C=Qingdao; D=Yantai; E=Yantai; F=Yantai. |
+| competition/document | evidence_competition | supported | competition: registered boundary_evidence anchor matched. |
+| sku_structure/top3_sku_transaction_amount | evidence_sku_structure | supported | top3_sku_transaction_amount: B=1300.9; C=2004.84; D=3055.78; E=726.25; F=1798.4. |
+| sku_structure/top3_sku_transaction_amount_share_pct | evidence_sku_structure | supported | top3_sku_transaction_amount_share_pct: B=11.15; C=28.38; D=16.9; E=12.55; F=19.33. |
+| repeated_reporting_windows/observed_month_count | evidence_repeated_reporting_windows | supported | observed_month_count: B=3; C=3; D=3; E=3; F=3. |
+| repeated_reporting_windows/feb_transaction_amount | evidence_repeated_reporting_windows | supported | feb_transaction_amount: B=10468.0; C=9503.7; D=20332.2; E=6794.9; F=12549.1. |
+| repeated_reporting_windows/mar_transaction_amount | evidence_repeated_reporting_windows | supported | mar_transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. |
+| repeated_reporting_windows/apr_transaction_amount | evidence_repeated_reporting_windows | supported | apr_transaction_amount: B=11496.8; C=6756.8; D=14087.2; E=11264.72; F=14090.7. |
+| repeated_reporting_windows/feb_transaction_orders | evidence_repeated_reporting_windows | supported | feb_transaction_orders: B=259.0; C=253.0; D=466.0; E=148.0; F=307.0. |
+| repeated_reporting_windows/mar_transaction_orders | evidence_repeated_reporting_windows | supported | mar_transaction_orders: B=299.0; C=175.0; D=404.0; E=158.0; F=266.0. |
+| repeated_reporting_windows/apr_transaction_orders | evidence_repeated_reporting_windows | supported | apr_transaction_orders: B=293.0; C=178.0; D=308.0; E=377.0; F=424.0. |
+
 - Unsupported claims detected by current rules: none
 - Definition conflicts detected by current rules: none
 
 ## 8. Final Judgment
 
-Stores B-F can be organized for same-period diagnostic review, but should not be treated as directly comparable without pairwise gates.
+Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. Direct comparability remains unresolved.
 
 The judgment is bounded by the cited local evidence and the unresolved requirements recorded above.
 
@@ -157,13 +183,13 @@ Reading the score:
 
 ## 10. What Cannot Be Concluded
 
-- Pairwise quantitative gates are not defined in the current contract.
+- Same-period diagnostic review is not a pairwise comparability gate.
 - Region type remains weak context.
-- Three monthly B-F reporting windows are available; they do not by themselves establish stable pairwise comparability.
 
 ## 11. Review-State Update
 
 - review_state_id: stores_b_f_same_period_not_directly_comparable
 - status: active
 - validity_conditions:
-  - Demo 2 March 2026 B-F context.
+  - B-F, March 2026; repeated evidence uses the registered February-April panel.
+  - Recompute after source or saved-summary changes.

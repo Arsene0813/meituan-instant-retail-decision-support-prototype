@@ -4,6 +4,20 @@ import csv
 from pathlib import Path
 from typing import Any, NamedTuple
 
+from rac.src.csv_evidence_validation import (
+    MONTH_KEYS,
+    canonical_rows,
+    exact_output_number,
+    read_csv,
+    require_fields,
+    validate_month_rows,
+)
+from retail_ops.ingestion import preview
+from retail_ops.scripts.generate_demo2_retail_memory_facts import (
+    DERIVED_DECIMALS,
+    DIAGNOSTIC_FIELDS,
+)
+
 
 SNAPSHOT_SOURCE_PATH = (
     "retail_ops/outputs/"
@@ -96,6 +110,55 @@ FACTOR_RECORD_SPECS = {
 }
 
 
+
+def validate_snapshot(headers, rows):
+    require_fields(headers, MONTH_KEYS)
+    if set(headers) - DIAGNOSTIC_FIELDS:
+        raise ValueError("Demo 2 diagnostic output contains unregistered fields")
+    validate_month_rows(rows)
+    for index, row in enumerate(rows, 2):
+        for field in headers:
+            try:
+                if field in preview.DECIMALS | DERIVED_DECIMALS:
+                    exact_output_number(row[field])
+                elif field in preview.COUNTS | preview.RANKS | preview.TEXT | preview.PERIOD:
+                    preview._value(field, row[field])
+            except (ValueError, ArithmeticError) as exc:
+                raise ValueError(f"row {index}: {field}: {exc}") from exc
+
+
+def reconcile_repeated_records(root, rows):
+    # The saved pivot does not carry full monthly date keys. Verify the
+    # actual registered panel records before accepting its selected cells.
+    panel_headers, panel_rows = canonical_rows(root, "store_period_panel_metrics")
+    require_fields(panel_headers, ("transaction_amount", "transaction_orders"))
+    periods = {"feb": "2026-02", "mar": "2026-03", "apr": "2026-04"}
+    by_store = {
+        store_id: {
+            row["period_month"]: row
+            for row in panel_rows if row["store_id"] == store_id
+        }
+        for store_id in STORE_IDS
+    }
+    fields = FACTOR_RECORD_SPECS["repeated_reporting_windows"].fields
+    for row in rows:
+        store_id = row["store_id"]
+        if store_id not in STORE_IDS:
+            continue
+        source = by_store[store_id]
+        if set(source) != set(periods.values()):
+            raise ValueError(f"{store_id}: panel must cover the three declared full months")
+        for field in fields:
+            count = field == "observed_month_count" or field.endswith("_transaction_orders")
+            observed = exact_output_number(row[field], count=count)
+            if field == "observed_month_count":
+                expected = len(source)
+            else:
+                prefix, canonical_field = field.split("_", 1)
+                expected = preview._value(canonical_field, source[periods[prefix]][canonical_field])
+            if observed != expected:
+                raise ValueError(f"{store_id}: {field} conflicts with current canonical panel")
+
 def supports_demo2_record(
     question_type: str | None,
     factor_id: str,
@@ -153,28 +216,16 @@ def resolve_demo2_record(
         result["absolute_path_checked"] = str(path)
         return result
 
-    with path.open(
-        "r",
-        encoding="utf-8-sig",
-        newline="",
-    ) as handle:
-        reader = csv.DictReader(handle)
-        headers = reader.fieldnames or []
-        rows = list(reader)
-
-    missing_fields = sorted(
-        {*spec.key_fields, *spec.fields}
-        - set(headers)
-    )
-
-    if missing_fields:
-        result["grounding_status"] = (
-            "record_contract_error"
-        )
-        result["record_contract_errors"] = [
-            "Missing fields: "
-            + ", ".join(missing_fields)
-        ]
+    try:
+        headers, rows = read_csv(root, spec.source_path)
+        require_fields(headers, (*spec.key_fields, *spec.fields))
+        if spec.source_path == SNAPSHOT_SOURCE_PATH:
+            validate_snapshot(headers, rows)
+        else:
+            reconcile_repeated_records(root, rows)
+    except (OSError, UnicodeError, csv.Error, ValueError, ArithmeticError) as exc:
+        result["grounding_status"] = "record_contract_error"
+        result["record_contract_errors"] = [str(exc)]
         return result
 
     selected = [

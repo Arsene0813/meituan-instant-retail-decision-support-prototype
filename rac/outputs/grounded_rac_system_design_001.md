@@ -2,7 +2,7 @@
 
 ## 1. Direct Answer
 
-RAC operates as a review layer above the existing typed memory system while leaving existing endpoints unchanged.
+The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.
 
 Deterministic local-file review; routing scores summarize route resolution under the current rules.
 
@@ -40,7 +40,7 @@ Weighting boundary:
 | retrieval_trace | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |
 | active_state_filtering | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |
 
-`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.
+`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.
 
 ## 4. Local Evidence Grounding
 
@@ -56,38 +56,52 @@ For CSV evidence, `Source Locator` shows the selected record scope and `Selected
 
 | Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |
 |---|---|---|---|---|---|---|
-| typed_memory | rac/README.md | default_evidence | keyword_matched | lines 1-2 | memory schema requirement | n/a |
-| evidence_packets | rac/README.md | default_evidence | keyword_matched | lines 5-7 | source_path, claim_supported, limitations | n/a |
-| hypotheses | rac/README.md | default_evidence | keyword_matched | lines 41-43 | hypothesis records | n/a |
-| belief_records | rac/README.md | default_evidence | keyword_matched | lines 138-140 | belief update schema | n/a |
-| confidence | rac/README.md | default_evidence | keyword_matched | lines 155-157 | confidence field | n/a |
-| limitations | rac/README.md | default_evidence | keyword_matched | lines 7-9 | limitations field | n/a |
-| retrieval_trace | rac/README.md | default_evidence | keyword_matched | lines 39-41 | source metadata | n/a |
-| active_state_filtering | rac/README.md | default_evidence | keyword_matched | lines 7-9 | active flag, freshness policy | n/a |
+| typed_memory | rac/README.md | design_evidence | keyword_matched | lines 1-2 | memory schema requirement | n/a |
+| evidence_packets | rac/README.md | design_evidence | keyword_matched | lines 5-7 | source_path, claim_supported, limitations | n/a |
+| hypotheses | rac/README.md | design_evidence | keyword_matched | lines 42-44 | hypothesis records | n/a |
+| belief_records | rac/README.md | design_evidence | keyword_matched | lines 140-142 | belief update schema | n/a |
+| confidence | rac/README.md | design_evidence | keyword_matched | lines 157-159 | confidence field | n/a |
+| limitations | rac/README.md | design_evidence | keyword_matched | lines 7-9 | limitations field | n/a |
+| retrieval_trace | rac/README.md | design_evidence | keyword_matched | lines 39-41 | source metadata | n/a |
+| active_state_filtering | rac/README.md | design_evidence | keyword_matched | lines 7-9 | active flag, freshness policy | n/a |
 
 
 ## 5. Competing Hypotheses
 
-The `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.
+Hypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.
 
-| Hypothesis | Scenario-Template Confidence | Status | Weakness |
+| Hypothesis | Confidence | Status | Weakness |
 |---|---:|---|---|
-| RAC operates as a reasoning layer above the existing typed memory layer. | 0.86 | strong | The current RAC path resolves evidence from committed local project files. |
-| The current deterministic implementation keeps evidence routing and review states inspectable. | 0.80 | strong | Fixed rules trade flexibility for inspectability. |
+| The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering. | unknown | strong | Document anchors establish the design scope; they do not verify a running integration. |
+| The current document routes alone establish a running memory integration. | unknown | unsupported | Document anchors establish the design scope; they do not verify a running integration. |
 
 ## 6. Critic Findings
 
-- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.
+- [medium] The selected document anchors describe review requirements, not measured operating outcomes. Recommendation: Use observations and tests appropriate to the proposed decision.
 
 ## 7. Claim and Definition Check
 
 - Status: pass
+
+### Evidence Checks
+
+| Check | Evidence | Status | Result |
+|---|---|---|---|
+| typed_memory/document | evidence_typed_memory | supported | typed_memory: registered design_evidence anchor matched. |
+| evidence_packets/document | evidence_evidence_packets | supported | evidence_packets: registered design_evidence anchor matched. |
+| hypotheses/document | evidence_hypotheses | supported | hypotheses: registered design_evidence anchor matched. |
+| belief_records/document | evidence_belief_records | supported | belief_records: registered design_evidence anchor matched. |
+| confidence/document | evidence_confidence | supported | confidence: registered design_evidence anchor matched. |
+| limitations/document | evidence_limitations | supported | limitations: registered design_evidence anchor matched. |
+| retrieval_trace/document | evidence_retrieval_trace | supported | retrieval_trace: registered design_evidence anchor matched. |
+| active_state_filtering/document | evidence_active_state_filtering | supported | active_state_filtering: registered design_evidence anchor matched. |
+
 - Unsupported claims detected by current rules: none
 - Definition conflicts detected by current rules: none
 
 ## 8. Final Judgment
 
-RAC operates as a review layer above the existing typed memory system while leaving existing endpoints unchanged.
+The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.
 
 The judgment is bounded by the cited local evidence and the unresolved requirements recorded above.
 
@@ -154,11 +168,11 @@ Reading the score:
 
 ## 10. What Cannot Be Concluded
 
-- The current RAC path is limited to committed local evidence.
+- Document anchors establish the design scope; they do not verify a running integration.
 
 ## 11. Review-State Update
 
 - review_state_id: rac_should_layer_above_existing_memory
 - status: active
 - validity_conditions:
-  - Current project architecture stage.
+  - Only the registered definition/design routes are used.

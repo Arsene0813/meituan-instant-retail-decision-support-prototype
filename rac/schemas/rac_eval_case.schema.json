@@ -37,8 +37,10 @@
       "enum": [
         "low",
         "moderate",
-        "high"
-      ]
+        "high",
+        "unknown"
+      ],
+      "description": "Expected confidence for grounded runs; unknown means no calibrated numerical estimate is available."
     }
   }
 }

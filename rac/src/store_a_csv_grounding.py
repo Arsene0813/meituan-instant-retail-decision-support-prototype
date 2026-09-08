@@ -4,6 +4,8 @@ import csv
 from pathlib import Path
 from typing import Any
 
+from rac.src.csv_evidence_validation import canonical_rows, require_fields
+
 
 SOURCE_PATH = "retail_ops/data/store_a_monthly_metrics.csv"
 PERIOD_MONTHS = ("2026-03", "2026-04")
@@ -33,6 +35,7 @@ FACTOR_FIELDS: dict[str, tuple[str, ...]] = {
         "activity_cost_ratio_pct",
     ),
     "transaction_orders": ("transaction_orders",),
+    "transaction_amount": ("transaction_amount",),
 }
 
 
@@ -94,24 +97,12 @@ def resolve_store_a_record(
         result["absolute_path_checked"] = str(path)
         return result
 
-    with path.open(
-        "r",
-        encoding="utf-8-sig",
-        newline="",
-    ) as handle:
-        reader = csv.DictReader(handle)
-        headers = reader.fieldnames or []
-        rows = list(reader)
-
-    required = {"store_id", "period_month", *fields}
-    missing_fields = sorted(required - set(headers))
-
-    if missing_fields:
+    try:
+        headers, rows = canonical_rows(root, "store_a_monthly_metrics")
+        require_fields(headers, fields)
+    except (OSError, UnicodeError, csv.Error, ValueError, ArithmeticError) as exc:
         result["grounding_status"] = "record_contract_error"
-        result["record_contract_errors"] = [
-            "Missing canonical fields: "
-            + ", ".join(missing_fields)
-        ]
+        result["record_contract_errors"] = [str(exc)]
         return result
 
     selected = [

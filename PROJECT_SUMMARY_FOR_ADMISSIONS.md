@@ -154,7 +154,7 @@ Main outputs:
 
 RAC is a deterministic source-aware review layer over local project evidence.
 
-The layer decomposes an operating question into relevant factors, routes each factor to local evidence, develops competing explanations, applies claim and definition checks, and produces a grounded report with confidence labels, evidence context, source paths, structured-record locators for CSV evidence, source-line pointers for text evidence, and canonical evidence fields.
+The layer decomposes an operating question into relevant factors, routes each factor to local evidence, develops competing explanations, applies claim and definition checks, and recomputes observations and review status from selected evidence, and produces a grounded report with explicit uncertainty, evidence context, source paths, structured-record locators for CSV evidence, source-line pointers for text evidence, and canonical evidence fields.
 
 This layer makes the review path visible across decision factors, source records, competing explanations, and additional evidence requirements.
 

@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import Any
 
 from rac.src.local_evidence_resolver import resolve_state_evidence
+from rac.src.evidence_review import build_review_plan, recompute_review
 from rac.src.mock_pipeline import (
     build_factor_weighting_explanation,
     join_sentence_fragments,
-    run_mock_pipeline,
     slugify,
 )
 from rac.src.state_validation import validate_cognition_state
@@ -187,39 +187,6 @@ def build_grounded_evidence_rows(
         )
 
     return rows
-
-
-RECORD_OR_KEYWORD_ROUTE_STATUSES = {
-    "record_matched",
-    "keyword_matched",
-}
-
-
-def synchronize_factor_evidence_status(
-    state: dict[str, Any],
-    resolver_result: dict[str, Any],
-) -> None:
-    """Align factor status with the resolved evidence route."""
-    status_by_factor = {
-        str(packet["factor_id"]): str(
-            packet["grounding_status"]
-        )
-        for packet in resolver_result["resolved_packets"]
-    }
-
-    for factor_weight in state["factor_weights"]:
-        factor_id = str(factor_weight["factor_id"])
-        grounding_status = status_by_factor.get(
-            factor_id,
-            "",
-        )
-
-        factor_weight["evidence_status"] = (
-            "partially_supported"
-            if grounding_status
-            in RECORD_OR_KEYWORD_ROUTE_STATUSES
-            else "missing"
-        )
 
 
 def format_record_scope(
@@ -462,10 +429,9 @@ def write_grounded_final_report(state: dict[str, Any]) -> str:
 
     lines.append("")
     lines.append(
-        "`partially_supported` indicates that a registered local "
-        "evidence route was resolved for the factor. It does not "
-        "necessarily mean that observed numeric evidence supports "
-        "the decision."
+        "`partially_supported` means at least one selected observation "
+        "or registered document/boundary route is available for the factor. "
+        "Read the evidence checks to distinguish values from context."
     )
     lines.append("")
     lines.append("## 4. Local Evidence Grounding")
@@ -637,14 +603,12 @@ def write_grounded_final_report(state: dict[str, Any]) -> str:
     lines.append("## 5. Competing Hypotheses")
     lines.append("")
     lines.append(
-        "The `Scenario-Template Confidence` column records "
-        "deterministic review labels assigned by "
-        "`generate_hypotheses(question_type)` in "
-        "`rac/src/mock_pipeline.py`."
+        "Hypothesis statements and statuses are recomputed from the selected "
+        "evidence. Confidence is unknown where no calibrated estimate is available."
     )
     lines.append("")
     lines.append(
-        "| Hypothesis | Scenario-Template Confidence "
+        "| Hypothesis | Confidence "
         "| Status | Weakness |"
     )
     lines.append("|---|---:|---|---|")
@@ -654,7 +618,7 @@ def write_grounded_final_report(state: dict[str, Any]) -> str:
             "| "
             + markdown_escape(hypothesis["claim"])
             + " | "
-            + f"{hypothesis['confidence']:.2f}"
+            + ("unknown" if hypothesis["confidence"] is None else f"{hypothesis['confidence']:.2f}")
             + " | "
             + markdown_escape(hypothesis["status"])
             + " | "
@@ -680,6 +644,15 @@ def write_grounded_final_report(state: dict[str, Any]) -> str:
     lines.append("## 7. Claim and Definition Check")
     lines.append("")
     lines.append(f"- Status: {state['fact_check']['status']}")
+    lines.append("")
+    lines.append("### Evidence Checks")
+    lines.append("")
+    lines.append("| Check | Evidence | Status | Result |")
+    lines.append("|---|---|---|---|")
+    for check in state["evidence_review"]["checks"]:
+        lines.append("| " + " | ".join(markdown_escape(check[key])
+                     for key in ("check_id", "evidence_id", "status", "claim")) + " |")
+    lines.append("")
 
     if state["fact_check"]["unsupported_claims"]:
         lines.append(
@@ -889,55 +862,11 @@ def write_grounded_final_report(state: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-GROUNDED_WORDING_REPLACEMENTS = {
-    "Deterministic mock pipeline only.":
-        "Deterministic grounded RAC pipeline only.",
-    "The mock pipeline does not compute quantitative pairwise thresholds.":
-        "The current grounded RAC pipeline does not compute quantitative pairwise thresholds.",
-    "The mock pipeline does not calculate real cost trend.":
-        "The current grounded RAC pipeline does not calculate a real cost trend.",
-    "This mock pipeline does not call the existing API or vector database.":
-        "The current grounded RAC pipeline uses local file evidence and does not call the existing API or vector database.",
-    "The mock pipeline must not claim causal proof from observational evidence.":
-        "The grounded RAC pipeline must not claim causal proof from observational evidence.",
-    "The mock pipeline uses structured placeholder evidence rather than live retrieval.":
-        "The grounded RAC pipeline uses deterministic local file evidence resolution rather than live backend or vector retrieval.",
-    "No live backend retrieval in this mock pipeline.":
-        "No live backend retrieval is performed by the current grounded RAC pipeline.",
-    "The mock pipeline does not compute real margins.":
-        "The current grounded RAC pipeline does not compute real margins.",
-    "The mock pipeline does not call Qdrant, FastAPI, Ollama, or external LLMs yet.":
-        "The current grounded RAC pipeline does not call Qdrant, FastAPI, Ollama, or external LLMs.",
-}
-
-
-def normalize_grounded_state_wording(value: Any) -> Any:
-    if isinstance(value, dict):
-        return {
-            key: normalize_grounded_state_wording(child)
-            for key, child in value.items()
-        }
-
-    if isinstance(value, list):
-        return [
-            normalize_grounded_state_wording(child)
-            for child in value
-        ]
-
-    if isinstance(value, str):
-        for source, replacement in GROUNDED_WORDING_REPLACEMENTS.items():
-            value = value.replace(source, replacement)
-
-    return value
-
-
 def run_grounded_pipeline(question: str, *, root: Path) -> dict[str, Any]:
-    state = run_mock_pipeline(question)
+    state = build_review_plan(question)
     grounded = resolve_state_evidence(state, root=root)
-    state = normalize_grounded_state_wording(state)
-    synchronize_factor_evidence_status(state, grounded)
-
     state["grounded_evidence"] = grounded
+    recompute_review(state)
     state["grounded_evidence_rows"] = build_grounded_evidence_rows(grounded)
     state["final_report"] = write_grounded_final_report(state)
 

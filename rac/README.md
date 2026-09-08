@@ -39,7 +39,8 @@ question
 -> factor weighting
 -> source-aware local evidence routing
 -> boundary evidence for unavailable requirements
--> competing hypotheses
+-> exact-value and coverage checks
+-> competing hypotheses updated from those checks
 -> critique
 -> rule-based claim and definition check
 -> review-state update
@@ -83,7 +84,7 @@ The current RAC path includes:
 - structured CSV record selection and source-specific text-anchor matching;
 - local evidence snippets and line ranges;
 - boundary evidence for unavailable requirements;
-- competing-hypothesis templates;
+- evidence-dependent hypothesis statements and statuses;
 - critique and rule-based claim and definition-check stages;
 - routing coverage scoring;
 - explicit limitation updates;
@@ -113,9 +114,10 @@ panel provides repeated-window record evidence for descriptive review.
 Competition context and the requirements for a future pairwise gate remain
 boundary evidence in `retail_ops/COMPARABILITY_GATE_V0.md`.
 
-In factor-weight rows, `partially_supported` means that a registered
-local evidence route was resolved. It does not necessarily mean that
-observed numeric evidence supports the decision.
+In factor-weight rows, `partially_supported` means that at least one
+selected observation or registered document/boundary route is available.
+Individual checks show which values are present and which requirements
+remain unresolved.
 
 ## Factor Weight Generation
 
@@ -194,9 +196,11 @@ does not measure evidence strength, conclusion correctness, business impact,
 decision quality, or model confidence. It is not used to select or rank the
 final judgment.
 
-Mock reports separately carry Scenario-Template Confidence. That value
-is assigned by deterministic question-type templates and is not merged
-with the grounded routing coverage score.
+Grounded hypothesis and belief `confidence` values are `null`: no calibrated
+numerical estimate is available. Hypothesis `status`, evidence checks and
+belief validity conditions carry the current assessment. Fixed mock-fixture
+numbers remain confined to the mock path. The evaluation cases expect
+`unknown` confidence for grounded runs.
 
 ## Competing Hypotheses, Critique, and Fact Checks
 
@@ -227,7 +231,8 @@ question-specific context required for comparison.
 
 The deterministic review pipeline establishes the review-state contract. The local
 resolver connects factors to repository evidence. The grounded pipeline
-combines both layers into inspectable reports. The quality gate checks
+builds its factor plan first, resolves evidence, then computes observations,
+hypotheses, critique, fact checks and belief state. The quality gate checks
 whether those reports preserve the required evidence structure.
 
 ## Grounded Report Contract
@@ -312,3 +317,51 @@ Such an experiment must preserve:
 - competing hypotheses and critique;
 - routing coverage as route resolution rather than evidence strength;
 - withholding of conclusions that exceed the available evidence.
+
+
+## Evidence Recalculation Contract
+
+The current registered data scopes are Store A, March-April 2026, and
+Stores B-F, March 2026, with the registered February-April panel used for
+repeated-window context. Other requested stores or windows require a
+registered route. General promotion and memory-design questions use document
+routes and do not select store records.
+
+`rac/src/evidence_review.py` builds only the plan before retrieval. After
+retrieval, it compares exact source numbers, checks record coverage and
+rebuilds the decision-bearing fields. Store A's six factors include both
+`transaction_amount` and `transaction_orders`. Missing values remain missing;
+zero is a provided value. A falling or mixed transaction pattern changes the
+observation, hypothesis statuses and belief text. The question's own growth
+premise is checked against those values.
+
+Registered CSV routes retain their errors. A document anchor cannot replace
+missing or invalid CSV records. The CSV readers validate complete reporting
+dates, canonical columns and logical keys before selection. The repeated-window
+summary is reconciled against the current registered panel before its selected
+cells are used. The March diagnostic snapshot is still a separate saved input;
+unified publication across raw data, SQL, facts and RAC remains to be connected.
+
+The review records exact source operands and comparison results in
+`evidence_review`. State validation recomputes the decision-bearing fields
+against that selected snapshot. The report gate additionally checks source
+values and evidence links. These are deterministic checks for the registered
+operations; they do not validate arbitrary natural-language claims.
+
+| Existing field or added RAC metadata | Definition and use | Naming decision |
+|---|---|---|
+| `transaction_amount` | Existing canonical backend metric and factor ID; now also selected for the Store A attribution review. Its business definition is unchanged. | Reuse existing name. |
+| `transaction_orders` | Existing canonical count; retained separately from amount. | No rename. |
+| `evidence_review` | Added RAC review metadata, registered in `cognition_state.schema.json`. | New internal metadata; no source metric added. |
+| `method`, `confidence_method` | Registered check-rule version and `not_estimated` confidence method. | Internal review metadata. |
+| `scope.store_ids`, `scope.period_start`, `scope.period_end` | Independently validated request scope; document-only reviews use no store/date selection. | Internal scope metadata; source `store_id` stays unchanged. |
+| `checks` | Per-field comparison, recorded-value or document-route checks. | Internal review metadata. |
+| `check_id`, `factor_id`, `evidence_id`, `source_path`, `field` | Links each check to its registered factor, selected packet and canonical field. | Existing identifiers reused in the new check records. |
+| `operation`, `status`, `result`, `claim` | Check operation and its computed result; descriptive claims are rendered from those results. | Internal check metadata. |
+| `operands.row_key`, `operands.value` | Exact source strings associated with selected keys; blank operands become JSON null for checking, while the evidence packet keeps its source text. | Internal check metadata; no backfill. |
+| Hypothesis/belief `confidence` | Required existing field; grounded runs store null when no calibrated estimate exists. | No rename; explicit unknown value registered. |
+| `expected_confidence` | Existing evaluation field; grounded cases now expect `unknown`. | No rename. |
+| `belief_id` value `store_a_march_april_increase_not_search_only` | The active review now uses `store_a_march_april_attribution`, so its identifier does not assert a direction before checking data. | One generated RAC record ID updated; field name unchanged. |
+
+The business-field rename count is zero. The dictionary, metric definitions
+and source CSV values are unchanged by this implementation step.

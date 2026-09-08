@@ -46,9 +46,17 @@
     {
       "factor_id": "transaction_orders",
       "name": "Transaction orders",
-      "description": "Provides accepted and not-cancelled order-volume context without establishing attribution by itself.",
+      "description": "Records the backend same-day paid and not-cancelled order count for the selected window.",
       "evidence_needed": [
         "transaction_orders"
+      ]
+    },
+    {
+      "factor_id": "transaction_amount",
+      "name": "Transaction amount",
+      "description": "Gives scale context but is not sufficient alone.",
+      "evidence_needed": [
+        "transaction amount"
       ]
     }
   ],
@@ -97,154 +105,564 @@
       "weighting_method": "fixed review-priority bucket assignment; source: rac/src/mock_pipeline.py; used to order review attention within the current evidence scope",
       "weight_source": "rac/src/mock_pipeline.py",
       "evidence_status": "partially_supported"
+    },
+    {
+      "factor_id": "transaction_amount",
+      "weight": 0.72,
+      "weight_bucket": "medium",
+      "weight_reason": "Important context but not sufficient on its own.",
+      "weighting_method": "fixed review-priority bucket assignment; source: rac/src/mock_pipeline.py; used to order review attention within the current evidence scope",
+      "weight_source": "rac/src/mock_pipeline.py",
+      "evidence_status": "partially_supported"
     }
   ],
   "evidence_packets": [
     {
       "evidence_id": "evidence_search_exposure",
-      "source_type": "markdown",
-      "source_path": "retail_ops/demo/demo_1_store_a_month_over_month_diagnostic.md",
-      "claim_supported": "Provides context needed to evaluate factor: search_exposure.",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "search_exposure_users increased from 4172 to 7736 (2026-03 to 2026-04). search_average_rank decreased from 20 to 18 (2026-03 to 2026-04). search_entry_users increased from 445 to 839 (2026-03 to 2026-04).",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_entry_conversion",
-      "source_type": "markdown",
-      "source_path": "retail_ops/demo/demo_1_store_a_month_over_month_diagnostic.md",
-      "claim_supported": "Provides context needed to evaluate factor: entry_conversion.",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "exposure_users increased from 4663 to 8366 (2026-03 to 2026-04). entry_users increased from 522 to 906 (2026-03 to 2026-04). entry_conversion_rate_pct decreased from 11.19 to 10.83 (2026-03 to 2026-04).",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_order_conversion",
-      "source_type": "markdown",
-      "source_path": "retail_ops/demo/demo_1_store_a_month_over_month_diagnostic.md",
-      "claim_supported": "Provides context needed to evaluate factor: order_conversion.",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "entry_users increased from 522 to 906 (2026-03 to 2026-04). order_users increased from 221 to 339 (2026-03 to 2026-04). order_conversion_rate_pct decreased from 42.34 to 37.42 (2026-03 to 2026-04).",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_promotion_intensity",
-      "source_type": "markdown",
-      "source_path": "retail_ops/demo/demo_1_store_a_month_over_month_diagnostic.md",
-      "claim_supported": "Provides context needed to evaluate factor: promotion_intensity.",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "activity_original_transaction_amount increased from 10035.00 to 15006.90 (2026-03 to 2026-04). activity_orders increased from 201 to 329 (2026-03 to 2026-04). activity_cost increased from 3868.16 to 6105.86 (2026-03 to 2026-04). merchant_subsidy_amount increased from 3727.16 to 5947.36 (2026-03 to 2026-04). platform_subsidy_amount increased from 141.00 to 158.50 (2026-03 to 2026-04). activity_cost_ratio_pct increased from 38.55 to 40.69 (2026-03 to 2026-04).",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_transaction_orders",
-      "source_type": "markdown",
-      "source_path": "retail_ops/demo/demo_1_store_a_month_over_month_diagnostic.md",
-      "claim_supported": "Provides context needed to evaluate factor: transaction_orders.",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "transaction_orders increased from 207 to 337 (2026-03 to 2026-04).",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
+      ]
+    },
+    {
+      "evidence_id": "evidence_transaction_amount",
+      "source_type": "csv",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "claim_supported": "transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04).",
+      "limitations": [
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     }
   ],
-  "hypotheses": [
-    {
-      "hypothesis_id": "H1",
-      "claim": "Search exposure is relevant to Store A's March-to-April increases in transaction amount and transaction orders, but it is not sufficient as a single explanation.",
-      "confidence": 0.52,
-      "supporting_factors": [
-        "search_exposure",
-        "entry_conversion"
+  "evidence_review": {
+    "method": "registered_local_evidence_rules_v1",
+    "scope": {
+      "store_ids": [
+        "A"
       ],
-      "weaknesses": [
-        "Does not isolate promotion effects.",
-        "Does not prove source-field improvement."
-      ],
-      "status": "plausible"
+      "period_start": "2026-03-01",
+      "period_end": "2026-04-30"
     },
-    {
-      "hypothesis_id": "H2",
-      "claim": "Store A's March-to-April increases in transaction amount and transaction orders should be reviewed alongside search exposure, entry conversion, order conversion, promotion intensity, and transaction orders.",
-      "confidence": 0.74,
-      "supporting_factors": [
-        "search_exposure",
-        "entry_conversion",
-        "order_conversion",
-        "promotion_intensity",
-        "transaction_orders"
-      ],
-      "weaknesses": [
-        "Observational evidence cannot establish strict causality."
-      ],
-      "status": "strong"
-    },
-    {
-      "hypothesis_id": "H3",
-      "claim": "The available evidence is insufficient for single-cause attribution.",
-      "confidence": 0.82,
-      "supporting_factors": [
-        "search_exposure",
-        "entry_conversion",
-        "order_conversion",
-        "promotion_intensity",
-        "transaction_orders"
-      ],
-      "weaknesses": [
-        "Conservative rather than complete causal explanation."
-      ],
-      "status": "strong"
-    }
-  ],
-  "critic_findings": [
-    {
-      "issue": "Observational evidence supports bounded association claims only.",
-      "severity": "high",
-      "recommendation": "Keep attribution language conditional and record unresolved alternatives."
-    },
-    {
-      "issue": "Current evidence scope is limited to committed local project files.",
-      "severity": "medium",
-      "recommendation": "Keep source paths and unresolved external requirements explicit."
-    }
-  ],
-  "fact_check": {
-    "status": "pass",
-    "unsupported_claims": [],
-    "definition_conflicts": []
-  },
-  "belief_update": {
-    "belief_id": "store_a_march_april_increase_not_search_only",
-    "claim": "Store A's March-to-April increases in transaction amount and transaction orders should not be attributed to search exposure alone.",
-    "confidence": 0.82,
-    "status": "active",
-    "validity_conditions": [
-      "Store A Demo 1 context.",
-      "Available month-over-month evidence only."
-    ],
-    "limitations": [
-      "No randomized experiment.",
-      "Evidence scope is limited to committed local project files.",
-      "No complete competitor-side evidence."
+    "confidence_method": "not_estimated",
+    "checks": [
+      {
+        "check_id": "search_exposure/search_exposure_users",
+        "factor_id": "search_exposure",
+        "evidence_id": "evidence_search_exposure",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "search_exposure_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "4172"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "7736"
+          }
+        ],
+        "claim": "search_exposure_users increased from 4172 to 7736 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "search_exposure/search_average_rank",
+        "factor_id": "search_exposure",
+        "evidence_id": "evidence_search_exposure",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "search_average_rank",
+        "operation": "compare",
+        "status": "supported",
+        "result": "decreased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "20"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "18"
+          }
+        ],
+        "claim": "search_average_rank decreased from 20 to 18 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "search_exposure/search_entry_users",
+        "factor_id": "search_exposure",
+        "evidence_id": "evidence_search_exposure",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "search_entry_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "445"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "839"
+          }
+        ],
+        "claim": "search_entry_users increased from 445 to 839 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "entry_conversion/exposure_users",
+        "factor_id": "entry_conversion",
+        "evidence_id": "evidence_entry_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "exposure_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "4663"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "8366"
+          }
+        ],
+        "claim": "exposure_users increased from 4663 to 8366 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "entry_conversion/entry_users",
+        "factor_id": "entry_conversion",
+        "evidence_id": "evidence_entry_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "entry_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "522"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "906"
+          }
+        ],
+        "claim": "entry_users increased from 522 to 906 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "entry_conversion/entry_conversion_rate_pct",
+        "factor_id": "entry_conversion",
+        "evidence_id": "evidence_entry_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "entry_conversion_rate_pct",
+        "operation": "compare",
+        "status": "supported",
+        "result": "decreased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "11.19"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "10.83"
+          }
+        ],
+        "claim": "entry_conversion_rate_pct decreased from 11.19 to 10.83 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "order_conversion/entry_users",
+        "factor_id": "order_conversion",
+        "evidence_id": "evidence_order_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "entry_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "522"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "906"
+          }
+        ],
+        "claim": "entry_users increased from 522 to 906 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "order_conversion/order_users",
+        "factor_id": "order_conversion",
+        "evidence_id": "evidence_order_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "order_users",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "221"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "339"
+          }
+        ],
+        "claim": "order_users increased from 221 to 339 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "order_conversion/order_conversion_rate_pct",
+        "factor_id": "order_conversion",
+        "evidence_id": "evidence_order_conversion",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "order_conversion_rate_pct",
+        "operation": "compare",
+        "status": "supported",
+        "result": "decreased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "42.34"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "37.42"
+          }
+        ],
+        "claim": "order_conversion_rate_pct decreased from 42.34 to 37.42 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/activity_original_transaction_amount",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "activity_original_transaction_amount",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "10035.00"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "15006.90"
+          }
+        ],
+        "claim": "activity_original_transaction_amount increased from 10035.00 to 15006.90 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/activity_orders",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "activity_orders",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "201"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "329"
+          }
+        ],
+        "claim": "activity_orders increased from 201 to 329 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/activity_cost",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "activity_cost",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "3868.16"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "6105.86"
+          }
+        ],
+        "claim": "activity_cost increased from 3868.16 to 6105.86 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/merchant_subsidy_amount",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "merchant_subsidy_amount",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "3727.16"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "5947.36"
+          }
+        ],
+        "claim": "merchant_subsidy_amount increased from 3727.16 to 5947.36 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/platform_subsidy_amount",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "platform_subsidy_amount",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "141.00"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "158.50"
+          }
+        ],
+        "claim": "platform_subsidy_amount increased from 141.00 to 158.50 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "promotion_intensity/activity_cost_ratio_pct",
+        "factor_id": "promotion_intensity",
+        "evidence_id": "evidence_promotion_intensity",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "activity_cost_ratio_pct",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "38.55"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "40.69"
+          }
+        ],
+        "claim": "activity_cost_ratio_pct increased from 38.55 to 40.69 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "transaction_orders/transaction_orders",
+        "factor_id": "transaction_orders",
+        "evidence_id": "evidence_transaction_orders",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "transaction_orders",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "207"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "337"
+          }
+        ],
+        "claim": "transaction_orders increased from 207 to 337 (2026-03 to 2026-04)."
+      },
+      {
+        "check_id": "transaction_amount/transaction_amount",
+        "factor_id": "transaction_amount",
+        "evidence_id": "evidence_transaction_amount",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "field": "transaction_amount",
+        "operation": "compare",
+        "status": "supported",
+        "result": "increased",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "value": "6454.84"
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "value": "9083.72"
+          }
+        ],
+        "claim": "transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04)."
+      }
     ]
   },
-  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nStore A's March-to-April increases in transaction amount and transaction orders should not be attributed to search exposure alone.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: causal_diagnostic\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | order_conversion, promotion_intensity |\n| medium | 0.72 | Important context but not sufficient on its own. | search_exposure, entry_conversion, transaction_orders |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | none |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| search_exposure | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| entry_conversion | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| order_conversion | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| promotion_intensity | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| transaction_orders | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n\n`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 5\n- Record matched packets: 5\n- Keyword matched packets: 0\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| search_exposure | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | search_exposure_users, search_average_rank, search_entry_users | store_id=A, period_month=2026-03: search_exposure_users=4172, search_average_rank=20, search_entry_users=445<br>store_id=A, period_month=2026-04: search_exposure_users=7736, search_average_rank=18, search_entry_users=839 |\n| entry_conversion | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | exposure_users, entry_users, entry_conversion_rate_pct | store_id=A, period_month=2026-03: exposure_users=4663, entry_users=522, entry_conversion_rate_pct=11.19<br>store_id=A, period_month=2026-04: exposure_users=8366, entry_users=906, entry_conversion_rate_pct=10.83 |\n| order_conversion | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | entry_users, order_users, order_conversion_rate_pct | store_id=A, period_month=2026-03: entry_users=522, order_users=221, order_conversion_rate_pct=42.34<br>store_id=A, period_month=2026-04: entry_users=906, order_users=339, order_conversion_rate_pct=37.42 |\n| promotion_intensity | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | activity_original_transaction_amount, activity_orders, activity_cost, merchant_subsidy_amount, platform_subsidy_amount, activity_cost_ratio_pct | store_id=A, period_month=2026-03: activity_original_transaction_amount=10035.00, activity_orders=201, activity_cost=3868.16, merchant_subsidy_amount=3727.16, platform_subsidy_amount=141.00, activity_cost_ratio_pct=38.55<br>store_id=A, period_month=2026-04: activity_original_transaction_amount=15006.90, activity_orders=329, activity_cost=6105.86, merchant_subsidy_amount=5947.36, platform_subsidy_amount=158.50, activity_cost_ratio_pct=40.69 |\n| transaction_orders | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | transaction_orders | store_id=A, period_month=2026-03: transaction_orders=207<br>store_id=A, period_month=2026-04: transaction_orders=337 |\n\n\n## 5. Competing Hypotheses\n\nThe `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.\n\n| Hypothesis | Scenario-Template Confidence | Status | Weakness |\n|---|---:|---|---|\n| Search exposure is relevant to Store A's March-to-April increases in transaction amount and transaction orders, but it is not sufficient as a single explanation. | 0.52 | plausible | Does not isolate promotion effects; Does not prove source-field improvement. |\n| Store A's March-to-April increases in transaction amount and transaction orders should be reviewed alongside search exposure, entry conversion, order conversion, promotion intensity, and transaction orders. | 0.74 | strong | Observational evidence cannot establish strict causality. |\n| The available evidence is insufficient for single-cause attribution. | 0.82 | strong | Conservative rather than complete causal explanation. |\n\n## 6. Critic Findings\n\n- [high] Observational evidence supports bounded association claims only. Recommendation: Keep attribution language conditional and record unresolved alternatives.\n- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nStore A's March-to-April increases in transaction amount and transaction orders should not be attributed to search exposure alone.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 5\n- Record matched packets: 5\n- Keyword matched packets: 0\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 1.00\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 5\n- record_matched_packets = 5\n- keyword_matched_packets = 0\n- boundary_matched_packets = 0\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 1.00\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- No randomized experiment.\n- Evidence scope is limited to committed local project files.\n- No complete competitor-side evidence.\n\n## 11. Review-State Update\n\n- review_state_id: store_a_march_april_increase_not_search_only\n- status: active\n- validity_conditions:\n  - Store A Demo 1 context.\n  - Available month-over-month evidence only.\n",
   "grounded_evidence": {
     "summary": {
       "question": "Can Store A's March-to-April increases in transaction amount and transaction orders be attributed to search exposure alone?",
       "question_type": "causal_diagnostic",
-      "total_packets": 5,
+      "total_packets": 6,
       "status_counts": {
-        "record_matched": 5
+        "record_matched": 6
       },
       "role_counts": {
-        "quantitative_evidence": 5
+        "quantitative_evidence": 6
       },
       "source_missing_count": 0,
-      "record_matched_count": 5,
+      "record_matched_count": 6,
       "keyword_matched_count": 0,
       "boundary_matched_count": 0,
       "fallback_count": 0
@@ -307,8 +725,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: search_exposure.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -372,8 +790,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: entry_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -437,8 +855,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: order_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -511,8 +929,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: promotion_intensity.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -570,8 +988,67 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: transaction_orders.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
+        ],
+        "resolver_limitations": [
+          "Deterministic Store A CSV record selection only.",
+          "Selected values describe the observed records; they do not establish a single cause for the March-to-April changes."
+        ]
+      },
+      {
+        "factor_id": "transaction_amount",
+        "evidence_id": "evidence_transaction_amount",
+        "source_type": "csv",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "source_exists": true,
+        "grounding_role": "quantitative_evidence",
+        "grounding_status": "record_matched",
+        "snippets": [],
+        "record_scope": {
+          "key_fields": [
+            "store_id",
+            "period_month"
+          ],
+          "row_count": 2,
+          "row_keys": [
+            {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            {
+              "store_id": "A",
+              "period_month": "2026-04"
+            }
+          ]
+        },
+        "evidence_fields": [
+          "transaction_amount"
+        ],
+        "evidence_values": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "values": {
+              "transaction_amount": "6454.84"
+            }
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "values": {
+              "transaction_amount": "9083.72"
+            }
+          }
+        ],
+        "original_claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
+        "original_limitations": [
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -580,6 +1057,77 @@
       }
     ]
   },
+  "hypotheses": [
+    {
+      "hypothesis_id": "H1",
+      "claim": "transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). transaction_orders increased from 207 to 337 (2026-03 to 2026-04).",
+      "confidence": null,
+      "supporting_factors": [
+        "transaction_amount",
+        "transaction_orders"
+      ],
+      "weaknesses": [
+        "These are within-store observations in the selected windows."
+      ],
+      "status": "strong"
+    },
+    {
+      "hypothesis_id": "H2",
+      "claim": "Search exposure and both transaction measures move in the same direction.",
+      "confidence": null,
+      "supporting_factors": [
+        "search_exposure",
+        "transaction_amount",
+        "transaction_orders"
+      ],
+      "weaknesses": [
+        "search_exposure_users increased from 4172 to 7736 (2026-03 to 2026-04).",
+        "Co-movement alone does not identify a search-only cause."
+      ],
+      "status": "plausible"
+    },
+    {
+      "hypothesis_id": "H3",
+      "claim": "Activity participation remains an alternative explanation to investigate.",
+      "confidence": null,
+      "supporting_factors": [
+        "promotion_intensity",
+        "entry_conversion",
+        "order_conversion"
+      ],
+      "weaknesses": [
+        "activity_original_transaction_amount increased from 10035.00 to 15006.90 (2026-03 to 2026-04). activity_orders increased from 201 to 329 (2026-03 to 2026-04). activity_cost increased from 3868.16 to 6105.86 (2026-03 to 2026-04). merchant_subsidy_amount increased from 3727.16 to 5947.36 (2026-03 to 2026-04). platform_subsidy_amount increased from 141.00 to 158.50 (2026-03 to 2026-04). activity_cost_ratio_pct increased from 38.55 to 40.69 (2026-03 to 2026-04).",
+        "The selected activity metrics do not isolate campaign effects."
+      ],
+      "status": "plausible"
+    }
+  ],
+  "belief_update": {
+    "belief_id": "store_a_march_april_attribution",
+    "claim": "transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). transaction_orders increased from 207 to 337 (2026-03 to 2026-04). The selected observations do not isolate search exposure as the sole cause.",
+    "confidence": null,
+    "status": "active",
+    "validity_conditions": [
+      "Store A, 2026-03-01 through 2026-04-30.",
+      "Recompute these checks after any source record changes."
+    ],
+    "limitations": [
+      "No comparison group or intervention evidence is supplied by these records."
+    ]
+  },
+  "critic_findings": [
+    {
+      "issue": "Alternative explanations have not been isolated by the selected observations.",
+      "severity": "high",
+      "recommendation": "Use aligned intervention and comparison evidence to test causal explanations."
+    }
+  ],
+  "fact_check": {
+    "status": "pass",
+    "unsupported_claims": [],
+    "definition_conflicts": []
+  },
+  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\ntransaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). transaction_orders increased from 207 to 337 (2026-03 to 2026-04). The selected observations do not isolate search exposure as the sole cause.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: causal_diagnostic\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | order_conversion, promotion_intensity |\n| medium | 0.72 | Important context but not sufficient on its own. | search_exposure, entry_conversion, transaction_orders, transaction_amount |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | none |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| search_exposure | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| entry_conversion | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| order_conversion | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| promotion_intensity | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| transaction_orders | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| transaction_amount | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n\n`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 6\n- Record matched packets: 6\n- Keyword matched packets: 0\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| search_exposure | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | search_exposure_users, search_average_rank, search_entry_users | store_id=A, period_month=2026-03: search_exposure_users=4172, search_average_rank=20, search_entry_users=445<br>store_id=A, period_month=2026-04: search_exposure_users=7736, search_average_rank=18, search_entry_users=839 |\n| entry_conversion | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | exposure_users, entry_users, entry_conversion_rate_pct | store_id=A, period_month=2026-03: exposure_users=4663, entry_users=522, entry_conversion_rate_pct=11.19<br>store_id=A, period_month=2026-04: exposure_users=8366, entry_users=906, entry_conversion_rate_pct=10.83 |\n| order_conversion | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | entry_users, order_users, order_conversion_rate_pct | store_id=A, period_month=2026-03: entry_users=522, order_users=221, order_conversion_rate_pct=42.34<br>store_id=A, period_month=2026-04: entry_users=906, order_users=339, order_conversion_rate_pct=37.42 |\n| promotion_intensity | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | activity_original_transaction_amount, activity_orders, activity_cost, merchant_subsidy_amount, platform_subsidy_amount, activity_cost_ratio_pct | store_id=A, period_month=2026-03: activity_original_transaction_amount=10035.00, activity_orders=201, activity_cost=3868.16, merchant_subsidy_amount=3727.16, platform_subsidy_amount=141.00, activity_cost_ratio_pct=38.55<br>store_id=A, period_month=2026-04: activity_original_transaction_amount=15006.90, activity_orders=329, activity_cost=6105.86, merchant_subsidy_amount=5947.36, platform_subsidy_amount=158.50, activity_cost_ratio_pct=40.69 |\n| transaction_orders | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | transaction_orders | store_id=A, period_month=2026-03: transaction_orders=207<br>store_id=A, period_month=2026-04: transaction_orders=337 |\n| transaction_amount | retail_ops/data/store_a_monthly_metrics.csv | quantitative_evidence | record_matched | records: store_id=A; period_month=2026-03, 2026-04; rows=2 | transaction_amount | store_id=A, period_month=2026-03: transaction_amount=6454.84<br>store_id=A, period_month=2026-04: transaction_amount=9083.72 |\n\n\n## 5. Competing Hypotheses\n\nHypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.\n\n| Hypothesis | Confidence | Status | Weakness |\n|---|---:|---|---|\n| transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). transaction_orders increased from 207 to 337 (2026-03 to 2026-04). | unknown | strong | These are within-store observations in the selected windows. |\n| Search exposure and both transaction measures move in the same direction. | unknown | plausible | search_exposure_users increased from 4172 to 7736 (2026-03 to 2026-04); Co-movement alone does not identify a search-only cause. |\n| Activity participation remains an alternative explanation to investigate. | unknown | plausible | activity_original_transaction_amount increased from 10035.00 to 15006.90 (2026-03 to 2026-04). activity_orders increased from 201 to 329 (2026-03 to 2026-04). activity_cost increased from 3868.16 to 6105.86 (2026-03 to 2026-04). merchant_subsidy_amount increased from 3727.16 to 5947.36 (2026-03 to 2026-04). platform_subsidy_amount increased from 141.00 to 158.50 (2026-03 to 2026-04). activity_cost_ratio_pct increased from 38.55 to 40.69 (2026-03 to 2026-04); The selected activity metrics do not isolate campaign effects. |\n\n## 6. Critic Findings\n\n- [high] Alternative explanations have not been isolated by the selected observations. Recommendation: Use aligned intervention and comparison evidence to test causal explanations.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n\n### Evidence Checks\n\n| Check | Evidence | Status | Result |\n|---|---|---|---|\n| search_exposure/search_exposure_users | evidence_search_exposure | supported | search_exposure_users increased from 4172 to 7736 (2026-03 to 2026-04). |\n| search_exposure/search_average_rank | evidence_search_exposure | supported | search_average_rank decreased from 20 to 18 (2026-03 to 2026-04). |\n| search_exposure/search_entry_users | evidence_search_exposure | supported | search_entry_users increased from 445 to 839 (2026-03 to 2026-04). |\n| entry_conversion/exposure_users | evidence_entry_conversion | supported | exposure_users increased from 4663 to 8366 (2026-03 to 2026-04). |\n| entry_conversion/entry_users | evidence_entry_conversion | supported | entry_users increased from 522 to 906 (2026-03 to 2026-04). |\n| entry_conversion/entry_conversion_rate_pct | evidence_entry_conversion | supported | entry_conversion_rate_pct decreased from 11.19 to 10.83 (2026-03 to 2026-04). |\n| order_conversion/entry_users | evidence_order_conversion | supported | entry_users increased from 522 to 906 (2026-03 to 2026-04). |\n| order_conversion/order_users | evidence_order_conversion | supported | order_users increased from 221 to 339 (2026-03 to 2026-04). |\n| order_conversion/order_conversion_rate_pct | evidence_order_conversion | supported | order_conversion_rate_pct decreased from 42.34 to 37.42 (2026-03 to 2026-04). |\n| promotion_intensity/activity_original_transaction_amount | evidence_promotion_intensity | supported | activity_original_transaction_amount increased from 10035.00 to 15006.90 (2026-03 to 2026-04). |\n| promotion_intensity/activity_orders | evidence_promotion_intensity | supported | activity_orders increased from 201 to 329 (2026-03 to 2026-04). |\n| promotion_intensity/activity_cost | evidence_promotion_intensity | supported | activity_cost increased from 3868.16 to 6105.86 (2026-03 to 2026-04). |\n| promotion_intensity/merchant_subsidy_amount | evidence_promotion_intensity | supported | merchant_subsidy_amount increased from 3727.16 to 5947.36 (2026-03 to 2026-04). |\n| promotion_intensity/platform_subsidy_amount | evidence_promotion_intensity | supported | platform_subsidy_amount increased from 141.00 to 158.50 (2026-03 to 2026-04). |\n| promotion_intensity/activity_cost_ratio_pct | evidence_promotion_intensity | supported | activity_cost_ratio_pct increased from 38.55 to 40.69 (2026-03 to 2026-04). |\n| transaction_orders/transaction_orders | evidence_transaction_orders | supported | transaction_orders increased from 207 to 337 (2026-03 to 2026-04). |\n| transaction_amount/transaction_amount | evidence_transaction_amount | supported | transaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). |\n\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\ntransaction_amount increased from 6454.84 to 9083.72 (2026-03 to 2026-04). transaction_orders increased from 207 to 337 (2026-03 to 2026-04). The selected observations do not isolate search exposure as the sole cause.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 6\n- Record matched packets: 6\n- Keyword matched packets: 0\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 1.00\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 6\n- record_matched_packets = 6\n- keyword_matched_packets = 0\n- boundary_matched_packets = 0\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 1.00\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- No comparison group or intervention evidence is supplied by these records.\n\n## 11. Review-State Update\n\n- review_state_id: store_a_march_april_attribution\n- status: active\n- validity_conditions:\n  - Store A, 2026-03-01 through 2026-04-30.\n  - Recompute these checks after any source record changes.\n",
   "grounded_evidence_rows": [
     {
       "factor_id": "search_exposure",
@@ -860,6 +1408,56 @@
           },
           "values": {
             "transaction_orders": "337"
+          }
+        }
+      ]
+    },
+    {
+      "factor_id": "transaction_amount",
+      "evidence_id": "evidence_transaction_amount",
+      "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+      "grounding_role": "quantitative_evidence",
+      "grounding_status": "record_matched",
+      "line_range": "n/a",
+      "matched_terms": [],
+      "snippet": "",
+      "record_scope": {
+        "key_fields": [
+          "store_id",
+          "period_month"
+        ],
+        "row_count": 2,
+        "row_keys": [
+          {
+            "store_id": "A",
+            "period_month": "2026-03"
+          },
+          {
+            "store_id": "A",
+            "period_month": "2026-04"
+          }
+        ]
+      },
+      "evidence_fields": [
+        "transaction_amount"
+      ],
+      "evidence_values": [
+        {
+          "row_key": {
+            "store_id": "A",
+            "period_month": "2026-03"
+          },
+          "values": {
+            "transaction_amount": "6454.84"
+          }
+        },
+        {
+          "row_key": {
+            "store_id": "A",
+            "period_month": "2026-04"
+          },
+          "values": {
+            "transaction_amount": "9083.72"
           }
         }
       ]

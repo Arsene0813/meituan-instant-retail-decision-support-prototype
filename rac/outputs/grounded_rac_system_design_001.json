@@ -150,141 +150,190 @@
       "evidence_id": "evidence_typed_memory",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: typed_memory.",
+      "claim_supported": "typed_memory: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_evidence_packets",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: evidence_packets.",
+      "claim_supported": "evidence_packets: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_hypotheses",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: hypotheses.",
+      "claim_supported": "hypotheses: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_belief_records",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: belief_records.",
+      "claim_supported": "belief_records: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_confidence",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: confidence.",
+      "claim_supported": "confidence: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_limitations",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: limitations.",
+      "claim_supported": "limitations: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_retrieval_trace",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: retrieval_trace.",
+      "claim_supported": "retrieval_trace: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_active_state_filtering",
       "source_type": "markdown",
       "source_path": "rac/README.md",
-      "claim_supported": "Provides context needed to evaluate factor: active_state_filtering.",
+      "claim_supported": "active_state_filtering: registered design_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     }
   ],
-  "hypotheses": [
-    {
-      "hypothesis_id": "H1",
-      "claim": "RAC operates as a reasoning layer above the existing typed memory layer.",
-      "confidence": 0.86,
-      "supporting_factors": [
-        "typed_memory",
-        "evidence_packets",
-        "hypotheses",
-        "belief_records",
-        "retrieval_trace",
-        "active_state_filtering"
-      ],
-      "weaknesses": [
-        "The current RAC path resolves evidence from committed local project files."
-      ],
-      "status": "strong"
+  "evidence_review": {
+    "method": "registered_local_evidence_rules_v1",
+    "scope": {
+      "store_ids": [],
+      "period_start": null,
+      "period_end": null
     },
-    {
-      "hypothesis_id": "H2",
-      "claim": "The current deterministic implementation keeps evidence routing and review states inspectable.",
-      "confidence": 0.8,
-      "supporting_factors": [
-        "confidence",
-        "limitations",
-        "retrieval_trace"
-      ],
-      "weaknesses": [
-        "Fixed rules trade flexibility for inspectability."
-      ],
-      "status": "strong"
-    }
-  ],
-  "critic_findings": [
-    {
-      "issue": "Current evidence scope is limited to committed local project files.",
-      "severity": "medium",
-      "recommendation": "Keep source paths and unresolved external requirements explicit."
-    }
-  ],
-  "fact_check": {
-    "status": "pass",
-    "unsupported_claims": [],
-    "definition_conflicts": []
-  },
-  "belief_update": {
-    "belief_id": "rac_should_layer_above_existing_memory",
-    "claim": "RAC operates as a review layer above the existing typed memory system while leaving existing endpoints unchanged.",
-    "confidence": 0.84,
-    "status": "active",
-    "validity_conditions": [
-      "Current project architecture stage."
-    ],
-    "limitations": [
-      "The current RAC path is limited to committed local evidence."
+    "confidence_method": "not_estimated",
+    "checks": [
+      {
+        "check_id": "typed_memory/document",
+        "factor_id": "typed_memory",
+        "evidence_id": "evidence_typed_memory",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "typed_memory: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "evidence_packets/document",
+        "factor_id": "evidence_packets",
+        "evidence_id": "evidence_evidence_packets",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "evidence_packets: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "hypotheses/document",
+        "factor_id": "hypotheses",
+        "evidence_id": "evidence_hypotheses",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "hypotheses: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "belief_records/document",
+        "factor_id": "belief_records",
+        "evidence_id": "evidence_belief_records",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "belief_records: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "confidence/document",
+        "factor_id": "confidence",
+        "evidence_id": "evidence_confidence",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "confidence: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "limitations/document",
+        "factor_id": "limitations",
+        "evidence_id": "evidence_limitations",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "limitations: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "retrieval_trace/document",
+        "factor_id": "retrieval_trace",
+        "evidence_id": "evidence_retrieval_trace",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "retrieval_trace: registered design_evidence anchor matched."
+      },
+      {
+        "check_id": "active_state_filtering/document",
+        "factor_id": "active_state_filtering",
+        "evidence_id": "evidence_active_state_filtering",
+        "source_path": "rac/README.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "active_state_filtering: registered design_evidence anchor matched."
+      }
     ]
   },
-  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nRAC operates as a review layer above the existing typed memory system while leaving existing endpoints unchanged.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: technical_design\n- Domain: ai_system_design\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | evidence_packets, belief_records, retrieval_trace |\n| medium | 0.72 | Important context but not sufficient on its own. | typed_memory, hypotheses, confidence, limitations, active_state_filtering |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | none |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| typed_memory | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| evidence_packets | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| hypotheses | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| belief_records | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| confidence | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| limitations | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| retrieval_trace | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| active_state_filtering | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n\n`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 8\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| typed_memory | rac/README.md | default_evidence | keyword_matched | lines 1-2 | memory schema requirement | n/a |\n| evidence_packets | rac/README.md | default_evidence | keyword_matched | lines 5-7 | source_path, claim_supported, limitations | n/a |\n| hypotheses | rac/README.md | default_evidence | keyword_matched | lines 41-43 | hypothesis records | n/a |\n| belief_records | rac/README.md | default_evidence | keyword_matched | lines 138-140 | belief update schema | n/a |\n| confidence | rac/README.md | default_evidence | keyword_matched | lines 155-157 | confidence field | n/a |\n| limitations | rac/README.md | default_evidence | keyword_matched | lines 7-9 | limitations field | n/a |\n| retrieval_trace | rac/README.md | default_evidence | keyword_matched | lines 39-41 | source metadata | n/a |\n| active_state_filtering | rac/README.md | default_evidence | keyword_matched | lines 7-9 | active flag, freshness policy | n/a |\n\n\n## 5. Competing Hypotheses\n\nThe `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.\n\n| Hypothesis | Scenario-Template Confidence | Status | Weakness |\n|---|---:|---|---|\n| RAC operates as a reasoning layer above the existing typed memory layer. | 0.86 | strong | The current RAC path resolves evidence from committed local project files. |\n| The current deterministic implementation keeps evidence routing and review states inspectable. | 0.80 | strong | Fixed rules trade flexibility for inspectability. |\n\n## 6. Critic Findings\n\n- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nRAC operates as a review layer above the existing typed memory system while leaving existing endpoints unchanged.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 8\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 1.00\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 8\n- record_matched_packets = 0\n- keyword_matched_packets = 8\n- boundary_matched_packets = 0\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 1.00\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- The current RAC path is limited to committed local evidence.\n\n## 11. Review-State Update\n\n- review_state_id: rac_should_layer_above_existing_memory\n- status: active\n- validity_conditions:\n  - Current project architecture stage.\n",
   "grounded_evidence": {
     "summary": {
       "question": "How should the RAC system be connected to the existing memory layer?",
@@ -294,7 +343,7 @@
         "keyword_matched": 8
       },
       "role_counts": {
-        "default_evidence": 8
+        "design_evidence": 8
       },
       "source_missing_count": 0,
       "record_matched_count": 0,
@@ -309,7 +358,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "typed memory",
           "memory",
@@ -347,8 +396,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: typed_memory.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -362,7 +411,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "evidence",
           "evidence packet",
@@ -401,8 +450,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: evidence_packets.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -416,7 +465,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "hypothesis",
           "hypotheses",
@@ -427,25 +476,25 @@
         "grounding_status": "keyword_matched",
         "snippets": [
           {
-            "line_start": 41,
-            "line_end": 43,
+            "line_start": 42,
+            "line_end": 44,
             "matched_terms": [
               "hypotheses",
               "competing"
             ],
-            "text": "-> boundary evidence for unavailable requirements\n-> competing hypotheses\n-> critique"
+            "text": "-> exact-value and coverage checks\n-> competing hypotheses updated from those checks\n-> critique"
           },
           {
-            "line_start": 49,
-            "line_end": 51,
+            "line_start": 50,
+            "line_end": 52,
             "matched_terms": [
               "hypothesis"
             ],
             "text": "The pipeline separates factor selection, evidence retrieval, hypothesis\nformation, critique, and report generation. A final answer therefore"
           },
           {
-            "line_start": 63,
-            "line_end": 65,
+            "line_start": 64,
+            "line_end": 66,
             "matched_terms": [
               "competing"
             ],
@@ -454,8 +503,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: hypotheses.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -469,7 +518,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "belief",
           "belief update",
@@ -481,24 +530,24 @@
         "grounding_status": "keyword_matched",
         "snippets": [
           {
-            "line_start": 138,
-            "line_end": 140,
+            "line_start": 140,
+            "line_end": 142,
             "matched_terms": [
               "belief"
             ],
             "text": "evidence_packets\nbelief_records\nretrieval_trace"
           },
           {
-            "line_start": 155,
-            "line_end": 157,
+            "line_start": 157,
+            "line_end": 159,
             "matched_terms": [
               "confidence"
             ],
             "text": "hypotheses\nconfidence\nlimitations"
           },
           {
-            "line_start": 193,
-            "line_end": 195,
+            "line_start": 195,
+            "line_end": 197,
             "matched_terms": [
               "confidence"
             ],
@@ -507,8 +556,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: belief_records.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -522,7 +571,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "confidence",
           "uncertainty",
@@ -532,34 +581,34 @@
         "grounding_status": "keyword_matched",
         "snippets": [
           {
-            "line_start": 155,
-            "line_end": 157,
+            "line_start": 157,
+            "line_end": 159,
             "matched_terms": [
               "confidence"
             ],
             "text": "hypotheses\nconfidence\nlimitations"
           },
           {
-            "line_start": 193,
-            "line_end": 195,
+            "line_start": 195,
+            "line_end": 197,
             "matched_terms": [
               "confidence"
             ],
             "text": "does not measure evidence strength, conclusion correctness, business impact,\ndecision quality, or model confidence. It is not used to select or rank the\nfinal judgment."
           },
           {
-            "line_start": 196,
-            "line_end": 198,
+            "line_start": 198,
+            "line_end": 200,
             "matched_terms": [
               "confidence"
             ],
-            "text": "Mock reports separately carry Scenario-Template Confidence. That value\nis assigned by deterministic question-type templates and is not merged"
+            "text": "Grounded hypothesis and belief `confidence` values are `null`: no calibrated\nnumerical estimate is available. Hypothesis `status`, evidence checks and"
           }
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: confidence.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -573,7 +622,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "limitation",
           "limitations",
@@ -598,11 +647,11 @@
             "matched_terms": [
               "boundary"
             ],
-            "text": "-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements\n-> competing hypotheses"
+            "text": "-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements\n-> exact-value and coverage checks"
           },
           {
-            "line_start": 51,
-            "line_end": 53,
+            "line_start": 52,
+            "line_end": 54,
             "matched_terms": [
               "limitation",
               "limitations"
@@ -612,8 +661,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: limitations.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -627,7 +676,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "retrieval",
           "trace",
@@ -648,16 +697,16 @@
             "text": "-> factor weighting\n-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements"
           },
           {
-            "line_start": 49,
-            "line_end": 51,
+            "line_start": 50,
+            "line_end": 52,
             "matched_terms": [
               "retrieval"
             ],
             "text": "The pipeline separates factor selection, evidence retrieval, hypothesis\nformation, critique, and report generation. A final answer therefore"
           },
           {
-            "line_start": 61,
-            "line_end": 63,
+            "line_start": 62,
+            "line_end": 64,
             "matched_terms": [
               "source"
             ],
@@ -666,8 +715,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: retrieval_trace.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -681,7 +730,7 @@
         "source_type": "markdown",
         "source_path": "rac/README.md",
         "source_exists": true,
-        "grounding_role": "default_evidence",
+        "grounding_role": "design_evidence",
         "keywords_used": [
           "active",
           "state",
@@ -703,16 +752,16 @@
             "text": "review path explicit, and records where the available evidence supports\na statement, where only a boundary can be established, and where a\nstronger conclusion should remain unresolved."
           },
           {
-            "line_start": 44,
-            "line_end": 46,
+            "line_start": 45,
+            "line_end": 47,
             "matched_terms": [
               "state"
             ],
             "text": "-> rule-based claim and definition check\n-> review-state update\n-> grounded final report"
           },
           {
-            "line_start": 76,
-            "line_end": 78,
+            "line_start": 77,
+            "line_end": 79,
             "matched_terms": [
               "state"
             ],
@@ -721,8 +770,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: active_state_filtering.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -732,12 +781,77 @@
       }
     ]
   },
+  "hypotheses": [
+    {
+      "hypothesis_id": "H1",
+      "claim": "The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.",
+      "confidence": null,
+      "supporting_factors": [
+        "typed_memory",
+        "evidence_packets",
+        "hypotheses",
+        "belief_records",
+        "confidence",
+        "limitations",
+        "retrieval_trace",
+        "active_state_filtering"
+      ],
+      "weaknesses": [
+        "Document anchors establish the design scope; they do not verify a running integration."
+      ],
+      "status": "strong"
+    },
+    {
+      "hypothesis_id": "H2",
+      "claim": "The current document routes alone establish a running memory integration.",
+      "confidence": null,
+      "supporting_factors": [
+        "typed_memory",
+        "evidence_packets",
+        "hypotheses",
+        "belief_records",
+        "confidence",
+        "limitations",
+        "retrieval_trace",
+        "active_state_filtering"
+      ],
+      "weaknesses": [
+        "Document anchors establish the design scope; they do not verify a running integration."
+      ],
+      "status": "unsupported"
+    }
+  ],
+  "belief_update": {
+    "belief_id": "rac_should_layer_above_existing_memory",
+    "claim": "The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.",
+    "confidence": null,
+    "status": "active",
+    "validity_conditions": [
+      "Only the registered definition/design routes are used."
+    ],
+    "limitations": [
+      "Document anchors establish the design scope; they do not verify a running integration."
+    ]
+  },
+  "critic_findings": [
+    {
+      "issue": "The selected document anchors describe review requirements, not measured operating outcomes.",
+      "severity": "medium",
+      "recommendation": "Use observations and tests appropriate to the proposed decision."
+    }
+  ],
+  "fact_check": {
+    "status": "pass",
+    "unsupported_claims": [],
+    "definition_conflicts": []
+  },
+  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nThe registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: technical_design\n- Domain: ai_system_design\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | evidence_packets, belief_records, retrieval_trace |\n| medium | 0.72 | Important context but not sufficient on its own. | typed_memory, hypotheses, confidence, limitations, active_state_filtering |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | none |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| typed_memory | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| evidence_packets | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| hypotheses | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| belief_records | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| confidence | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| limitations | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| retrieval_trace | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| active_state_filtering | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n\n`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 8\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| typed_memory | rac/README.md | design_evidence | keyword_matched | lines 1-2 | memory schema requirement | n/a |\n| evidence_packets | rac/README.md | design_evidence | keyword_matched | lines 5-7 | source_path, claim_supported, limitations | n/a |\n| hypotheses | rac/README.md | design_evidence | keyword_matched | lines 42-44 | hypothesis records | n/a |\n| belief_records | rac/README.md | design_evidence | keyword_matched | lines 140-142 | belief update schema | n/a |\n| confidence | rac/README.md | design_evidence | keyword_matched | lines 157-159 | confidence field | n/a |\n| limitations | rac/README.md | design_evidence | keyword_matched | lines 7-9 | limitations field | n/a |\n| retrieval_trace | rac/README.md | design_evidence | keyword_matched | lines 39-41 | source metadata | n/a |\n| active_state_filtering | rac/README.md | design_evidence | keyword_matched | lines 7-9 | active flag, freshness policy | n/a |\n\n\n## 5. Competing Hypotheses\n\nHypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.\n\n| Hypothesis | Confidence | Status | Weakness |\n|---|---:|---|---|\n| The registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering. | unknown | strong | Document anchors establish the design scope; they do not verify a running integration. |\n| The current document routes alone establish a running memory integration. | unknown | unsupported | Document anchors establish the design scope; they do not verify a running integration. |\n\n## 6. Critic Findings\n\n- [medium] The selected document anchors describe review requirements, not measured operating outcomes. Recommendation: Use observations and tests appropriate to the proposed decision.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n\n### Evidence Checks\n\n| Check | Evidence | Status | Result |\n|---|---|---|---|\n| typed_memory/document | evidence_typed_memory | supported | typed_memory: registered design_evidence anchor matched. |\n| evidence_packets/document | evidence_evidence_packets | supported | evidence_packets: registered design_evidence anchor matched. |\n| hypotheses/document | evidence_hypotheses | supported | hypotheses: registered design_evidence anchor matched. |\n| belief_records/document | evidence_belief_records | supported | belief_records: registered design_evidence anchor matched. |\n| confidence/document | evidence_confidence | supported | confidence: registered design_evidence anchor matched. |\n| limitations/document | evidence_limitations | supported | limitations: registered design_evidence anchor matched. |\n| retrieval_trace/document | evidence_retrieval_trace | supported | retrieval_trace: registered design_evidence anchor matched. |\n| active_state_filtering/document | evidence_active_state_filtering | supported | active_state_filtering: registered design_evidence anchor matched. |\n\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nThe registered local documents cover the connection between RAC review states and typed memory: typed_memory, evidence_packets, hypotheses, belief_records, confidence, limitations, retrieval_trace, active_state_filtering.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 8\n- Record matched packets: 0\n- Keyword matched packets: 8\n- Boundary matched packets: 0\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 1.00\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 8\n- record_matched_packets = 0\n- keyword_matched_packets = 8\n- boundary_matched_packets = 0\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 1.00\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- Document anchors establish the design scope; they do not verify a running integration.\n\n## 11. Review-State Update\n\n- review_state_id: rac_should_layer_above_existing_memory\n- status: active\n- validity_conditions:\n  - Only the registered definition/design routes are used.\n",
   "grounded_evidence_rows": [
     {
       "factor_id": "typed_memory",
       "evidence_id": "evidence_typed_memory",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "1-2",
       "matched_terms": [
@@ -749,7 +863,7 @@
       "factor_id": "evidence_packets",
       "evidence_id": "evidence_evidence_packets",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "5-7",
       "matched_terms": [
@@ -761,22 +875,22 @@
       "factor_id": "hypotheses",
       "evidence_id": "evidence_hypotheses",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
-      "line_range": "41-43",
+      "line_range": "42-44",
       "matched_terms": [
         "hypotheses",
         "competing"
       ],
-      "snippet": "-> boundary evidence for unavailable requirements -> competing hypotheses -> critique"
+      "snippet": "-> exact-value and coverage checks -> competing hypotheses updated from those checks -> critique"
     },
     {
       "factor_id": "belief_records",
       "evidence_id": "evidence_belief_records",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
-      "line_range": "138-140",
+      "line_range": "140-142",
       "matched_terms": [
         "belief"
       ],
@@ -786,9 +900,9 @@
       "factor_id": "confidence",
       "evidence_id": "evidence_confidence",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
-      "line_range": "155-157",
+      "line_range": "157-159",
       "matched_terms": [
         "confidence"
       ],
@@ -798,7 +912,7 @@
       "factor_id": "limitations",
       "evidence_id": "evidence_limitations",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "7-9",
       "matched_terms": [
@@ -810,7 +924,7 @@
       "factor_id": "retrieval_trace",
       "evidence_id": "evidence_retrieval_trace",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "39-41",
       "matched_terms": [
@@ -822,7 +936,7 @@
       "factor_id": "active_state_filtering",
       "evidence_id": "evidence_active_state_filtering",
       "source_path": "rac/README.md",
-      "grounding_role": "default_evidence",
+      "grounding_role": "design_evidence",
       "grounding_status": "keyword_matched",
       "line_range": "7-9",
       "matched_terms": [

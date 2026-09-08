@@ -19,7 +19,7 @@ from rac.src.local_evidence_resolver import (
     resolve_evidence_packet,
     resolve_state_evidence,
 )
-from rac.src.mock_pipeline import run_mock_pipeline
+from rac.src.evidence_review import build_review_plan
 from rac.src.store_a_csv_grounding import (
     FACTOR_FIELDS as STORE_A_FACTOR_FIELDS,
     PERIOD_MONTHS as STORE_A_PERIOD_MONTHS,
@@ -477,7 +477,7 @@ def main() -> None:
     total_fallbacks = 0
 
     for case in cases:
-        state = run_mock_pipeline(case["question"])
+        state = build_review_plan(case["question"])
         resolved = resolve_state_evidence(state, root=ROOT)
 
         summary = resolved["summary"]

@@ -151,3 +151,50 @@ def validate_cognition_state(
         hypothesis_ids.append(hypothesis_id)
 
     _require_unique(hypothesis_ids, "hypothesis_id values")
+
+    if "evidence_review" in state:
+        _validate_evidence_review(state)
+
+
+def _validate_evidence_review(state: dict[str, Any]) -> None:
+    """Check the scope, packet links and decision state of a grounded review.
+
+    Source-value reconciliation is performed by the registered readers and
+    positive-fixture quality gate. This check detects altered or stale review
+    fields relative to the selected evidence snapshot.
+    """
+    from copy import deepcopy
+    from rac.src.evidence_review import build_review_plan, recompute_review
+    from rac.src.local_evidence_resolver import candidate_sources_for_packet
+
+    try:
+        plan = build_review_plan(state["question"])
+        for key in ("question_type", "domain", "factors"):
+            if state[key] != plan[key]:
+                raise ValueError(f"{key} differs from the registered question plan")
+        for key in ("method", "scope", "confidence_method"):
+            if state["evidence_review"][key] != plan["evidence_review"][key]:
+                raise ValueError(f"evidence_review.{key} differs from the declared scope")
+        packets = state["grounded_evidence"]["resolved_packets"]
+        ids = [packet["evidence_id"] for packet in packets]
+        if len(ids) != len(set(ids)) or set(ids) != {packet["evidence_id"] for packet in plan["evidence_packets"]}:
+            raise ValueError("grounded evidence must resolve exactly one packet per planned factor")
+        for packet in packets:
+            if packet["evidence_id"] != "evidence_" + packet["factor_id"]:
+                raise ValueError("grounded evidence factor and evidence ID disagree")
+            candidates = candidate_sources_for_packet(packet, question_type=state["question_type"])
+            if packet["source_path"] != candidates[0]["source_path"]:
+                raise ValueError("grounded evidence does not use its authoritative registered source")
+        expected = deepcopy(state)
+        recompute_review(expected)
+        for key in ("evidence_review", "evidence_packets", "factor_weights", "hypotheses",
+                    "critic_findings", "fact_check", "belief_update"):
+            if state[key] != expected[key]:
+                raise ValueError(f"{key} does not match the current evidence checks")
+        from rac.src.grounded_pipeline import build_grounded_evidence_rows, write_grounded_final_report
+        if state["grounded_evidence_rows"] != build_grounded_evidence_rows(state["grounded_evidence"]):
+            raise ValueError("rendered evidence rows do not match the selected packets")
+        if state["final_report"] != write_grounded_final_report(state):
+            raise ValueError("final report does not match the current review state")
+    except (KeyError, TypeError, ValueError, ArithmeticError) as exc:
+        raise CognitionStateValidationError(f"Grounded review consistency failed: {exc}") from exc

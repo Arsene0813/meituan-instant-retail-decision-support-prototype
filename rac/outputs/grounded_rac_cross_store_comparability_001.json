@@ -78,7 +78,7 @@
     {
       "factor_id": "repeated_reporting_windows",
       "name": "Repeated reporting windows",
-      "description": "Three monthly B-F reporting windows are available for descriptive review, but they do not establish stable pairwise comparability.",
+      "description": "Checks the registered panel records and their saved summary for repeated-window review.",
       "evidence_needed": [
         "multi-period data"
       ]
@@ -146,7 +146,7 @@
       "weight_reason": "Potentially relevant but requires stronger evidence.",
       "weighting_method": "fixed review-priority bucket assignment; source: rac/src/mock_pipeline.py; used to order review attention within the current evidence scope",
       "weight_source": "rac/src/mock_pipeline.py",
-      "evidence_status": "missing"
+      "evidence_status": "partially_supported"
     },
     {
       "factor_id": "sku_structure",
@@ -170,161 +170,1049 @@
   "evidence_packets": [
     {
       "evidence_id": "evidence_same_reporting_period",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: same_reporting_period.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "period_start: B=2026-03-01; C=2026-03-01; D=2026-03-01; E=2026-03-01; F=2026-03-01. period_end: B=2026-03-31; C=2026-03-31; D=2026-03-31; E=2026-03-31; F=2026-03-31. period_month: B=2026-03; C=2026-03; D=2026-03; E=2026-03; F=2026-03.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_store_type",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: store_type.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "store_type: B=self-operated; C=self-operated; D=self-operated; E=partner; F=partner.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_order_volume",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: order_volume.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "transaction_orders: B=299; C=175; D=404; E=158; F=266.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_transaction_amount",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_activity_intensity",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: activity_intensity.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "activity_orders: B=265; C=124; D=337; E=109; F=217. activity_order_share_pct: B=88.63; C=70.86; D=83.42; E=68.99; F=81.58. activity_cost: B=3361.3; C=490.21; D=2776.4; E=1576.26; F=1008.3. activity_cost_ratio_pct: B=24.12; C=9.45; D=14.92; E=29.38; F=12.16.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_region_context",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: region_context.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "region_type: B=Qingdao; C=Qingdao; D=Yantai; E=Yantai; F=Yantai.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_competition",
       "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: competition.",
+      "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+      "claim_supported": "competition: registered boundary_evidence anchor matched.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_sku_structure",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: sku_structure.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+      "claim_supported": "top3_sku_transaction_amount: B=1300.9; C=2004.84; D=3055.78; E=726.25; F=1798.4. top3_sku_transaction_amount_share_pct: B=11.15; C=28.38; D=16.9; E=12.55; F=19.33.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     },
     {
       "evidence_id": "evidence_repeated_reporting_windows",
-      "source_type": "markdown",
-      "source_path": "retail_ops/data/demo2_source_notes.md",
-      "claim_supported": "Provides context needed to evaluate factor: repeated_reporting_windows.",
+      "source_type": "csv",
+      "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+      "claim_supported": "observed_month_count: B=3; C=3; D=3; E=3; F=3. feb_transaction_amount: B=10468.0; C=9503.7; D=20332.2; E=6794.9; F=12549.1. mar_transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. apr_transaction_amount: B=11496.8; C=6756.8; D=14087.2; E=11264.72; F=14090.7. feb_transaction_orders: B=259.0; C=253.0; D=466.0; E=148.0; F=307.0. mar_transaction_orders: B=299.0; C=175.0; D=404.0; E=158.0; F=266.0. apr_transaction_orders: B=293.0; C=178.0; D=308.0; E=377.0; F=424.0.",
       "limitations": [
-        "Evidence is resolved from committed local project files.",
-        "Coverage is limited to the sources listed in this packet."
+        "Source files are read from the local review root.",
+        "This packet covers only its registered factor route."
       ]
     }
   ],
-  "hypotheses": [
-    {
-      "hypothesis_id": "H1",
-      "claim": "Stores B-F can be organized in a same-period diagnostic table.",
-      "confidence": 0.78,
-      "supporting_factors": [
-        "same_reporting_period"
+  "evidence_review": {
+    "method": "registered_local_evidence_rules_v1",
+    "scope": {
+      "store_ids": [
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
       ],
-      "weaknesses": [
-        "Same-period diagnostic organization does not establish robust comparability."
-      ],
-      "status": "strong"
+      "period_start": "2026-03-01",
+      "period_end": "2026-03-31"
     },
-    {
-      "hypothesis_id": "H2",
-      "claim": "Stores B-F should not be treated as directly comparable without pairwise gates.",
-      "confidence": 0.86,
-      "supporting_factors": [
-        "same_reporting_period",
-        "store_type",
-        "order_volume",
-        "transaction_amount",
-        "activity_intensity",
-        "region_context",
-        "competition",
-        "sku_structure",
-        "repeated_reporting_windows"
-      ],
-      "weaknesses": [
-        "Pairwise quantitative thresholds are outside the current review contract."
-      ],
-      "status": "strong"
-    }
-  ],
-  "critic_findings": [
-    {
-      "issue": "Current evidence scope is limited to committed local project files.",
-      "severity": "medium",
-      "recommendation": "Keep source paths and unresolved external requirements explicit."
-    },
-    {
-      "issue": "Same-period diagnostic organization must not be described as a completed pairwise comparability gate.",
-      "severity": "critical",
-      "recommendation": "Separate same-period diagnostic review from pairwise comparability."
-    }
-  ],
-  "fact_check": {
-    "status": "pass",
-    "unsupported_claims": [],
-    "definition_conflicts": []
-  },
-  "belief_update": {
-    "belief_id": "stores_b_f_same_period_not_directly_comparable",
-    "claim": "Stores B-F can be organized for same-period diagnostic review, but should not be treated as directly comparable without pairwise gates.",
-    "confidence": 0.86,
-    "status": "active",
-    "validity_conditions": [
-      "Demo 2 March 2026 B-F context."
-    ],
-    "limitations": [
-      "Pairwise quantitative gates are not defined in the current contract.",
-      "Region type remains weak context.",
-      "Three monthly B-F reporting windows are available; they do not by themselves establish stable pairwise comparability."
+    "confidence_method": "not_estimated",
+    "checks": [
+      {
+        "check_id": "same_reporting_period/period_start",
+        "factor_id": "same_reporting_period",
+        "evidence_id": "evidence_same_reporting_period",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "period_start",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-01"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-01"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-01"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-01"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-01"
+          }
+        ],
+        "claim": "period_start: B=2026-03-01; C=2026-03-01; D=2026-03-01; E=2026-03-01; F=2026-03-01."
+      },
+      {
+        "check_id": "same_reporting_period/period_end",
+        "factor_id": "same_reporting_period",
+        "evidence_id": "evidence_same_reporting_period",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "period_end",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-31"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-31"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-31"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-31"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03-31"
+          }
+        ],
+        "claim": "period_end: B=2026-03-31; C=2026-03-31; D=2026-03-31; E=2026-03-31; F=2026-03-31."
+      },
+      {
+        "check_id": "same_reporting_period/period_month",
+        "factor_id": "same_reporting_period",
+        "evidence_id": "evidence_same_reporting_period",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "period_month",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "2026-03"
+          }
+        ],
+        "claim": "period_month: B=2026-03; C=2026-03; D=2026-03; E=2026-03; F=2026-03."
+      },
+      {
+        "check_id": "store_type/store_type",
+        "factor_id": "store_type",
+        "evidence_id": "evidence_store_type",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "store_type",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "self-operated"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "self-operated"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "self-operated"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "partner"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "partner"
+          }
+        ],
+        "claim": "store_type: B=self-operated; C=self-operated; D=self-operated; E=partner; F=partner."
+      },
+      {
+        "check_id": "order_volume/transaction_orders",
+        "factor_id": "order_volume",
+        "evidence_id": "evidence_order_volume",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "transaction_orders",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "299"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "175"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "404"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "158"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "266"
+          }
+        ],
+        "claim": "transaction_orders: B=299; C=175; D=404; E=158; F=266."
+      },
+      {
+        "check_id": "transaction_amount/transaction_amount",
+        "factor_id": "transaction_amount",
+        "evidence_id": "evidence_transaction_amount",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "transaction_amount",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "11665.5"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "7064.09"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "18078.7"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "5784.87"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "9301.8"
+          }
+        ],
+        "claim": "transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8."
+      },
+      {
+        "check_id": "activity_intensity/activity_orders",
+        "factor_id": "activity_intensity",
+        "evidence_id": "evidence_activity_intensity",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "activity_orders",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "265"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "124"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "337"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "109"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "217"
+          }
+        ],
+        "claim": "activity_orders: B=265; C=124; D=337; E=109; F=217."
+      },
+      {
+        "check_id": "activity_intensity/activity_order_share_pct",
+        "factor_id": "activity_intensity",
+        "evidence_id": "evidence_activity_intensity",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "activity_order_share_pct",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "88.63"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "70.86"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "83.42"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "68.99"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "81.58"
+          }
+        ],
+        "claim": "activity_order_share_pct: B=88.63; C=70.86; D=83.42; E=68.99; F=81.58."
+      },
+      {
+        "check_id": "activity_intensity/activity_cost",
+        "factor_id": "activity_intensity",
+        "evidence_id": "evidence_activity_intensity",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "activity_cost",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "3361.3"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "490.21"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "2776.4"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "1576.26"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "1008.3"
+          }
+        ],
+        "claim": "activity_cost: B=3361.3; C=490.21; D=2776.4; E=1576.26; F=1008.3."
+      },
+      {
+        "check_id": "activity_intensity/activity_cost_ratio_pct",
+        "factor_id": "activity_intensity",
+        "evidence_id": "evidence_activity_intensity",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "activity_cost_ratio_pct",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "24.12"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "9.45"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "14.92"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "29.38"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "12.16"
+          }
+        ],
+        "claim": "activity_cost_ratio_pct: B=24.12; C=9.45; D=14.92; E=29.38; F=12.16."
+      },
+      {
+        "check_id": "region_context/region_type",
+        "factor_id": "region_context",
+        "evidence_id": "evidence_region_context",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "region_type",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "Qingdao"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "Qingdao"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "Yantai"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "Yantai"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "Yantai"
+          }
+        ],
+        "claim": "region_type: B=Qingdao; C=Qingdao; D=Yantai; E=Yantai; F=Yantai."
+      },
+      {
+        "check_id": "competition/document",
+        "factor_id": "competition",
+        "evidence_id": "evidence_competition",
+        "source_path": "retail_ops/COMPARABILITY_GATE_V0.md",
+        "field": null,
+        "operation": "document_route",
+        "status": "supported",
+        "result": "matched",
+        "operands": [],
+        "claim": "competition: registered boundary_evidence anchor matched."
+      },
+      {
+        "check_id": "sku_structure/top3_sku_transaction_amount",
+        "factor_id": "sku_structure",
+        "evidence_id": "evidence_sku_structure",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "top3_sku_transaction_amount",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "1300.9"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "2004.84"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "3055.78"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "726.25"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "1798.4"
+          }
+        ],
+        "claim": "top3_sku_transaction_amount: B=1300.9; C=2004.84; D=3055.78; E=726.25; F=1798.4."
+      },
+      {
+        "check_id": "sku_structure/top3_sku_transaction_amount_share_pct",
+        "factor_id": "sku_structure",
+        "evidence_id": "evidence_sku_structure",
+        "source_path": "retail_ops/outputs/demo2_cross_store_comparability_output.csv",
+        "field": "top3_sku_transaction_amount_share_pct",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B",
+              "period_month": "2026-03"
+            },
+            "value": "11.15"
+          },
+          {
+            "row_key": {
+              "store_id": "C",
+              "period_month": "2026-03"
+            },
+            "value": "28.38"
+          },
+          {
+            "row_key": {
+              "store_id": "D",
+              "period_month": "2026-03"
+            },
+            "value": "16.9"
+          },
+          {
+            "row_key": {
+              "store_id": "E",
+              "period_month": "2026-03"
+            },
+            "value": "12.55"
+          },
+          {
+            "row_key": {
+              "store_id": "F",
+              "period_month": "2026-03"
+            },
+            "value": "19.33"
+          }
+        ],
+        "claim": "top3_sku_transaction_amount_share_pct: B=11.15; C=28.38; D=16.9; E=12.55; F=19.33."
+      },
+      {
+        "check_id": "repeated_reporting_windows/observed_month_count",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "observed_month_count",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "3"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "3"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "3"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "3"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "3"
+          }
+        ],
+        "claim": "observed_month_count: B=3; C=3; D=3; E=3; F=3."
+      },
+      {
+        "check_id": "repeated_reporting_windows/feb_transaction_amount",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "feb_transaction_amount",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "10468.0"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "9503.7"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "20332.2"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "6794.9"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "12549.1"
+          }
+        ],
+        "claim": "feb_transaction_amount: B=10468.0; C=9503.7; D=20332.2; E=6794.9; F=12549.1."
+      },
+      {
+        "check_id": "repeated_reporting_windows/mar_transaction_amount",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "mar_transaction_amount",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "11665.5"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "7064.09"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "18078.7"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "5784.87"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "9301.8"
+          }
+        ],
+        "claim": "mar_transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8."
+      },
+      {
+        "check_id": "repeated_reporting_windows/apr_transaction_amount",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "apr_transaction_amount",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "11496.8"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "6756.8"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "14087.2"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "11264.72"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "14090.7"
+          }
+        ],
+        "claim": "apr_transaction_amount: B=11496.8; C=6756.8; D=14087.2; E=11264.72; F=14090.7."
+      },
+      {
+        "check_id": "repeated_reporting_windows/feb_transaction_orders",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "feb_transaction_orders",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "259.0"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "253.0"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "466.0"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "148.0"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "307.0"
+          }
+        ],
+        "claim": "feb_transaction_orders: B=259.0; C=253.0; D=466.0; E=148.0; F=307.0."
+      },
+      {
+        "check_id": "repeated_reporting_windows/mar_transaction_orders",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "mar_transaction_orders",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "299.0"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "175.0"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "404.0"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "158.0"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "266.0"
+          }
+        ],
+        "claim": "mar_transaction_orders: B=299.0; C=175.0; D=404.0; E=158.0; F=266.0."
+      },
+      {
+        "check_id": "repeated_reporting_windows/apr_transaction_orders",
+        "factor_id": "repeated_reporting_windows",
+        "evidence_id": "evidence_repeated_reporting_windows",
+        "source_path": "retail_ops/outputs/repeated_window_panel_summary_output.csv",
+        "field": "apr_transaction_orders",
+        "operation": "record_values",
+        "status": "supported",
+        "result": "recorded",
+        "operands": [
+          {
+            "row_key": {
+              "store_id": "B"
+            },
+            "value": "293.0"
+          },
+          {
+            "row_key": {
+              "store_id": "C"
+            },
+            "value": "178.0"
+          },
+          {
+            "row_key": {
+              "store_id": "D"
+            },
+            "value": "308.0"
+          },
+          {
+            "row_key": {
+              "store_id": "E"
+            },
+            "value": "377.0"
+          },
+          {
+            "row_key": {
+              "store_id": "F"
+            },
+            "value": "424.0"
+          }
+        ],
+        "claim": "apr_transaction_orders: B=293.0; C=178.0; D=308.0; E=377.0; F=424.0."
+      }
     ]
   },
-  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nStores B-F can be organized for same-period diagnostic review, but should not be treated as directly comparable without pairwise gates.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: comparability_judgment\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | activity_intensity |\n| medium | 0.72 | Important context but not sufficient on its own. | same_reporting_period, store_type, order_volume, transaction_amount |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | region_context, competition, sku_structure, repeated_reporting_windows |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| same_reporting_period | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| store_type | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| order_volume | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| transaction_amount | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| activity_intensity | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| region_context | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| competition | 0.60 | default | missing | Potentially relevant but requires stronger evidence. |\n| sku_structure | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| repeated_reporting_windows | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n\n`partially_supported` indicates that a registered local evidence route was resolved for the factor. It does not necessarily mean that observed numeric evidence supports the decision.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 9\n- Record matched packets: 8\n- Keyword matched packets: 0\n- Boundary matched packets: 1\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| same_reporting_period | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | period_start, period_end, period_month | store_id=B, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=C, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=D, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=E, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=F, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03 |\n| store_type | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | store_type | store_id=B, period_month=2026-03: store_type=self-operated<br>store_id=C, period_month=2026-03: store_type=self-operated<br>store_id=D, period_month=2026-03: store_type=self-operated<br>store_id=E, period_month=2026-03: store_type=partner<br>store_id=F, period_month=2026-03: store_type=partner |\n| order_volume | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | transaction_orders | store_id=B, period_month=2026-03: transaction_orders=299<br>store_id=C, period_month=2026-03: transaction_orders=175<br>store_id=D, period_month=2026-03: transaction_orders=404<br>store_id=E, period_month=2026-03: transaction_orders=158<br>store_id=F, period_month=2026-03: transaction_orders=266 |\n| transaction_amount | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | transaction_amount | store_id=B, period_month=2026-03: transaction_amount=11665.5<br>store_id=C, period_month=2026-03: transaction_amount=7064.09<br>store_id=D, period_month=2026-03: transaction_amount=18078.7<br>store_id=E, period_month=2026-03: transaction_amount=5784.87<br>store_id=F, period_month=2026-03: transaction_amount=9301.8 |\n| activity_intensity | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | activity_orders, activity_order_share_pct, activity_cost, activity_cost_ratio_pct | store_id=B, period_month=2026-03: activity_orders=265, activity_order_share_pct=88.63, activity_cost=3361.3, activity_cost_ratio_pct=24.12<br>store_id=C, period_month=2026-03: activity_orders=124, activity_order_share_pct=70.86, activity_cost=490.21, activity_cost_ratio_pct=9.45<br>store_id=D, period_month=2026-03: activity_orders=337, activity_order_share_pct=83.42, activity_cost=2776.4, activity_cost_ratio_pct=14.92<br>store_id=E, period_month=2026-03: activity_orders=109, activity_order_share_pct=68.99, activity_cost=1576.26, activity_cost_ratio_pct=29.38<br>store_id=F, period_month=2026-03: activity_orders=217, activity_order_share_pct=81.58, activity_cost=1008.3, activity_cost_ratio_pct=12.16 |\n| region_context | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | region_type | store_id=B, period_month=2026-03: region_type=Qingdao<br>store_id=C, period_month=2026-03: region_type=Qingdao<br>store_id=D, period_month=2026-03: region_type=Yantai<br>store_id=E, period_month=2026-03: region_type=Yantai<br>store_id=F, period_month=2026-03: region_type=Yantai |\n| competition | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 101-103 | competition-context requirement in comparability contract | n/a |\n| sku_structure | retail_ops/outputs/demo2_cross_store_comparability_output.csv | product_mix_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | top3_sku_transaction_amount, top3_sku_transaction_amount_share_pct | store_id=B, period_month=2026-03: top3_sku_transaction_amount=1300.9, top3_sku_transaction_amount_share_pct=11.15<br>store_id=C, period_month=2026-03: top3_sku_transaction_amount=2004.84, top3_sku_transaction_amount_share_pct=28.38<br>store_id=D, period_month=2026-03: top3_sku_transaction_amount=3055.78, top3_sku_transaction_amount_share_pct=16.9<br>store_id=E, period_month=2026-03: top3_sku_transaction_amount=726.25, top3_sku_transaction_amount_share_pct=12.55<br>store_id=F, period_month=2026-03: top3_sku_transaction_amount=1798.4, top3_sku_transaction_amount_share_pct=19.33 |\n| repeated_reporting_windows | retail_ops/outputs/repeated_window_panel_summary_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; rows=5 | observed_month_count, feb_transaction_amount, mar_transaction_amount, apr_transaction_amount, feb_transaction_orders, mar_transaction_orders, apr_transaction_orders | store_id=B: observed_month_count=3, feb_transaction_amount=10468.0, mar_transaction_amount=11665.5, apr_transaction_amount=11496.8, feb_transaction_orders=259.0, mar_transaction_orders=299.0, apr_transaction_orders=293.0<br>store_id=C: observed_month_count=3, feb_transaction_amount=9503.7, mar_transaction_amount=7064.09, apr_transaction_amount=6756.8, feb_transaction_orders=253.0, mar_transaction_orders=175.0, apr_transaction_orders=178.0<br>store_id=D: observed_month_count=3, feb_transaction_amount=20332.2, mar_transaction_amount=18078.7, apr_transaction_amount=14087.2, feb_transaction_orders=466.0, mar_transaction_orders=404.0, apr_transaction_orders=308.0<br>store_id=E: observed_month_count=3, feb_transaction_amount=6794.9, mar_transaction_amount=5784.87, apr_transaction_amount=11264.72, feb_transaction_orders=148.0, mar_transaction_orders=158.0, apr_transaction_orders=377.0<br>store_id=F: observed_month_count=3, feb_transaction_amount=12549.1, mar_transaction_amount=9301.8, apr_transaction_amount=14090.7, feb_transaction_orders=307.0, mar_transaction_orders=266.0, apr_transaction_orders=424.0 |\n\n\n## 5. Competing Hypotheses\n\nThe `Scenario-Template Confidence` column records deterministic review labels assigned by `generate_hypotheses(question_type)` in `rac/src/mock_pipeline.py`.\n\n| Hypothesis | Scenario-Template Confidence | Status | Weakness |\n|---|---:|---|---|\n| Stores B-F can be organized in a same-period diagnostic table. | 0.78 | strong | Same-period diagnostic organization does not establish robust comparability. |\n| Stores B-F should not be treated as directly comparable without pairwise gates. | 0.86 | strong | Pairwise quantitative thresholds are outside the current review contract. |\n\n## 6. Critic Findings\n\n- [medium] Current evidence scope is limited to committed local project files. Recommendation: Keep source paths and unresolved external requirements explicit.\n- [critical] Same-period diagnostic organization must not be described as a completed pairwise comparability gate. Recommendation: Separate same-period diagnostic review from pairwise comparability.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nStores B-F can be organized for same-period diagnostic review, but should not be treated as directly comparable without pairwise gates.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 9\n- Record matched packets: 8\n- Keyword matched packets: 0\n- Boundary matched packets: 1\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 0.95\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 9\n- record_matched_packets = 8\n- keyword_matched_packets = 0\n- boundary_matched_packets = 1\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 0.89\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- Pairwise quantitative gates are not defined in the current contract.\n- Region type remains weak context.\n- Three monthly B-F reporting windows are available; they do not by themselves establish stable pairwise comparability.\n\n## 11. Review-State Update\n\n- review_state_id: stores_b_f_same_period_not_directly_comparable\n- status: active\n- validity_conditions:\n  - Demo 2 March 2026 B-F context.\n",
   "grounded_evidence": {
     "summary": {
       "question": "Are Stores B-F directly comparable in March 2026?",
@@ -449,8 +1337,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: same_reporting_period.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -561,8 +1449,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: store_type.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -673,8 +1561,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: order_volume.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -771,8 +1659,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -887,8 +1775,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: activity_intensity.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -985,8 +1873,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: region_context.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1044,8 +1932,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: competition.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Local text matching only.",
@@ -1149,8 +2037,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: sku_structure.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1292,8 +2180,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: repeated_reporting_windows.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1328,6 +2216,71 @@
       }
     ]
   },
+  "hypotheses": [
+    {
+      "hypothesis_id": "H1",
+      "claim": "Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3.",
+      "confidence": null,
+      "supporting_factors": [
+        "same_reporting_period",
+        "transaction_amount",
+        "order_volume",
+        "repeated_reporting_windows"
+      ],
+      "weaknesses": [
+        "Only the stated fields and reporting windows were checked."
+      ],
+      "status": "strong"
+    },
+    {
+      "hypothesis_id": "H2",
+      "claim": "The current evidence establishes direct comparability for an operating decision.",
+      "confidence": null,
+      "supporting_factors": [
+        "same_reporting_period",
+        "store_type",
+        "order_volume",
+        "transaction_amount",
+        "activity_intensity",
+        "region_context",
+        "competition",
+        "sku_structure",
+        "repeated_reporting_windows"
+      ],
+      "weaknesses": [
+        "A question-specific pairwise gate is not implemented.",
+        "Region type remains weak context."
+      ],
+      "status": "unsupported"
+    }
+  ],
+  "belief_update": {
+    "belief_id": "stores_b_f_same_period_not_directly_comparable",
+    "claim": "Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. Direct comparability remains unresolved.",
+    "confidence": null,
+    "status": "active",
+    "validity_conditions": [
+      "B-F, March 2026; repeated evidence uses the registered February-April panel.",
+      "Recompute after source or saved-summary changes."
+    ],
+    "limitations": [
+      "Same-period diagnostic review is not a pairwise comparability gate.",
+      "Region type remains weak context."
+    ]
+  },
+  "critic_findings": [
+    {
+      "issue": "Shared reporting dates do not establish direct comparability.",
+      "severity": "medium",
+      "recommendation": "Use observations and tests appropriate to the proposed decision."
+    }
+  ],
+  "fact_check": {
+    "status": "pass",
+    "unsupported_claims": [],
+    "definition_conflicts": []
+  },
+  "final_report": "# Grounded RAC Report\n\n## 1. Direct Answer\n\nStores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. Direct comparability remains unresolved.\n\nDeterministic local-file review; routing scores summarize route resolution under the current rules.\n\n## 2. Question Type\n\n- Question type: comparability_judgment\n- Domain: retail_operations\n\n## 3. Factor Weights\n\n### 3a. How Factor Weights Are Generated\n\nFactor weights are fixed review-priority buckets assigned by explicit rules in `rac/src/mock_pipeline.py`. They order review attention within the current evidence scope.\n\n| Bucket | Weight | Rule | Factors in This Report |\n|---|---:|---|---|\n| high | 0.85 | Central to avoiding overconfident or misleading conclusions. | activity_intensity |\n| medium | 0.72 | Important context but not sufficient on its own. | same_reporting_period, store_type, order_volume, transaction_amount |\n| default | 0.60 | Potentially relevant but requires stronger evidence. | region_context, competition, sku_structure, repeated_reporting_windows |\n\nWeighting boundary:\n\n- Use these values only to order review attention within the current evidence scope.\n\n### 3b. Factor Weights Used in This Report\n\n| Decision Factor ID | Weight | Bucket | Evidence Status | Why It Matters |\n|---|---:|---|---|---|\n| same_reporting_period | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| store_type | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| order_volume | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| transaction_amount | 0.72 | medium | partially_supported | Important context but not sufficient on its own. |\n| activity_intensity | 0.85 | high | partially_supported | Central to avoiding overconfident or misleading conclusions. |\n| region_context | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| competition | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| sku_structure | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n| repeated_reporting_windows | 0.60 | default | partially_supported | Potentially relevant but requires stronger evidence. |\n\n`partially_supported` means at least one selected observation or registered document/boundary route is available for the factor. Read the evidence checks to distinguish values from context.\n\n## 4. Local Evidence Grounding\n\n- Total evidence packets: 9\n- Record matched packets: 8\n- Keyword matched packets: 0\n- Boundary matched packets: 1\n- Fallback packets: 0\n- Missing source files: 0\n\nFor CSV evidence, `Source Locator` shows the selected record scope and `Selected Values` shows values read from those records. For Markdown evidence, the locator remains a local line-range pointer.\n`Decision Factor ID` is an internal RAC review identifier. The field column shows canonical project fields where available and labels unresolved requirements explicitly.\n\n| Decision Factor ID | Source | Evidence Type | Status | Source Locator | Canonical Evidence Fields / Requirement | Selected Values |\n|---|---|---|---|---|---|---|\n| same_reporting_period | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | period_start, period_end, period_month | store_id=B, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=C, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=D, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=E, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03<br>store_id=F, period_month=2026-03: period_start=2026-03-01, period_end=2026-03-31, period_month=2026-03 |\n| store_type | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | store_type | store_id=B, period_month=2026-03: store_type=self-operated<br>store_id=C, period_month=2026-03: store_type=self-operated<br>store_id=D, period_month=2026-03: store_type=self-operated<br>store_id=E, period_month=2026-03: store_type=partner<br>store_id=F, period_month=2026-03: store_type=partner |\n| order_volume | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | transaction_orders | store_id=B, period_month=2026-03: transaction_orders=299<br>store_id=C, period_month=2026-03: transaction_orders=175<br>store_id=D, period_month=2026-03: transaction_orders=404<br>store_id=E, period_month=2026-03: transaction_orders=158<br>store_id=F, period_month=2026-03: transaction_orders=266 |\n| transaction_amount | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | transaction_amount | store_id=B, period_month=2026-03: transaction_amount=11665.5<br>store_id=C, period_month=2026-03: transaction_amount=7064.09<br>store_id=D, period_month=2026-03: transaction_amount=18078.7<br>store_id=E, period_month=2026-03: transaction_amount=5784.87<br>store_id=F, period_month=2026-03: transaction_amount=9301.8 |\n| activity_intensity | retail_ops/outputs/demo2_cross_store_comparability_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | activity_orders, activity_order_share_pct, activity_cost, activity_cost_ratio_pct | store_id=B, period_month=2026-03: activity_orders=265, activity_order_share_pct=88.63, activity_cost=3361.3, activity_cost_ratio_pct=24.12<br>store_id=C, period_month=2026-03: activity_orders=124, activity_order_share_pct=70.86, activity_cost=490.21, activity_cost_ratio_pct=9.45<br>store_id=D, period_month=2026-03: activity_orders=337, activity_order_share_pct=83.42, activity_cost=2776.4, activity_cost_ratio_pct=14.92<br>store_id=E, period_month=2026-03: activity_orders=109, activity_order_share_pct=68.99, activity_cost=1576.26, activity_cost_ratio_pct=29.38<br>store_id=F, period_month=2026-03: activity_orders=217, activity_order_share_pct=81.58, activity_cost=1008.3, activity_cost_ratio_pct=12.16 |\n| region_context | retail_ops/outputs/demo2_cross_store_comparability_output.csv | context_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | region_type | store_id=B, period_month=2026-03: region_type=Qingdao<br>store_id=C, period_month=2026-03: region_type=Qingdao<br>store_id=D, period_month=2026-03: region_type=Yantai<br>store_id=E, period_month=2026-03: region_type=Yantai<br>store_id=F, period_month=2026-03: region_type=Yantai |\n| competition | retail_ops/COMPARABILITY_GATE_V0.md | boundary_evidence | boundary_matched | lines 101-103 | competition-context requirement in comparability contract | n/a |\n| sku_structure | retail_ops/outputs/demo2_cross_store_comparability_output.csv | product_mix_evidence | record_matched | records: store_id=B, C, D, E, F; period_month=2026-03; rows=5 | top3_sku_transaction_amount, top3_sku_transaction_amount_share_pct | store_id=B, period_month=2026-03: top3_sku_transaction_amount=1300.9, top3_sku_transaction_amount_share_pct=11.15<br>store_id=C, period_month=2026-03: top3_sku_transaction_amount=2004.84, top3_sku_transaction_amount_share_pct=28.38<br>store_id=D, period_month=2026-03: top3_sku_transaction_amount=3055.78, top3_sku_transaction_amount_share_pct=16.9<br>store_id=E, period_month=2026-03: top3_sku_transaction_amount=726.25, top3_sku_transaction_amount_share_pct=12.55<br>store_id=F, period_month=2026-03: top3_sku_transaction_amount=1798.4, top3_sku_transaction_amount_share_pct=19.33 |\n| repeated_reporting_windows | retail_ops/outputs/repeated_window_panel_summary_output.csv | quantitative_evidence | record_matched | records: store_id=B, C, D, E, F; rows=5 | observed_month_count, feb_transaction_amount, mar_transaction_amount, apr_transaction_amount, feb_transaction_orders, mar_transaction_orders, apr_transaction_orders | store_id=B: observed_month_count=3, feb_transaction_amount=10468.0, mar_transaction_amount=11665.5, apr_transaction_amount=11496.8, feb_transaction_orders=259.0, mar_transaction_orders=299.0, apr_transaction_orders=293.0<br>store_id=C: observed_month_count=3, feb_transaction_amount=9503.7, mar_transaction_amount=7064.09, apr_transaction_amount=6756.8, feb_transaction_orders=253.0, mar_transaction_orders=175.0, apr_transaction_orders=178.0<br>store_id=D: observed_month_count=3, feb_transaction_amount=20332.2, mar_transaction_amount=18078.7, apr_transaction_amount=14087.2, feb_transaction_orders=466.0, mar_transaction_orders=404.0, apr_transaction_orders=308.0<br>store_id=E: observed_month_count=3, feb_transaction_amount=6794.9, mar_transaction_amount=5784.87, apr_transaction_amount=11264.72, feb_transaction_orders=148.0, mar_transaction_orders=158.0, apr_transaction_orders=377.0<br>store_id=F: observed_month_count=3, feb_transaction_amount=12549.1, mar_transaction_amount=9301.8, apr_transaction_amount=14090.7, feb_transaction_orders=307.0, mar_transaction_orders=266.0, apr_transaction_orders=424.0 |\n\n\n## 5. Competing Hypotheses\n\nHypothesis statements and statuses are recomputed from the selected evidence. Confidence is unknown where no calibrated estimate is available.\n\n| Hypothesis | Confidence | Status | Weakness |\n|---|---:|---|---|\n| Stores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. | unknown | strong | Only the stated fields and reporting windows were checked. |\n| The current evidence establishes direct comparability for an operating decision. | unknown | unsupported | A question-specific pairwise gate is not implemented; Region type remains weak context. |\n\n## 6. Critic Findings\n\n- [medium] Shared reporting dates do not establish direct comparability. Recommendation: Use observations and tests appropriate to the proposed decision.\n\n## 7. Claim and Definition Check\n\n- Status: pass\n\n### Evidence Checks\n\n| Check | Evidence | Status | Result |\n|---|---|---|---|\n| same_reporting_period/period_start | evidence_same_reporting_period | supported | period_start: B=2026-03-01; C=2026-03-01; D=2026-03-01; E=2026-03-01; F=2026-03-01. |\n| same_reporting_period/period_end | evidence_same_reporting_period | supported | period_end: B=2026-03-31; C=2026-03-31; D=2026-03-31; E=2026-03-31; F=2026-03-31. |\n| same_reporting_period/period_month | evidence_same_reporting_period | supported | period_month: B=2026-03; C=2026-03; D=2026-03; E=2026-03; F=2026-03. |\n| store_type/store_type | evidence_store_type | supported | store_type: B=self-operated; C=self-operated; D=self-operated; E=partner; F=partner. |\n| order_volume/transaction_orders | evidence_order_volume | supported | transaction_orders: B=299; C=175; D=404; E=158; F=266. |\n| transaction_amount/transaction_amount | evidence_transaction_amount | supported | transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. |\n| activity_intensity/activity_orders | evidence_activity_intensity | supported | activity_orders: B=265; C=124; D=337; E=109; F=217. |\n| activity_intensity/activity_order_share_pct | evidence_activity_intensity | supported | activity_order_share_pct: B=88.63; C=70.86; D=83.42; E=68.99; F=81.58. |\n| activity_intensity/activity_cost | evidence_activity_intensity | supported | activity_cost: B=3361.3; C=490.21; D=2776.4; E=1576.26; F=1008.3. |\n| activity_intensity/activity_cost_ratio_pct | evidence_activity_intensity | supported | activity_cost_ratio_pct: B=24.12; C=9.45; D=14.92; E=29.38; F=12.16. |\n| region_context/region_type | evidence_region_context | supported | region_type: B=Qingdao; C=Qingdao; D=Yantai; E=Yantai; F=Yantai. |\n| competition/document | evidence_competition | supported | competition: registered boundary_evidence anchor matched. |\n| sku_structure/top3_sku_transaction_amount | evidence_sku_structure | supported | top3_sku_transaction_amount: B=1300.9; C=2004.84; D=3055.78; E=726.25; F=1798.4. |\n| sku_structure/top3_sku_transaction_amount_share_pct | evidence_sku_structure | supported | top3_sku_transaction_amount_share_pct: B=11.15; C=28.38; D=16.9; E=12.55; F=19.33. |\n| repeated_reporting_windows/observed_month_count | evidence_repeated_reporting_windows | supported | observed_month_count: B=3; C=3; D=3; E=3; F=3. |\n| repeated_reporting_windows/feb_transaction_amount | evidence_repeated_reporting_windows | supported | feb_transaction_amount: B=10468.0; C=9503.7; D=20332.2; E=6794.9; F=12549.1. |\n| repeated_reporting_windows/mar_transaction_amount | evidence_repeated_reporting_windows | supported | mar_transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. |\n| repeated_reporting_windows/apr_transaction_amount | evidence_repeated_reporting_windows | supported | apr_transaction_amount: B=11496.8; C=6756.8; D=14087.2; E=11264.72; F=14090.7. |\n| repeated_reporting_windows/feb_transaction_orders | evidence_repeated_reporting_windows | supported | feb_transaction_orders: B=259.0; C=253.0; D=466.0; E=148.0; F=307.0. |\n| repeated_reporting_windows/mar_transaction_orders | evidence_repeated_reporting_windows | supported | mar_transaction_orders: B=299.0; C=175.0; D=404.0; E=158.0; F=266.0. |\n| repeated_reporting_windows/apr_transaction_orders | evidence_repeated_reporting_windows | supported | apr_transaction_orders: B=293.0; C=178.0; D=308.0; E=377.0; F=424.0. |\n\n- Unsupported claims detected by current rules: none\n- Definition conflicts detected by current rules: none\n\n## 8. Final Judgment\n\nStores B-F have verified March 2026 records for same-period diagnostic review. transaction_amount: B=11665.5; C=7064.09; D=18078.7; E=5784.87; F=9301.8. transaction_orders: B=299; C=175; D=404; E=158; F=266. observed_month_count: B=3; C=3; D=3; E=3; F=3. Direct comparability remains unresolved.\n\nThe judgment is bounded by the cited local evidence and the unresolved requirements recorded above.\n\n## 9. Evidence-Routing Coverage\n\nPacket composition:\n\n- Total packets: 9\n- Record matched packets: 8\n- Keyword matched packets: 0\n- Boundary matched packets: 1\n- Fallback packets: 0\n- Missing source files: 0\n\n- Routing coverage score: 0.95\n- Read this value as route resolution under the current rules, not as evidence strength or decision quality.\n\nHow this score is calculated:\n\n```text\nrouting_coverage_score =\n  0.45 * record_or_keyword_route_rate\n+ 0.25 * resolved_or_boundary_route_rate\n+ 0.15 * no_missing_source_file_score\n+ 0.15 * no_fallback_score\n```\n\nWeight rationale:\n\n| Component | Weight | Why |\n|---|---:|---|\n| `record_or_keyword_route_rate` | 0.45 | Highest priority because record- or keyword-matched local routes should matter more than boundary-only evidence. |\n| `resolved_or_boundary_route_rate` | 0.25 | Boundary evidence is valuable because it explicitly records missing requirements instead of hiding them. |\n| `no_missing_source_file_score` | 0.15 | Source files must exist, but this is a basic traceability check rather than evidence strength. |\n| `no_fallback_score` | 0.15 | Fallback packets indicate unresolved routing and reduce the current routing score. |\n\nScore contract:\n\n- Component weights are fixed prototype heuristics.\n- The score summarizes route resolution under the current rules.\n- Alternative weights are a formula sensitivity check; the report judgment is produced separately.\n\nScore inputs (contract fields):\n\n- total_packets = 9\n- record_matched_packets = 8\n- keyword_matched_packets = 0\n- boundary_matched_packets = 1\n- fallback_packets = 0\n- missing_source_files = 0\n\nDerived rates and checks:\n\n- record_or_keyword_route_rate = (record_matched_packets + keyword_matched_packets) / total_packets = 0.89\n- resolved_or_boundary_route_rate = (record_matched_packets + keyword_matched_packets + boundary_matched_packets) / total_packets = 1.00\n- no_missing_source_file_score = 1.00\n- no_fallback_score = 1.00\n\nReading the score:\n\n- A higher value means more requested evidence routes were resolved or explicitly bounded.\n- Boundary evidence contributes when it documents a missing requirement.\n- Read the score as coverage rather than evidence strength, causal validity, decision quality, or business impact.\n\n## 10. What Cannot Be Concluded\n\n- Same-period diagnostic review is not a pairwise comparability gate.\n- Region type remains weak context.\n\n## 11. Review-State Update\n\n- review_state_id: stores_b_f_same_period_not_directly_comparable\n- status: active\n- validity_conditions:\n  - B-F, March 2026; repeated evidence uses the registered February-April panel.\n  - Recompute after source or saved-summary changes.\n",
   "grounded_evidence_rows": [
     {
       "factor_id": "same_reporting_period",

@@ -21,5 +21,5 @@ Rules:
 1. Generate at least two competing hypotheses when the question is causal, strategic, or comparative.
 2. Include an insufficient-evidence hypothesis when evidence is incomplete.
 3. Do not collapse all explanations into one answer too early.
-4. Confidence must reflect both supporting evidence and weaknesses.
+4. Use null for confidence when no calibrated numerical estimate is available. The current grounded rules require null; record support and weaknesses through status and evidence checks.
 5. Do not claim causality from observational data unless the evidence supports it.

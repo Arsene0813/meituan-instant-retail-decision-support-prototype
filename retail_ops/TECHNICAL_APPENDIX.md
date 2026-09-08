@@ -128,8 +128,8 @@ retrieval. Individual missing metric values remain `null`.
 
 The existing Store A facts are range summaries. A single-month request needs
 a corresponding month fact; range summaries are not relabelled as monthly
-evidence. Shared publication/version selection and RAC evidence recomputation
-remain separate work.
+evidence. RAC now recomputes the registered review checks from its selected
+local evidence; shared publication/version selection remains to be connected.
 
 ### Responsibility Split
 

@@ -11,8 +11,8 @@ A contract pass means the case satisfied the checks implemented by the current d
 - Total cases: 4
 - Report-contract passed cases: 4
 - Report-contract failed cases: 0
-- Total grounded packets: 30
-- Record matched packets: 13
+- Total grounded packets: 31
+- Record matched packets: 14
 - Keyword matched packets: 14
 - Boundary matched packets: 3
 - Fallback packets: 0
@@ -22,14 +22,14 @@ A contract pass means the case satisfied the checks implemented by the current d
 
 | Case | Contract Pass | Factors | Hypotheses | Critic Findings | Grounded Rows | Record Matched | Keyword Matched | Boundary Matched | Fallback | Missing Sources |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| rac_store_a_attribution_001 | True | 5 | 3 | 2 | 5 | 5 | 0 | 0 | 0 | 0 |
-| rac_cross_store_comparability_001 | True | 9 | 2 | 2 | 9 | 8 | 0 | 1 | 0 | 0 |
-| rac_promotion_strategy_001 | True | 8 | 2 | 2 | 8 | 0 | 6 | 2 | 0 | 0 |
+| rac_store_a_attribution_001 | True | 6 | 3 | 1 | 6 | 6 | 0 | 0 | 0 | 0 |
+| rac_cross_store_comparability_001 | True | 9 | 2 | 1 | 9 | 8 | 0 | 1 | 0 | 0 |
+| rac_promotion_strategy_001 | True | 8 | 2 | 1 | 8 | 0 | 6 | 2 | 0 | 0 |
 | rac_system_design_001 | True | 8 | 2 | 1 | 8 | 0 | 8 | 0 | 0 | 0 |
 
 ## Store A Record Grounding Requirement
 
-For rac_store_a_attribution_001, the gate requires five Store A records for 2026-03 and 2026-04, using canonical fields whose selected values equal the source CSV.
+For rac_store_a_attribution_001, the gate requires 6 factor-specific evidence packets covering the two Store A records for 2026-03 and 2026-04, using canonical fields whose selected values equal the source CSV.
 
 ## Cross-Store Grounding Requirement
 

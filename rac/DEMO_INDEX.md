@@ -17,7 +17,8 @@ question
 -> factor weighting
 -> source-aware local evidence grounding
 -> boundary evidence for unavailable requirements
--> hypothesis generation
+-> exact-value and coverage checks
+-> hypothesis update
 -> critique
 -> rule-based claim and definition check
 -> review-state update
@@ -39,11 +40,11 @@ The implemented review process:
 3. Route each factor to local evidence.
 4. Distinguish quantitative evidence from boundary evidence.
 5. Record source paths, structured-record locators for CSV evidence, source-line pointers for text evidence, and canonical evidence fields.
-6. Generate competing hypotheses.
+6. Recompute observations and competing hypotheses from the selected evidence.
 7. Critique weak claims.
 8. Check unsupported claims and definition conflicts.
 9. Produce a grounded report with a routing coverage score,
-   scenario-template confidence labels, and explicit limitations.
+   evidence-dependent statuses, unknown confidence where unestimated, and explicit limitations.
 10. Validate the report through a report-contract quality gate.
 
 The current implementation is deterministic and source-aware. It uses
@@ -86,7 +87,7 @@ Exact counts and per-case routes are generated in
 
 | Case | Question | What It Demonstrates | Grounded Report |
 |---|---|---|---|
-| `rac_store_a_attribution_001` | Can Store A's March-to-April increases in transaction amount and transaction orders be attributed to search exposure alone? | Grounds search exposure, entry conversion, order conversion, promotion intensity, and transaction orders to the March-April Store A CSV records while rejecting single-cause attribution. | [Store A attribution report](outputs/grounded_rac_store_a_attribution_001.md) |
+| `rac_store_a_attribution_001` | Can Store A's March-to-April increases in transaction amount and transaction orders be attributed to search exposure alone? | Checks transaction amount and order-count directions against March-April Store A records, then reviews search, conversion and activity explanations. | [Store A attribution report](outputs/grounded_rac_store_a_attribution_001.md) |
 | `rac_cross_store_comparability_001` | Are Stores B-F directly comparable in March 2026? | Selects B-F record values for the declared factors and retains competition context as boundary evidence. | [Cross-store boundary report](outputs/grounded_rac_cross_store_comparability_001.md) |
 | `rac_promotion_strategy_001` | What should be checked before changing promotions for a store? | Routes available transaction, cost, and conversion evidence while retaining required SKU-level margin and competitor context as unresolved requirements. | [Promotion-strategy report](outputs/grounded_rac_promotion_strategy_001.md) |
 | `rac_system_design_001` | How should RAC connect to the existing memory layer? | Shows how typed memory records feed a factor-aware grounded review path. | [System-design report](outputs/grounded_rac_system_design_001.md) |
@@ -128,8 +129,9 @@ For code review, inspect:
 2. [`local_evidence_resolver.py`](src/local_evidence_resolver.py)
 3. [`demo2_csv_grounding.py`](src/demo2_csv_grounding.py)
 4. [`store_a_csv_grounding.py`](src/store_a_csv_grounding.py)
-5. [`grounded_pipeline.py`](src/grounded_pipeline.py)
-6. [`validate_grounded_quality_gate.py`](scripts/validate_grounded_quality_gate.py)
+5. [`evidence_review.py`](src/evidence_review.py)
+6. [`grounded_pipeline.py`](src/grounded_pipeline.py)
+7. [`validate_grounded_quality_gate.py`](scripts/validate_grounded_quality_gate.py)
 
 ## What The Grounded Reports Show
 
@@ -141,7 +143,7 @@ Each grounded report includes:
 - local evidence source paths and grounding roles;
 - structured-record locators for CSV evidence and source-line audit pointers for text evidence;
 - canonical evidence fields;
-- competing hypotheses with scenario-template confidence labels;
+- competing hypotheses with recomputed statuses and explicit unknown confidence;
 - critic findings;
 - claim and definition-check status;
 - a bounded final judgment;
@@ -170,15 +172,14 @@ The current implemented scope includes:
 - fixed and interpretable factor-weight buckets;
 - factor-specific local evidence routing;
 - explicit boundary evidence for unavailable requirements;
-- competing hypothesis templates;
+- exact-value checks and evidence-dependent hypotheses;
 - critique and rule-based claim and definition-check records;
 - JSON Schema and cross-record state validation;
 - fixed evaluation cases and generated quality summaries.
 
 The local evidence resolver uses deterministic matching over project
-files. Factor weights and scenario-template confidence labels are
-review-state values rather than learned probabilities or estimated
-business outcomes.
+files. Factor weights order review attention. Grounded numerical confidence
+remains unknown; statuses and check results change with the selected evidence.
 
 For pairwise cross-store decisions, the next evidence contract requires
 defined thresholds, repeated reporting windows, and additional operating

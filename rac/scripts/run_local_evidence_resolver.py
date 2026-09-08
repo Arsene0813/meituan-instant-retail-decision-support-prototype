@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from rac.src.local_evidence_resolver import resolve_state_evidence
-from rac.src.mock_pipeline import run_mock_pipeline
+from rac.src.evidence_review import build_review_plan
 
 
 def load_eval_cases() -> list[dict]:
@@ -18,7 +18,7 @@ def load_eval_cases() -> list[dict]:
 
 
 def run_case(case: dict) -> dict:
-    state = run_mock_pipeline(case["question"])
+    state = build_review_plan(case["question"])
     resolved = resolve_state_evidence(state, root=ROOT)
 
     return {

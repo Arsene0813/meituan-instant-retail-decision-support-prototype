@@ -6,15 +6,15 @@
     "summary": {
       "question": "Can Store A's March-to-April increases in transaction amount and transaction orders be attributed to search exposure alone?",
       "question_type": "causal_diagnostic",
-      "total_packets": 5,
+      "total_packets": 6,
       "status_counts": {
-        "record_matched": 5
+        "record_matched": 6
       },
       "role_counts": {
-        "quantitative_evidence": 5
+        "quantitative_evidence": 6
       },
       "source_missing_count": 0,
-      "record_matched_count": 5,
+      "record_matched_count": 6,
       "keyword_matched_count": 0,
       "boundary_matched_count": 0,
       "fallback_count": 0
@@ -77,8 +77,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: search_exposure.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -142,8 +142,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: entry_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -207,8 +207,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: order_conversion.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -281,8 +281,8 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: promotion_intensity.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",
@@ -340,8 +340,67 @@
         ],
         "original_claim_supported": "Provides context needed to evaluate factor: transaction_orders.",
         "original_limitations": [
-          "Evidence is resolved from committed local project files.",
-          "Coverage is limited to the sources listed in this packet."
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
+        ],
+        "resolver_limitations": [
+          "Deterministic Store A CSV record selection only.",
+          "Selected values describe the observed records; they do not establish a single cause for the March-to-April changes."
+        ]
+      },
+      {
+        "factor_id": "transaction_amount",
+        "evidence_id": "evidence_transaction_amount",
+        "source_type": "csv",
+        "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+        "source_exists": true,
+        "grounding_role": "quantitative_evidence",
+        "grounding_status": "record_matched",
+        "snippets": [],
+        "record_scope": {
+          "key_fields": [
+            "store_id",
+            "period_month"
+          ],
+          "row_count": 2,
+          "row_keys": [
+            {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            {
+              "store_id": "A",
+              "period_month": "2026-04"
+            }
+          ]
+        },
+        "evidence_fields": [
+          "transaction_amount"
+        ],
+        "evidence_values": [
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-03"
+            },
+            "values": {
+              "transaction_amount": "6454.84"
+            }
+          },
+          {
+            "row_key": {
+              "store_id": "A",
+              "period_month": "2026-04"
+            },
+            "values": {
+              "transaction_amount": "9083.72"
+            }
+          }
+        ],
+        "original_claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
+        "original_limitations": [
+          "Source files are read from the local review root.",
+          "This packet covers only its registered factor route."
         ],
         "resolver_limitations": [
           "Deterministic Store A CSV record selection only.",

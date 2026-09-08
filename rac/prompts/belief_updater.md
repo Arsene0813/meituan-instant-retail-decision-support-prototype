@@ -20,7 +20,7 @@ Required output fields:
 
 Rules:
 
-1. Confidence must be between 0 and 1.
+1. Use null for confidence when no calibrated numerical estimate is available. The current grounded rules require null; numeric mock-fixture confidence remains between 0 and 1.
 2. Use tentative when evidence is incomplete.
 3. Use active only when the conclusion is well supported within its stated scope.
 4. Always include validity conditions.

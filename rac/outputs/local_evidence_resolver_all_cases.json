@@ -7,15 +7,15 @@
       "summary": {
         "question": "Can Store A's March-to-April increases in transaction amount and transaction orders be attributed to search exposure alone?",
         "question_type": "causal_diagnostic",
-        "total_packets": 5,
+        "total_packets": 6,
         "status_counts": {
-          "record_matched": 5
+          "record_matched": 6
         },
         "role_counts": {
-          "quantitative_evidence": 5
+          "quantitative_evidence": 6
         },
         "source_missing_count": 0,
-        "record_matched_count": 5,
+        "record_matched_count": 6,
         "keyword_matched_count": 0,
         "boundary_matched_count": 0,
         "fallback_count": 0
@@ -78,8 +78,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: search_exposure.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic Store A CSV record selection only.",
@@ -143,8 +143,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: entry_conversion.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic Store A CSV record selection only.",
@@ -208,8 +208,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: order_conversion.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic Store A CSV record selection only.",
@@ -282,8 +282,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: promotion_intensity.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic Store A CSV record selection only.",
@@ -341,8 +341,67 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: transaction_orders.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
+          ],
+          "resolver_limitations": [
+            "Deterministic Store A CSV record selection only.",
+            "Selected values describe the observed records; they do not establish a single cause for the March-to-April changes."
+          ]
+        },
+        {
+          "factor_id": "transaction_amount",
+          "evidence_id": "evidence_transaction_amount",
+          "source_type": "csv",
+          "source_path": "retail_ops/data/store_a_monthly_metrics.csv",
+          "source_exists": true,
+          "grounding_role": "quantitative_evidence",
+          "grounding_status": "record_matched",
+          "snippets": [],
+          "record_scope": {
+            "key_fields": [
+              "store_id",
+              "period_month"
+            ],
+            "row_count": 2,
+            "row_keys": [
+              {
+                "store_id": "A",
+                "period_month": "2026-03"
+              },
+              {
+                "store_id": "A",
+                "period_month": "2026-04"
+              }
+            ]
+          },
+          "evidence_fields": [
+            "transaction_amount"
+          ],
+          "evidence_values": [
+            {
+              "row_key": {
+                "store_id": "A",
+                "period_month": "2026-03"
+              },
+              "values": {
+                "transaction_amount": "6454.84"
+              }
+            },
+            {
+              "row_key": {
+                "store_id": "A",
+                "period_month": "2026-04"
+              },
+              "values": {
+                "transaction_amount": "9083.72"
+              }
+            }
+          ],
+          "original_claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
+          "original_limitations": [
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic Store A CSV record selection only.",
@@ -480,8 +539,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: same_reporting_period.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -592,8 +651,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: store_type.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -704,8 +763,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: order_volume.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -802,8 +861,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: transaction_amount.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -918,8 +977,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: activity_intensity.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1016,8 +1075,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: region_context.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1075,8 +1134,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: competition.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1180,8 +1239,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: sku_structure.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1323,8 +1382,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: repeated_reporting_windows.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Deterministic B-F CSV record selection for the declared comparison scope.",
@@ -1374,7 +1433,7 @@
           "boundary_matched": 2
         },
         "role_counts": {
-          "default_evidence": 6,
+          "definition_evidence": 6,
           "boundary_evidence": 2
         },
         "source_missing_count": 0,
@@ -1390,7 +1449,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `activity_orders`"
           ],
@@ -1407,8 +1466,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: activity_orders.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1422,7 +1481,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `activity_cost`"
           ],
@@ -1439,8 +1498,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: activity_cost.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1454,7 +1513,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `merchant_subsidy_amount`"
           ],
@@ -1471,8 +1530,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: merchant_subsidy.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1486,7 +1545,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `platform_subsidy_amount`"
           ],
@@ -1503,8 +1562,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: platform_subsidy.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1518,7 +1577,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `order_conversion_rate_pct`"
           ],
@@ -1535,8 +1594,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: order_conversion.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1550,7 +1609,7 @@
           "source_type": "markdown",
           "source_path": "retail_ops/data/DATA_DICTIONARY.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "definition_evidence",
           "keywords_used": [
             "### `payment_conversion_rate_pct`"
           ],
@@ -1567,8 +1626,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: payment_conversion.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1599,8 +1658,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: sku_margin_structure.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1650,8 +1709,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: competitor_context.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1675,7 +1734,7 @@
           "keyword_matched": 8
         },
         "role_counts": {
-          "default_evidence": 8
+          "design_evidence": 8
         },
         "source_missing_count": 0,
         "record_matched_count": 0,
@@ -1690,7 +1749,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "typed memory",
             "memory",
@@ -1728,8 +1787,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: typed_memory.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1743,7 +1802,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "evidence",
             "evidence packet",
@@ -1782,8 +1841,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: evidence_packets.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1797,7 +1856,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "hypothesis",
             "hypotheses",
@@ -1808,25 +1867,25 @@
           "grounding_status": "keyword_matched",
           "snippets": [
             {
-              "line_start": 41,
-              "line_end": 43,
+              "line_start": 42,
+              "line_end": 44,
               "matched_terms": [
                 "hypotheses",
                 "competing"
               ],
-              "text": "-> boundary evidence for unavailable requirements\n-> competing hypotheses\n-> critique"
+              "text": "-> exact-value and coverage checks\n-> competing hypotheses updated from those checks\n-> critique"
             },
             {
-              "line_start": 49,
-              "line_end": 51,
+              "line_start": 50,
+              "line_end": 52,
               "matched_terms": [
                 "hypothesis"
               ],
               "text": "The pipeline separates factor selection, evidence retrieval, hypothesis\nformation, critique, and report generation. A final answer therefore"
             },
             {
-              "line_start": 63,
-              "line_end": 65,
+              "line_start": 64,
+              "line_end": 66,
               "matched_terms": [
                 "competing"
               ],
@@ -1835,8 +1894,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: hypotheses.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1850,7 +1909,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "belief",
             "belief update",
@@ -1862,24 +1921,24 @@
           "grounding_status": "keyword_matched",
           "snippets": [
             {
-              "line_start": 138,
-              "line_end": 140,
+              "line_start": 140,
+              "line_end": 142,
               "matched_terms": [
                 "belief"
               ],
               "text": "evidence_packets\nbelief_records\nretrieval_trace"
             },
             {
-              "line_start": 155,
-              "line_end": 157,
+              "line_start": 157,
+              "line_end": 159,
               "matched_terms": [
                 "confidence"
               ],
               "text": "hypotheses\nconfidence\nlimitations"
             },
             {
-              "line_start": 193,
-              "line_end": 195,
+              "line_start": 195,
+              "line_end": 197,
               "matched_terms": [
                 "confidence"
               ],
@@ -1888,8 +1947,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: belief_records.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1903,7 +1962,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "confidence",
             "uncertainty",
@@ -1913,34 +1972,34 @@
           "grounding_status": "keyword_matched",
           "snippets": [
             {
-              "line_start": 155,
-              "line_end": 157,
+              "line_start": 157,
+              "line_end": 159,
               "matched_terms": [
                 "confidence"
               ],
               "text": "hypotheses\nconfidence\nlimitations"
             },
             {
-              "line_start": 193,
-              "line_end": 195,
+              "line_start": 195,
+              "line_end": 197,
               "matched_terms": [
                 "confidence"
               ],
               "text": "does not measure evidence strength, conclusion correctness, business impact,\ndecision quality, or model confidence. It is not used to select or rank the\nfinal judgment."
             },
             {
-              "line_start": 196,
-              "line_end": 198,
+              "line_start": 198,
+              "line_end": 200,
               "matched_terms": [
                 "confidence"
               ],
-              "text": "Mock reports separately carry Scenario-Template Confidence. That value\nis assigned by deterministic question-type templates and is not merged"
+              "text": "Grounded hypothesis and belief `confidence` values are `null`: no calibrated\nnumerical estimate is available. Hypothesis `status`, evidence checks and"
             }
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: confidence.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -1954,7 +2013,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "limitation",
             "limitations",
@@ -1979,11 +2038,11 @@
               "matched_terms": [
                 "boundary"
               ],
-              "text": "-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements\n-> competing hypotheses"
+              "text": "-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements\n-> exact-value and coverage checks"
             },
             {
-              "line_start": 51,
-              "line_end": 53,
+              "line_start": 52,
+              "line_end": 54,
               "matched_terms": [
                 "limitation",
                 "limitations"
@@ -1993,8 +2052,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: limitations.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -2008,7 +2067,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "retrieval",
             "trace",
@@ -2029,16 +2088,16 @@
               "text": "-> factor weighting\n-> source-aware local evidence routing\n-> boundary evidence for unavailable requirements"
             },
             {
-              "line_start": 49,
-              "line_end": 51,
+              "line_start": 50,
+              "line_end": 52,
               "matched_terms": [
                 "retrieval"
               ],
               "text": "The pipeline separates factor selection, evidence retrieval, hypothesis\nformation, critique, and report generation. A final answer therefore"
             },
             {
-              "line_start": 61,
-              "line_end": 63,
+              "line_start": 62,
+              "line_end": 64,
               "matched_terms": [
                 "source"
               ],
@@ -2047,8 +2106,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: retrieval_trace.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",
@@ -2062,7 +2121,7 @@
           "source_type": "markdown",
           "source_path": "rac/README.md",
           "source_exists": true,
-          "grounding_role": "default_evidence",
+          "grounding_role": "design_evidence",
           "keywords_used": [
             "active",
             "state",
@@ -2084,16 +2143,16 @@
               "text": "review path explicit, and records where the available evidence supports\na statement, where only a boundary can be established, and where a\nstronger conclusion should remain unresolved."
             },
             {
-              "line_start": 44,
-              "line_end": 46,
+              "line_start": 45,
+              "line_end": 47,
               "matched_terms": [
                 "state"
               ],
               "text": "-> rule-based claim and definition check\n-> review-state update\n-> grounded final report"
             },
             {
-              "line_start": 76,
-              "line_end": 78,
+              "line_start": 77,
+              "line_end": 79,
               "matched_terms": [
                 "state"
               ],
@@ -2102,8 +2161,8 @@
           ],
           "original_claim_supported": "Provides context needed to evaluate factor: active_state_filtering.",
           "original_limitations": [
-            "Evidence is resolved from committed local project files.",
-            "Coverage is limited to the sources listed in this packet."
+            "Source files are read from the local review root.",
+            "This packet covers only its registered factor route."
           ],
           "resolver_limitations": [
             "Local text matching only.",

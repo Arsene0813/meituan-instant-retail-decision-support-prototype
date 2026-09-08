@@ -26,6 +26,7 @@ REQUIRED_REPORT_SECTIONS = [
     "## 2. Question Type",
     "## 3. Factor Weights",
     "## 4. Local Evidence Grounding",
+    "### Evidence Checks",
     "## 5. Competing Hypotheses",
     "## 6. Critic Findings",
     "## 7. Claim and Definition Check",
@@ -212,9 +213,9 @@ def validate_record_grounded_case(
         state["grounded_evidence"]["summary"].get(
             "record_matched_count"
         )
-        != 5
+        != len(STORE_A_FACTOR_FIELDS)
     ):
-        fail("Store A record count is not five")
+        fail("Store A record count does not match registered factors")
 
     for factor_id, row in record_rows.items():
         if row["source_path"] != STORE_A_SOURCE_PATH:
@@ -240,14 +241,11 @@ def validate_record_grounded_case(
             )
 
     for fragment in [
-        "Record matched packets: 5",
+        f"Record matched packets: {len(STORE_A_FACTOR_FIELDS)}",
         (
             "records: store_id=A; "
             "period_month=2026-03, 2026-04; rows=2"
         ),
-        "search_exposure_users=4172",
-        "transaction_orders=337",
-        "activity_cost_ratio_pct=40.69",
     ]:
         if fragment not in state["final_report"]:
             fail(

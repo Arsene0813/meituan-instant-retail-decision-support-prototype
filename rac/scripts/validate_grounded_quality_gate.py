@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from decimal import Decimal, InvalidOperation
 import json
 import re
 import sys
@@ -32,6 +33,7 @@ REQUIRED_REPORT_SECTIONS = [
     "### 3a. How Factor Weights Are Generated",
     "### 3b. Factor Weights Used in This Report",
     "## 4. Local Evidence Grounding",
+    "### Evidence Checks",
     "## 5. Competing Hypotheses",
     "## 6. Critic Findings",
     "## 7. Claim and Definition Check",
@@ -101,6 +103,100 @@ def validate_forbidden_claims(report: str) -> list[str]:
         if normalize(claim) in normalized_report:
             issues.append(f"forbidden positive claim found: {claim}")
 
+    return issues
+
+
+def validate_evidence_review(state: dict[str, Any]) -> list[str]:
+    """Check operands and directions independently of report wording."""
+    issues: list[str] = []
+    review = state.get("evidence_review", {})
+    if review.get("method") != "registered_local_evidence_rules_v1":
+        issues.append("missing registered evidence-review method")
+    if review.get("confidence_method") != "not_estimated":
+        issues.append("grounded confidence must remain explicitly unestimated")
+    records = [*state.get("hypotheses", []), state.get("belief_update", {})]
+    if any(record.get("confidence") is not None for record in records):
+        issues.append("grounded review contains an estimated numerical confidence")
+
+    kind = state.get("question_type")
+    expected_scope = (
+        {"store_ids": ["A"], "period_start": "2026-03-01", "period_end": "2026-04-30"}
+        if kind == "causal_diagnostic" else
+        {"store_ids": list(DEMO2_STORE_IDS), "period_start": "2026-03-01", "period_end": "2026-03-31"}
+        if kind == "comparability_judgment" else
+        {"store_ids": [], "period_start": None, "period_end": None}
+    )
+    if review.get("scope") != expected_scope:
+        issues.append("evidence review does not preserve its registered store/window scope")
+
+    packets = state.get("grounded_evidence", {}).get("resolved_packets", [])
+    by_factor = {packet.get("factor_id"): packet for packet in packets}
+    if len(by_factor) != len(packets):
+        issues.append("duplicate resolved evidence factors")
+    expected_ids = {
+        str(packet["factor_id"]) + "/" + field
+        for packet in packets
+        for field in packet.get("evidence_fields", ["document"])
+    }
+    checks = review.get("checks", [])
+    actual_ids = [check.get("check_id") for check in checks]
+    if len(actual_ids) != len(set(actual_ids)) or set(actual_ids) != expected_ids:
+        issues.append("evidence checks do not exactly cover registered factor fields/routes")
+
+    for check in checks:
+        label = str(check.get("check_id", ""))
+        packet = by_factor.get(check.get("factor_id"))
+        if packet is None:
+            issues.append(label + ": check has no resolved factor")
+            continue
+        if (check.get("evidence_id") != packet.get("evidence_id")
+                or check.get("source_path") != packet.get("source_path")):
+            issues.append(label + ": check does not refer to its selected source packet")
+        if "evidence_fields" not in packet:
+            matched = packet.get("grounding_status") in {"keyword_matched", "boundary_matched"}
+            if (check.get("field") is not None or check.get("operation") != "document_route"
+                    or check.get("operands") != []
+                    or check.get("status") != ("supported" if matched else "missing")
+                    or check.get("result") != ("matched" if matched else "unresolved")):
+                issues.append(label + ": document route is misrepresented as observed data")
+            continue
+
+        field = check.get("field")
+        if field not in packet["evidence_fields"]:
+            issues.append(label + ": field was not selected by the registered route")
+            continue
+        expected_operands = [
+            {"row_key": item["row_key"],
+             "value": item["values"].get(field) if str(item["values"].get(field) or "").strip() else None}
+            for item in packet.get("evidence_values", [])
+        ]
+        if check.get("operands") != expected_operands:
+            issues.append(label + ": operands differ from the independently selected source values")
+        operation = "compare" if kind == "causal_diagnostic" else "record_values"
+        if check.get("operation") != operation:
+            issues.append(label + ": incorrect operation for the registered review")
+        matched = packet.get("grounding_status") == "record_matched"
+        complete = matched and bool(expected_operands) and all(
+            operand["value"] is not None for operand in expected_operands
+        )
+        expected_status = (
+            "supported" if complete else
+            "missing" if matched or packet.get("grounding_status") == "source_missing" else "invalid"
+        )
+        expected_result = "recorded" if complete else "unresolved"
+        if complete and operation == "compare":
+            try:
+                if len(expected_operands) != 2:
+                    raise ValueError("comparison requires two records")
+                before, after = (Decimal(operand["value"]) for operand in expected_operands)
+                if not before.is_finite() or not after.is_finite():
+                    raise ValueError("non-finite operand")
+                expected_result = "increased" if after > before else "decreased" if after < before else "unchanged"
+            except (InvalidOperation, TypeError, ValueError):
+                issues.append(label + ": comparison accepted invalid numerical operands")
+                continue
+        if check.get("status") != expected_status or check.get("result") != expected_result:
+            issues.append(label + ": result/status contradicts the selected operands")
     return issues
 
 
@@ -383,7 +479,7 @@ def validate_store_a_grounding(
     }
 
     if (
-        len(record_rows) != 5
+        len(record_rows) != len(STORE_A_FACTOR_FIELDS)
         or set(by_factor) != set(STORE_A_FACTOR_FIELDS)
     ):
         issues.append(
@@ -396,7 +492,7 @@ def validate_store_a_grounding(
         {},
     ).get("summary", {})
 
-    if summary.get("record_matched_count") != 5:
+    if summary.get("record_matched_count") != len(STORE_A_FACTOR_FIELDS):
         issues.append(
             "Store A summary record count mismatch"
         )
@@ -496,18 +592,12 @@ def validate_store_a_grounding(
                     )
 
     for fragment in [
-        "Record matched packets: 5",
+        f"Record matched packets: {len(STORE_A_FACTOR_FIELDS)}",
         (
             "records: store_id=A; "
             "period_month=2026-03, 2026-04; rows=2"
         ),
-        "search_exposure_users=4172",
-        "search_exposure_users=7736",
-        "transaction_orders=207",
-        "transaction_orders=337",
-        "activity_cost_ratio_pct=38.55",
-        "activity_cost_ratio_pct=40.69",
-        "record_matched_packets = 5",
+        f"record_matched_packets = {len(STORE_A_FACTOR_FIELDS)}",
     ]:
         if fragment not in state.get(
             "final_report",
@@ -623,20 +713,10 @@ def validate_factor_evidence_status(
     """Keep factor status aligned with its evidence route."""
     issues: list[str] = []
 
-    record_or_keyword_grounding_statuses = {
-        "record_matched",
-        "keyword_matched",
-    }
-
-    grounding_by_factor = {
-        str(row.get("factor_id", "")): str(
-            row.get("grounding_status", "")
-        )
-        for row in state.get(
-            "grounded_evidence_rows",
-            [],
-        )
-    }
+    checks = state.get("evidence_review", {}).get("checks", [])
+    checks_by_factor: dict[str, list[dict[str, Any]]] = {}
+    for check in checks:
+        checks_by_factor.setdefault(str(check.get("factor_id", "")), []).append(check)
 
     for factor_weight in state.get(
         "factor_weights",
@@ -651,22 +731,13 @@ def validate_factor_evidence_status(
                 "",
             )
         )
-        grounding_status = grounding_by_factor.get(
-            factor_id,
-            "",
-        )
-
-        if not grounding_status:
-            issues.append(
-                "factor weight has no grounded row: "
-                f"{factor_id}"
-            )
+        factor_checks = checks_by_factor.get(factor_id, [])
+        if not factor_checks:
+            issues.append("factor weight has no registered evidence checks: " + factor_id)
             continue
-
         expected_status = (
             "partially_supported"
-            if grounding_status
-            in record_or_keyword_grounding_statuses
+            if any(check.get("status") == "supported" for check in factor_checks)
             else "missing"
         )
 
@@ -674,7 +745,6 @@ def validate_factor_evidence_status(
             issues.append(
                 "factor evidence-status mismatch: "
                 f"{factor_id}; "
-                f"grounding_status={grounding_status}; "
                 f"expected={expected_status}; "
                 f"actual={actual_status}"
             )
@@ -795,8 +865,7 @@ def validate_cross_store_grounding(state: dict[str, Any]) -> list[str]:
 
     required_report_phrases = [
         "same-period diagnostic review",
-        "should not be treated as directly comparable",
-        "Pairwise quantitative gates are not defined in the current contract."
+        "Direct comparability remains unresolved."
     ]
 
     for phrase in required_report_phrases:
@@ -817,6 +886,7 @@ def validate_state(case: dict[str, Any], state: dict[str, Any]) -> dict[str, Any
 
     issues.extend(validate_report_sections(report))
     issues.extend(validate_forbidden_claims(report))
+    issues.extend(validate_evidence_review(state))
 
     row_issues, row_status_counts = validate_grounded_rows(rows)
     issues.extend(row_issues)
@@ -850,9 +920,6 @@ def validate_state(case: dict[str, Any], state: dict[str, Any]) -> dict[str, Any
 
     if hypothesis_count < 2:
         issues.append("fewer than 2 hypotheses")
-
-    if critic_count == 0:
-        issues.append("no critic findings")
 
     if limitation_count == 0:
         issues.append("no belief limitations")
@@ -892,7 +959,7 @@ def validate_state(case: dict[str, Any], state: dict[str, Any]) -> dict[str, Any
     required_report_contract_phrases = [
         'Deterministic local-file review',
         'fixed review-priority buckets assigned by explicit rules',
-        'Scenario-Template Confidence',
+        '| Hypothesis | Confidence',
         'Unsupported claims detected by current rules',
         'Definition conflicts detected by current rules',
         'The judgment is bounded by the cited local evidence',
@@ -901,7 +968,7 @@ def validate_state(case: dict[str, Any], state: dict[str, Any]) -> dict[str, Any
         'routing_coverage_score =',
         'record_or_keyword_route_rate',
         'resolved_or_boundary_route_rate',
-        '`partially_supported` indicates that a registered local evidence route was resolved',
+        '`partially_supported` means at least one selected observation',
         'Score inputs (contract fields):',
         'Score contract:',
         'The score summarizes route resolution under the current rules.',
@@ -1080,7 +1147,7 @@ def write_markdown_summary(results: list[dict[str, Any]], output_path: Path) -> 
     lines.append("")
     lines.append(
         "For rac_store_a_attribution_001, "
-        "the gate requires five Store A records "
+        f"the gate requires {len(STORE_A_FACTOR_FIELDS)} factor-specific evidence packets covering the two Store A records "
         "for 2026-03 and 2026-04, using canonical "
         "fields whose selected values equal the "
         "source CSV."

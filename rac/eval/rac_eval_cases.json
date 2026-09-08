@@ -16,7 +16,7 @@
       "The system proves causality",
       "The system has live Meituan backend access"
     ],
-    "expected_confidence": "moderate"
+    "expected_confidence": "unknown"
   },
   {
     "case_id": "rac_cross_store_comparability_001",
@@ -39,7 +39,7 @@
       "Region type is a strong market classifier",
       "The system proves which store is better"
     ],
-    "expected_confidence": "moderate"
+    "expected_confidence": "unknown"
   },
   {
     "case_id": "rac_promotion_strategy_001",
@@ -61,7 +61,7 @@
       "One month of data is enough to prove promotion effectiveness",
       "The system can recommend final actions without checking margins"
     ],
-    "expected_confidence": "moderate"
+    "expected_confidence": "unknown"
   },
   {
     "case_id": "rac_system_design_001",
@@ -83,6 +83,6 @@
       "The system solves causal inference automatically",
       "The system should replace existing memory-layer endpoints immediately"
     ],
-    "expected_confidence": "high"
+    "expected_confidence": "unknown"
   }
 ]
