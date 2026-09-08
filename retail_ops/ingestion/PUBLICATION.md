@@ -117,4 +117,4 @@ python3 -m retail_ops.ingestion.publication_cli analyze \
 - RAC 仍使用已登记的 A 店三月至四月、B–F 店三月及二月至四月 panel 检查范围；发布功能没有扩大问题范围。
 - 现有 Docker API 与 Qdrant 尚未切换到这个入口。本轮无需重建容器。
 
-下一步需要把接入的真实来源登记、上传操作和查询界面串起来，并让 API 按明确发布 ID 读取，继续保留同店和跨店分析的来源与窗口核对。
+[区间 RAC 与 API](RANGE_API.md) 已可按明确发布 ID 读取 `--source-records` 版本，核对同店及跨店的日期范围和来源口径。后续将真实来源登记、上传操作和查询界面串起来。

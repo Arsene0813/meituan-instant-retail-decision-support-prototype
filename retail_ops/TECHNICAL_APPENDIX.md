@@ -830,3 +830,10 @@ A view without selected input is an explicitly recorded empty table, not evidenc
 The v2 intake registry preserves the existing receipt fields and registers `canonical_csv_v2` for actual source date windows. Daily records use identical `period_start` and `period_end`; uploading a cumulative report each day does not change its source window. Existing month labels retain their documented meaning.
 
 `publication_cli publish --source-records` creates a verified source-data version without monthly SQL/fact generation. `source_query` reads one version using explicit start/end dates, returns records, lineage and per-store coverage, and does not persist query results. Natural-month selection resolves to the same date parameters. Two store metrics have explicitly registered complete-daily-coverage sums; other values retain their source-window semantics. See [SOURCE_QUERY.md](ingestion/SOURCE_QUERY.md) for field mappings, rules, and commands.
+
+
+## Date-range RAC and HTTP reads
+
+`range_analysis` selects current and optional baseline windows from one verified private publication copy, reconciles each query summary with source rows, then rebuilds RAC checks, alternative direction hypotheses, critique and belief. The default review fields are `transaction_amount` and `transaction_orders`; optional fields retain the dictionary definitions and registered comparison rules. `rac/contracts/range_review.v1.json` defines scope and calculation rules, and `rac/schemas/range_cognition_state.v1.schema.json` registers review metadata including exact differences and reference links. No canonical source field is renamed.
+
+The standalone `api.retail_range_api` provides `/retail/query` and `/retail/review` using a server-configured external publication directory. Requests carry explicit IDs and selectors, never paths, SQL or source evidence. It runs in the publication interpreter on localhost port 8001; existing Docker endpoints are separate. Neither endpoint writes a query record. See [RANGE_API.md](ingestion/RANGE_API.md) for startup, request shapes and version handling.

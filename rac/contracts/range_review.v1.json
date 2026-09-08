@@ -1,0 +1,53 @@
+{
+  "review_contract_version": "1",
+  "method": "registered_range_evidence_rules_v1",
+  "accepted_grain": "store_period",
+  "comparison_fields": [
+    "activity_cost",
+    "activity_cost_ratio_pct",
+    "activity_orders",
+    "entry_conversion_rate_pct",
+    "entry_times",
+    "entry_users",
+    "exposure_times",
+    "exposure_users",
+    "merchant_subsidy_amount",
+    "order_conversion_rate_pct",
+    "order_users",
+    "platform_subsidy_amount",
+    "search_entry_users",
+    "search_exposure_users",
+    "transaction_amount",
+    "transaction_orders"
+  ],
+  "primary_fields": [
+    "transaction_amount",
+    "transaction_orders"
+  ],
+  "default_fields": [
+    "transaction_amount",
+    "transaction_orders"
+  ],
+  "scope_comparison_fields": [
+    "source_system",
+    "source_page",
+    "scope_version",
+    "timezone",
+    "selection_conditions"
+  ],
+  "same_store_identity_fields": [
+    "binding_id",
+    "source_account_id",
+    "source_store_id"
+  ],
+  "reviewer_identity": "preserve_in_lineage_exclude_from_semantic_comparison",
+  "mixed_summary_basis_fields": [
+    "transaction_amount",
+    "transaction_orders"
+  ],
+  "comparison": "exact_difference_and_direction_of_selected_values",
+  "unequal_window_lengths": "retain_lengths_no_normalization",
+  "other_fields": "preserve_source_values_without_direction_rules",
+  "confidence": "not_estimated",
+  "query_storage": "none"
+}

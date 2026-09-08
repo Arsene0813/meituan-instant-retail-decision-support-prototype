@@ -249,57 +249,74 @@ def _store_result(store_id, entries, fields, contract, first, last):
             "ambiguities": ambiguities, "metrics": metrics}
 
 
-def query_publication(root: Path, directory: Path, publication_id: str, dataset_id: str,
-                      store_ids: list[str], period_start: str, period_end: str,
-                      fields: list[str] | None = None) -> dict:
-    """Pin once, select with parameterized in-memory SQL, return without saving."""
+def _query_scope(store_ids, period_start, period_end):
     first, last = _range(period_start, period_end)
     if (not isinstance(store_ids, list) or not store_ids or
             any(not isinstance(store, str) or not store or store != store.strip() for store in store_ids)
             or len(store_ids) != len(set(store_ids))):
         raise ValueError("store_ids require distinct, non-empty canonical store IDs")
     stores = sorted(store_ids)
+    return first, last, stores
+
+
+def _query_pinned(pinned, dataset_id, stores, first, last, fields):
+    _load_policy(pinned.root)
+    summary = pinned.manifest.get("summary", {})
+    if (summary.get("profile") != "source_records_v1" or summary.get("records_path") != RECORDS_PATH):
+        raise ValueError("date-range queries require a source_records_v1 publication")
+    contracts = load_dataset_contracts(pinned.root)
+    if not isinstance(dataset_id, str) or dataset_id not in contracts or dataset_id not in SCHEMAS:
+        raise ValueError("dataset_id requires a registered contract and field schema")
+    contract = contracts[dataset_id]
+    allowed = SCHEMAS[dataset_id] - KEYS - set(contract.key_fields)
+    if fields is None:
+        selected = sorted(allowed)
+    elif (not isinstance(fields, list) or not fields or
+          any(not isinstance(field, str) or field not in allowed for field in fields)
+          or len(fields) != len(set(fields))):
+        raise ValueError("fields require distinct registered non-key field names")
+    else:
+        selected = sorted(fields)
+    entries = _validate_entries(json.loads((pinned.root / RECORDS_PATH).read_bytes(),
+                                           object_pairs_hook=_unique), contracts)
+    if type(summary.get("record_count")) is not int or summary["record_count"] != len(entries):
+        raise ValueError("published source record count does not match its manifest")
+    with closing(sqlite3.connect(":memory:")) as connection:
+        connection.execute("PRAGMA temp_store = MEMORY")
+        connection.execute("CREATE TABLE source_records (dataset_id TEXT, store_id TEXT, period_start TEXT, period_end TEXT, batch_id TEXT, source_line_end INTEGER, payload TEXT)")
+        connection.executemany("INSERT INTO source_records VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [(item["dataset_id"], item["record"]["store_id"], *_window(item), item["source"]["batch_id"],
+              item["source"]["source_line_end"], json.dumps(item, ensure_ascii=False, sort_keys=True, allow_nan=False))
+             for item in entries])
+        rows = connection.execute(
+            "SELECT payload FROM source_records WHERE dataset_id = ? AND store_id IN (" +
+            ", ".join("?" for _ in stores) + ") AND period_start <= ? AND period_end >= ? "
+            "ORDER BY store_id, period_start, period_end, batch_id, source_line_end, payload",
+            [dataset_id, *stores, last.isoformat(), first.isoformat()]).fetchall()
+    found = {store: [] for store in stores}
+    for row in rows:
+        item = json.loads(row[0])
+        found[item["record"]["store_id"]].append(item)
+    return {"publication_id": pinned.publication_id, "dataset_id": dataset_id,
+            "period_start": first.isoformat(), "period_end": last.isoformat(), "fields": selected,
+            "stores": [_store_result(store, found[store], selected, contract, first, last) for store in stores]}
+
+
+def query_pinned_publication(pinned, dataset_id: str, store_ids: list[str],
+                             period_start: str, period_end: str,
+                             fields: list[str] | None = None) -> dict:
+    """Select from an already verified private publication; never open a new version."""
+    first, last, stores = _query_scope(store_ids, period_start, period_end)
+    return _query_pinned(pinned, dataset_id, stores, first, last, fields)
+
+
+def query_publication(root: Path, directory: Path, publication_id: str, dataset_id: str,
+                      store_ids: list[str], period_start: str, period_end: str,
+                      fields: list[str] | None = None) -> dict:
+    """Pin once, select with parameterized in-memory SQL, return without saving."""
+    first, last, stores = _query_scope(store_ids, period_start, period_end)
     with open_publication(root, directory, publication_id) as pinned:
-        _load_policy(pinned.root)
-        summary = pinned.manifest.get("summary", {})
-        if (summary.get("profile") != "source_records_v1" or summary.get("records_path") != RECORDS_PATH):
-            raise ValueError("date-range queries require a source_records_v1 publication")
-        contracts = load_dataset_contracts(pinned.root)
-        if not isinstance(dataset_id, str) or dataset_id not in contracts or dataset_id not in SCHEMAS:
-            raise ValueError("dataset_id requires a registered contract and field schema")
-        contract = contracts[dataset_id]
-        allowed = SCHEMAS[dataset_id] - KEYS - set(contract.key_fields)
-        if fields is None:
-            selected = sorted(allowed)
-        elif (not isinstance(fields, list) or not fields or
-              any(not isinstance(field, str) or field not in allowed for field in fields)
-              or len(fields) != len(set(fields))):
-            raise ValueError("fields require distinct registered non-key field names")
-        else:
-            selected = sorted(fields)
-        entries = _validate_entries(json.loads((pinned.root / RECORDS_PATH).read_bytes(),
-                                               object_pairs_hook=_unique), contracts)
-        if type(summary.get("record_count")) is not int or summary["record_count"] != len(entries):
-            raise ValueError("published source record count does not match its manifest")
-        with closing(sqlite3.connect(":memory:")) as connection:
-            connection.execute("PRAGMA temp_store = MEMORY")
-            connection.execute("CREATE TABLE source_records (dataset_id TEXT, store_id TEXT, period_start TEXT, period_end TEXT, batch_id TEXT, source_line_end INTEGER, payload TEXT)")
-            connection.executemany("INSERT INTO source_records VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [(item["dataset_id"], item["record"]["store_id"], *_window(item), item["source"]["batch_id"],
-                  item["source"]["source_line_end"], json.dumps(item, ensure_ascii=False, sort_keys=True, allow_nan=False))
-                 for item in entries])
-            rows = connection.execute(
-                "SELECT payload FROM source_records WHERE dataset_id = ? AND store_id IN (" +
-                ", ".join("?" for _ in stores) + ") AND period_start <= ? AND period_end >= ? "
-                "ORDER BY store_id, period_start, period_end, batch_id, source_line_end, payload",
-                [dataset_id, *stores, last.isoformat(), first.isoformat()]).fetchall()
-        found = {store: [] for store in stores}
-        for row in rows:
-            item = json.loads(row[0])
-            found[item["record"]["store_id"]].append(item)
-        return {"publication_id": pinned.publication_id, "dataset_id": dataset_id,
-                "period_start": first.isoformat(), "period_end": last.isoformat(), "fields": selected,
-                "stores": [_store_result(store, found[store], selected, contract, first, last) for store in stores]}
+        return _query_pinned(pinned, dataset_id, stores, first, last, fields)
 
 
 def main(argv=None):

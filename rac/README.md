@@ -342,7 +342,7 @@ summary is reconciled against the current registered panel before its selected
 cells are used. The [publication CLI](../retail_ops/ingestion/PUBLICATION.md)
 rebuilds SQL diagnostics and Demo 2 facts from selected batches, then gives
 RAC the same verified publication for the full run. Existing RAC scripts still
-read project fixtures; the API has not yet switched to publication selection.
+read project fixtures; the separate range API reads selected source publications.
 
 The review records exact source operands and comparison results in
 `evidence_review`. State validation recomputes the decision-bearing fields
@@ -367,3 +367,25 @@ operations; they do not validate arbitrary natural-language claims.
 
 The business-field rename count is zero. The dictionary, metric definitions
 and source CSV values are unchanged by this implementation step.
+
+## Selected date ranges
+
+The [range API and CLI](../retail_ops/ingestion/RANGE_API.md) read actual-date
+source publications. One range returns recorded values and evidence gaps;
+one store with an earlier baseline adds temporal comparisons; several stores
+under one range add descriptive value comparisons. `range_analysis` opens the
+publication once for all windows and every RAC check.
+
+`range_evidence_review.py` reconciles query summaries with their source rows,
+checks reporting conditions, evaluates alternative directions and selected
+co-movement statements, and recomputes the belief and final answer. The default
+review selects `transaction_amount` and `transaction_orders`; other registered
+fields can be selected explicitly. Complete daily sums retain the Step 7 rules.
+A recorded exact-window value remains visible when comparison context is missing.
+
+The contract is registered in `rac/contracts/range_review.v1.json` and
+`rac/schemas/range_cognition_state.v1.schema.json`. Factor priority orders
+attention; confidence remains null where no estimate has been calibrated.
+This path returns a transient state and does not save queries or replace the
+existing monthly review state schema. Its descriptive comparisons do not
+implement the future operating-strategy comparability gate.

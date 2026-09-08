@@ -29,13 +29,16 @@ STATIC_FILES = (
     "retail_ops/contracts/range_query.v1.json",
     "retail_ops/data/DATA_DICTIONARY.md", "retail_ops/TECHNICAL_APPENDIX.md",
     "retail_ops/COMPARABILITY_GATE_V0.md", "rac/README.md",
-    "rac/schemas/cognition_state.schema.json",
+    "rac/schemas/cognition_state.schema.json", "rac/schemas/range_cognition_state.v1.schema.json",
+    "rac/contracts/range_review.v1.json",
     *("retail_ops/sql/" + name for name in SQL_OUTPUTS),
 )
 CODE_FILES = (
     "retail_ops/ingestion/contracts.py", "retail_ops/ingestion/preview.py",
     "retail_ops/ingestion/source_windows.py", "retail_ops/ingestion/source_view.py",
     "retail_ops/ingestion/source_query.py",
+    "retail_ops/ingestion/range_analysis.py", "rac/src/range_evidence_review.py",
+    "api/retail_range_api.py",
     "retail_ops/ingestion/intake_registry.py", "retail_ops/ingestion/batch_store.py",
     "retail_ops/ingestion/publication.py", "retail_ops/ingestion/publication_recipe.py",
     "retail_ops/ingestion/publication_cli.py", "retail_ops/sql_runtime.py",
